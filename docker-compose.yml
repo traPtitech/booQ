@@ -10,3 +10,7 @@ services:
     build: .
     volumes:
       - './:/go/src/github.com/traPtitech/booQ'
+  booq-client:
+    build: ./client
+    volumes:
+      - './client:/app'
