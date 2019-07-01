@@ -1,0 +1,12 @@
+version: "3"
+services:
+  proxy:
+    image: nginx
+    ports:
+      - "3000:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+  booq-server:
+    build: .
+    volumes:
+      - './:/go/src/github.com/traPtitech/booQ'

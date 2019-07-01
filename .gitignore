@@ -18,5 +18,6 @@
 booQ
 
 # etc
+/.vscode/
 /tmp/
 .DS_Store
