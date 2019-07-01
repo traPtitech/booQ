@@ -12,4 +12,3 @@ RUN go mod download \
   && go get github.com/pilu/fresh
 
 COPY . .
-ENTRYPOINT fresh -c fresh.conf

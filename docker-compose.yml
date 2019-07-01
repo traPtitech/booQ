@@ -10,7 +10,11 @@ services:
     build: .
     volumes:
       - './:/go/src/github.com/traPtitech/booQ'
+    tty: true
+    entrypoint: fresh -c fresh.conf
   booq-client:
     build: ./client
     volumes:
       - './client:/app'
+    tty: true
+    entrypoint: npm run serve
