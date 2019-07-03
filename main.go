@@ -2,12 +2,26 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+
+	"github.com/traPtitech/booQ/model"
 )
 
 func main() {
+
+	db, err := model.EstablishConnection()
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	if os.Getenv("BOOQ_ENV") == "development" {
+		db.LogMode(true)
+	}
+
 	// Echo instance
 	e := echo.New()
 
