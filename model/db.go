@@ -10,6 +10,10 @@ import (
 
 var db *gorm.DB
 
+var allTables = []interface{}{
+	User{},
+}
+
 func EstablishConnection() (*gorm.DB, error) {
 	user := os.Getenv("MYSQL_USERNAME")
 	if user == "" {
@@ -34,4 +38,18 @@ func EstablishConnection() (*gorm.DB, error) {
 	_db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", user, pass, host, dbname)+"?parseTime=true&loc=Asia%2FTokyo&charset=utf8mb4")
 	db = _db
 	return db, err
+}
+
+func Migrate() error {
+	if err := db.AutoMigrate(allTables...).Error; err != nil {
+		return err
+	}
+
+	user := User{Name: "traP"}
+	trap := db.Where("name = ?", user.Name).First(&user)
+	if trap.RecordNotFound() {
+		db.Create(&user)
+	}
+
+	return nil
 }

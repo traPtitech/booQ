@@ -22,6 +22,11 @@ func main() {
 		db.LogMode(true)
 	}
 
+	err = model.Migrate()
+	if err != nil {
+		panic(err)
+	}
+
 	// Echo instance
 	e := echo.New()
 
