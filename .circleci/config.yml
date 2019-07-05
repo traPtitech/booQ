@@ -1,0 +1,24 @@
+version: 2.1
+
+jobs:
+  deploy-staging:
+    machine: true
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "fa:24:36:42:e9:0a:0b:a2:30:6e:04:e5:b2:a6:f8:51"
+      - run:
+          name: ssh-keyscan
+          command: ssh-keyscan ${STAGING_DEPLOY_HOST} >> ~/.ssh/known_hosts 2>/dev/null
+      - run:
+          name: deploy staging environment
+          command: ssh -o LogLevel=QUIET -t ${STAGING_DEPLOY_USER}@${STAGING_DEPLOY_HOST} "~/deploy.sh"
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - deploy-staging:
+          filters:
+            branches:
+              only: master

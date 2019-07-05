@@ -1,10 +1,11 @@
 # booQ
+[![CircleCI](https://circleci.com/gh/traPtitech/booQ/tree/master.svg?style=shield)](https://circleci.com/gh/traPtitech/booQ/tree/master)
 
 management tool for equipment and book rental
 
 ## Development environment
 ### Setup with docker and docker-compose
-####First Up (or entirely rebuild)
+#### First Up (or entirely rebuild)
 `docker-compose up --build`
 
 Now you can access to `http://localhost:3000` for booQ
