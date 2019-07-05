@@ -19,8 +19,6 @@ workflows:
   main:
     jobs:
       - deploy-staging:
-          requires:
-            - build-image
           filters:
             branches:
               only: /.*/
