@@ -1,4 +1,5 @@
 /client/
+/docs/
 README.md
 Dockerfile
 docker-compose.yml
