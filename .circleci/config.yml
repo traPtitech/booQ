@@ -21,6 +21,4 @@ workflows:
       - deploy-staging:
           filters:
             branches:
-              only: /.*/
-            tags:
-              only: /.*/
+              only: master
