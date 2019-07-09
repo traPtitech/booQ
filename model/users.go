@@ -9,10 +9,10 @@ import (
 // User userの構造体
 type User struct {
 	gorm.Model
-	Name       string    `gorm:"unique;not null;size:50" json:"name"`
-	ScreenName string    `json:"screen_name"`
-	IconFileID string    `json:"icon_file_id"`
-	Admin      int       `gorm:"default:0" json:"admin"`
+	Name        string    `gorm:"unique;not null;size:50" json:"name"`
+	DisplayName string    `json:"displayName"`
+	IconFileID  string    `json:"iconFileId"`
+	Admin       int       `gorm:"default:0" json:"admin"`
 }
 
 // GetUser userを取得する

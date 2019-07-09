@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/http"
 	"os"
 
 	"github.com/labstack/echo"
@@ -11,6 +10,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 
 	"github.com/traPtitech/booQ/model"
+	"github.com/traPtitech/booQ/router"
 )
 
 func main() {
@@ -37,10 +37,8 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Route => handler
-	e.GET("/api/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
+	// Routing
+	router.SetupRouting(e)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":3001"))
