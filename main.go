@@ -6,6 +6,9 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	
+	// gorm mysql driver
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 
 	"github.com/traPtitech/booQ/model"
 )
