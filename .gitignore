@@ -21,4 +21,4 @@ booQ
 /.vscode/
 /tmp/
 .DS_Store
-.env
+/.env
