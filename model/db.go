@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 var db *gorm.DB
@@ -14,6 +13,7 @@ var allTables = []interface{}{
 	User{},
 }
 
+// EstablishConnection DBに接続する
 func EstablishConnection() (*gorm.DB, error) {
 	user := os.Getenv("MYSQL_USERNAME")
 	if user == "" {
@@ -22,7 +22,7 @@ func EstablishConnection() (*gorm.DB, error) {
 
 	pass := os.Getenv("MYSQL_PASSWORD")
 	if pass == "" {
-		pass = "password"
+		pass = ""
 	}
 
 	host := os.Getenv("MYSQL_HOST")
@@ -40,16 +40,16 @@ func EstablishConnection() (*gorm.DB, error) {
 	return db, err
 }
 
+// Migrate DBのマイグレーション
 func Migrate() error {
 	if err := db.AutoMigrate(allTables...).Error; err != nil {
 		return err
 	}
 
-	user := User{Name: "traP"}
-	trap := db.Where("name = ?", user.Name).First(&user)
-	if trap.RecordNotFound() {
-		db.Create(&user)
+	traP, err := GetUser(User{Name: "traP"})
+	if traP.Name == "" {
+		_, err = CreateUser(User{Name: "traP", Admin: 1})
 	}
 
-	return nil
+	return err
 }

@@ -46,7 +46,19 @@
         >
           <v-icon color="tertiary">mdi-view-dashboard</v-icon>
         </router-link>
+        <v-btn
+          v-if="$store.state.me"
+          class="default v-btn--simple"
+          dark
+          icon
+          @click="$router.push('/about')"
+        >
+          <v-avatar size="40">
+            <img :src="`https://q.trap.jp/api/1.0/files/${$store.state.me.iconFileId}`">
+          </v-avatar>
+        </v-btn>
         <router-link
+          v-else
           v-ripple
           class="toolbar-items"
           to="/about"
@@ -59,9 +71,8 @@
 </template>
 
 <script>
-import {
-  mapMutations
-} from 'vuex'
+import { mapMutations } from 'vuex'
+import { getMe } from '@/utils/api'
 
 export default {
   data () {
@@ -77,6 +88,17 @@ export default {
       this.title = val.name
     }
   },
+  async created () {
+    try {
+      if (!this.$store.state.me) {
+        if (location.pathname === '/callback') return
+        const resp = await getMe()
+        await this.$store.commit('setMe', resp.data)
+      }
+    } catch (e) {
+      this.toggleLoginDialog()
+    }
+  },
   mounted () {
     this.onResponsiveInverted()
     window.addEventListener('resize', this.onResponsiveInverted)
@@ -86,7 +108,7 @@ export default {
     window.removeEventListener('resize', this.onResponsiveInverted)
   },
   methods: {
-    ...mapMutations(['setDrawer', 'toggleDrawer']),
+    ...mapMutations(['setDrawer', 'toggleDrawer', 'toggleLoginDialog']),
     onClickBtn () {
       this.setDrawer(!this.$store.state.drawer)
     },
