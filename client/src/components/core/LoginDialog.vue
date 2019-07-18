@@ -42,7 +42,6 @@ export default {
     login () {
       this.toggleLoginDialog()
       redirectAuthorizationEndpoint()
-      console.log('po')
     }
   }
 }
