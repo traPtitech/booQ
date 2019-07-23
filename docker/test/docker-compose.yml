@@ -1,0 +1,31 @@
+version: "3"
+services:
+  booq-test-db:
+    image: mariadb:10.3.9
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: booq_test
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: password
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --log-error=test_db.log
+    expose:
+      - '3306'
+    ports:
+      - '3306:3306'
+
+  booq-test-server:
+    build:
+      context: ../../
+    environment:
+      BOOQ_ENV: test
+      MYSQL_HOST: booq-test-db
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: booq_test
+    volumes:
+      - '../../:/go/src/github.com/traPtitech/booQ'
+    tty: true
+    entrypoint: dockerize -timeout 60s -wait tcp://booq-test-db:3306
+    command: /bin/sh -c "go run .circleci/init.go && go test . ./model ./router -v -covermode=atomic -vet=off"
+    depends_on:
+      - booq-test-db
