@@ -1,9 +1,9 @@
 package router
 
 import (
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
 
 	"github.com/labstack/echo"
 
@@ -25,7 +25,10 @@ func middlewareAuthUser(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 		body, _ := ioutil.ReadAll(res.Body)
 		user := model.User{}
-		json.Unmarshal(body, &user)
+		err := json.Unmarshal(body, &user)
+		if err != nil {
+			return c.NoContent(http.StatusInternalServerError)
+		}
 		c.Set("user", user)
 		return next(c)
 	}
