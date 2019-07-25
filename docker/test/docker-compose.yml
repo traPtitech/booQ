@@ -26,6 +26,6 @@ services:
       - '../../:/go/src/github.com/traPtitech/booQ'
     tty: true
     entrypoint: dockerize -timeout 60s -wait tcp://booq-test-db:3306
-    command: /bin/sh -c "go run .circleci/init.go && go test . ./model ./router -v -covermode=atomic -vet=off"
+    command: /bin/sh -c "golangci-lint run . ./model ./router && go run .circleci/init.go && go test . ./model ./router -v -covermode=atomic -vet=off"
     depends_on:
       - booq-test-db

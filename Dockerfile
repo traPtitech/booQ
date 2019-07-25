@@ -13,7 +13,8 @@ RUN apk add --update --no-cache git && \
 
 WORKDIR /go/src/github.com/traPtitech/booQ
 COPY ./go.* ./
-RUN go mod download \
-  && go get github.com/pilu/fresh
+RUN go mod download && \
+  go get github.com/pilu/fresh && \
+  go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.13.2
 
 COPY . .
