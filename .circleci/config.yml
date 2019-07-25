@@ -1,6 +1,100 @@
 version: 2.1
 
+executors:
+  default:
+    docker:
+      - image: circleci/golang:1.12.5
+        environment:
+          - GO111MODULE: "on"
+          - GOCACHE: "/tmp/go/cache"
+    working_directory: ~/workspace
+
+commands:
+  restore_mod:
+    steps:
+      - restore_cache:
+          keys:
+            - gomod-{{ checksum "go.mod" }}
+  restore_build_cache:
+    steps:
+      - restore_cache:
+          keys:
+            - build-cache-{{ .Branch }}--
+            - build-cache-master--
+
 jobs:
+  gomod:
+    executor: default
+    steps:
+      - checkout
+      - restore_mod
+      - run:
+          when: always
+          command: go mod download
+      - save_cache:
+          key: gomod-{{ checksum "go.mod" }}
+          when: always
+          paths:
+            - /go/pkg/mod/cache
+
+  lint:
+    executor: default
+    steps:
+      - checkout
+      - restore_mod
+      - run:
+          name: Install golangci-lint v1.13.2
+          command: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.13.2
+      - run: ./bin/golangci-lint run
+
+  build:
+    executor: default
+    steps:
+      - checkout
+      - restore_mod
+      - restore_build_cache
+      - run:
+          name: build
+          when: always
+          command: |
+            mkdir -p $GOCACHE
+            go build
+      - save_cache:
+          key: build-cache-{{ .Branch }}--{{ .Revision }}
+          when: always
+          paths:
+            - /tmp/go/cache
+      - store_artifacts:
+          path: ~/workspace/booQ
+          destination: booQ
+
+  test:
+    docker:
+      - image: circleci/golang:1.12.5
+        environment:
+          - GO111MODULE: "on"
+          - GOCACHE: "/tmp/go/cache"
+          - MYSQL_USERNAME: "root"
+          - MYSQL_PASSWORD: "password"
+          - MYSQL_DATABASE: "booq_test"
+      - image: circleci/mariadb:10.0.38-ram
+        environment:
+          - MYSQL_ROOT_PASSWORD: "password"
+          - MYSQL_DATABASE: "booq_test"
+    working_directory: ~/workspace
+    steps:
+      - checkout
+      - restore_mod
+      - restore_build_cache
+      - run:
+          name: Setup DB
+          command: |
+            dockerize -wait tcp://localhost:3306 -timeout 60s
+            go run .circleci/init.go
+      - run:
+          name: test
+          command: go test . ./model ./router -v -covermode=atomic -vet=off
+
   deploy-staging:
     machine: true
     steps:
@@ -18,6 +112,36 @@ workflows:
   version: 2
   main:
     jobs:
+      - gomod:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+      - lint:
+          requires:
+            - gomod
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+      - build:
+          requires:
+            - gomod
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+      - test:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
       - deploy-staging:
           filters:
             branches:
