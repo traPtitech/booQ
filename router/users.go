@@ -2,6 +2,7 @@ package router
 
 import (
 	"net/http"
+
 	"github.com/labstack/echo"
 
 	"github.com/traPtitech/booQ/model"
@@ -16,7 +17,7 @@ func GetUsersMe(c echo.Context) error {
 	}
 
 	if res.Name == "" {
-		res, err = model.CreateUser(user)
+		res, _ = model.CreateUser(user)
 	}
 
 	return c.JSON(http.StatusOK, res)

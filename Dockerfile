@@ -1,5 +1,6 @@
 FROM golang:1.12.5-alpine AS build
 ENV GO111MODULE=on
+ENV CGO_ENABLED=0
 ENV DOCKERIZE_VERSION v0.6.1
 RUN apk add --update --no-cache git && \
   apk --update add tzdata && \
@@ -12,7 +13,8 @@ RUN apk add --update --no-cache git && \
 
 WORKDIR /go/src/github.com/traPtitech/booQ
 COPY ./go.* ./
-RUN go mod download \
-  && go get github.com/pilu/fresh
+RUN go mod download && \
+  go get github.com/pilu/fresh && \
+  go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.13.2
 
 COPY . .
