@@ -14,11 +14,10 @@ func TestMain(m *testing.M) {
 }
 
 func setup() {
-	db, err := EstablishConnection()
+	_, err := EstablishConnection()
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
 	err = Migrate()
 	if err != nil {
