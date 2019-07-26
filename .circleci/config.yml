@@ -53,7 +53,7 @@ jobs:
             - /go/pkg/mod/cache
 
   client-module-install:
-    executor: clinet
+    executor: client
     steps:
       - checkout
       - install_module
