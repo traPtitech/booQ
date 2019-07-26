@@ -175,7 +175,7 @@ workflows:
               only: /.*/
       - server-test:
           requires:
-            - server-lint
+            - server-build
           filters:
             branches:
               only: /.*/
