@@ -8,6 +8,10 @@ executors:
           - GO111MODULE: "on"
           - GOCACHE: "/tmp/go/cache"
     working_directory: ~/workspace
+  client:
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/workspace
 
 commands:
   restore_mod:
@@ -21,14 +25,27 @@ commands:
           keys:
             - build-cache-{{ .Branch }}--
             - build-cache-master--
+  install_module:
+    steps:
+      - run:
+          name: client module install
+          when: always
+          command: cd client && npm ci
+  restore_npm_cache:
+    steps:
+      - restore_cache:
+          keys:
+            - npm-{{ checksum "client/package-lock.json" }}
 
 jobs:
-  gomod:
+  server-build:
     executor: default
     steps:
       - checkout
       - restore_mod
+      - restore_build_cache
       - run:
+          name: go mod
           when: always
           command: go mod download
       - save_cache:
@@ -36,23 +53,6 @@ jobs:
           when: always
           paths:
             - /go/pkg/mod/cache
-
-  lint:
-    executor: default
-    steps:
-      - checkout
-      - restore_mod
-      - run:
-          name: Install golangci-lint v1.13.2
-          command: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.13.2
-      - run: ./bin/golangci-lint run
-
-  build:
-    executor: default
-    steps:
-      - checkout
-      - restore_mod
-      - restore_build_cache
       - run:
           name: build
           when: always
@@ -68,7 +68,40 @@ jobs:
           path: ~/workspace/booQ
           destination: booQ
 
-  test:
+  client-build:
+    executor: client
+    steps:
+      - checkout
+      - restore_npm_cache
+      - install_module
+      - save_cache:
+          key: npm-{{ checksum "client/package-lock.json" }}
+          when: always
+          paths:
+            - ~/.npm
+
+  server-lint:
+    executor: default
+    steps:
+      - checkout
+      - restore_mod
+      - run:
+          name: Install golangci-lint v1.13.2
+          command: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.13.2
+      - run: ./bin/golangci-lint run
+
+  client-lint:
+    executor: client
+    steps:
+      - checkout
+      - restore_npm_cache
+      - install_module
+      - run:
+          name: lint
+          command: cd client && NODE_ENV=production npm run lint
+
+
+  server-test:
     docker:
       - image: circleci/golang:1.12.5
         environment:
@@ -112,31 +145,37 @@ workflows:
   version: 2
   main:
     jobs:
-      - gomod:
+      - server-build:
           filters:
             branches:
               only: /.*/
             tags:
               only: /.*/
-      - lint:
-          requires:
-            - gomod
+      - client-build:
           filters:
             branches:
               only: /.*/
             tags:
               only: /.*/
-      - build:
+      - server-lint:
           requires:
-            - gomod
+            - server-build
           filters:
             branches:
               only: /.*/
             tags:
               only: /.*/
-      - test:
+      - client-lint:
           requires:
-            - build
+            - client-build
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+      - server-test:
+          requires:
+            - server-build
           filters:
             branches:
               only: /.*/
