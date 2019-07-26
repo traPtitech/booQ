@@ -8,6 +8,10 @@ executors:
           - GO111MODULE: "on"
           - GOCACHE: "/tmp/go/cache"
     working_directory: ~/workspace
+  client:
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/workspace
 
 commands:
   restore_mod:
@@ -21,6 +25,17 @@ commands:
           keys:
             - build-cache-{{ .Branch }}--
             - build-cache-master--
+  install_module:
+    steps:
+      - run:
+          name: client module install
+          when: always
+          command: cd client && npm ci
+  restore_npm_cache:
+    steps:
+      - restore_cache:
+          keys:
+            - npm-{{ checksum "client/package-lock.json" }}
 
 jobs:
   gomod:
@@ -37,6 +52,17 @@ jobs:
           paths:
             - /go/pkg/mod/cache
 
+  client-module-install:
+    executor: clinet
+    steps:
+      - checkout
+      - install_module
+      - save_cache:
+          key: npm-{{ checksum "client/package-lock.json" }}
+          when: always
+          paths:
+            - ~/.npm
+
   lint:
     executor: default
     steps:
@@ -46,6 +72,16 @@ jobs:
           name: Install golangci-lint v1.13.2
           command: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.13.2
       - run: ./bin/golangci-lint run
+
+  client-lint:
+    executor: client
+    steps:
+      - checkout
+      - restore_npm_cache
+      - install_module
+      - run:
+          name: lint
+          command: cd client && NODE_ENV=production npm run lint
 
   build:
     executor: default
@@ -118,9 +154,23 @@ workflows:
               only: /.*/
             tags:
               only: /.*/
+      - client-module-install:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
       - lint:
           requires:
             - gomod
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
+      - client-lint:
+          requires:
+            - client-module-install
           filters:
             branches:
               only: /.*/
