@@ -56,6 +56,7 @@ jobs:
     executor: client
     steps:
       - checkout
+      - restore_npm_cache
       - install_module
       - save_cache:
           key: npm-{{ checksum "client/package-lock.json" }}
