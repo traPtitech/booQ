@@ -38,12 +38,14 @@ commands:
             - npm-{{ checksum "client/package-lock.json" }}
 
 jobs:
-  gomod:
+  server-build:
     executor: default
     steps:
       - checkout
       - restore_mod
+      - restore_build_cache
       - run:
+          name: go mod
           when: always
           command: go mod download
       - save_cache:
@@ -51,6 +53,20 @@ jobs:
           when: always
           paths:
             - /go/pkg/mod/cache
+      - run:
+          name: build
+          when: always
+          command: |
+            mkdir -p $GOCACHE
+            go build
+      - save_cache:
+          key: build-cache-{{ .Branch }}--{{ .Revision }}
+          when: always
+          paths:
+            - /tmp/go/cache
+      - store_artifacts:
+          path: ~/workspace/booQ
+          destination: booQ
 
   client-module-install:
     executor: client
@@ -64,7 +80,7 @@ jobs:
           paths:
             - ~/.npm
 
-  lint:
+  server-lint:
     executor: default
     steps:
       - checkout
@@ -84,28 +100,8 @@ jobs:
           name: lint
           command: cd client && NODE_ENV=production npm run lint
 
-  build:
-    executor: default
-    steps:
-      - checkout
-      - restore_mod
-      - restore_build_cache
-      - run:
-          name: build
-          when: always
-          command: |
-            mkdir -p $GOCACHE
-            go build
-      - save_cache:
-          key: build-cache-{{ .Branch }}--{{ .Revision }}
-          when: always
-          paths:
-            - /tmp/go/cache
-      - store_artifacts:
-          path: ~/workspace/booQ
-          destination: booQ
 
-  test:
+  server-test:
     docker:
       - image: circleci/golang:1.12.5
         environment:
@@ -149,7 +145,7 @@ workflows:
   version: 2
   main:
     jobs:
-      - gomod:
+      - server-build:
           filters:
             branches:
               only: /.*/
@@ -161,9 +157,9 @@ workflows:
               only: /.*/
             tags:
               only: /.*/
-      - lint:
+      - server-lint:
           requires:
-            - gomod
+            - server-build
           filters:
             branches:
               only: /.*/
@@ -177,17 +173,9 @@ workflows:
               only: /.*/
             tags:
               only: /.*/
-      - build:
+      - server-test:
           requires:
-            - gomod
-          filters:
-            branches:
-              only: /.*/
-            tags:
-              only: /.*/
-      - test:
-          requires:
-            - build
+            - server-build
           filters:
             branches:
               only: /.*/
