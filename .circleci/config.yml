@@ -167,7 +167,7 @@ workflows:
               only: /.*/
       - client-lint:
           requires:
-            - client-module-install
+            - client-build
           filters:
             branches:
               only: /.*/
