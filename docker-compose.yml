@@ -46,3 +46,12 @@ services:
       - './client:/app'
     tty: true
     entrypoint: npm run serve
+
+  swagger:
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./docs/swagger.yaml:/usr/share/nginx/html/sample.yaml
+    environment:
+      API_URL: sample.yaml
+    ports:
+      - "4000:8080"
