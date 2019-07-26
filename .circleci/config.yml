@@ -68,7 +68,7 @@ jobs:
           path: ~/workspace/booQ
           destination: booQ
 
-  client-module-install:
+  client-build:
     executor: client
     steps:
       - checkout
@@ -151,7 +151,7 @@ workflows:
               only: /.*/
             tags:
               only: /.*/
-      - client-module-install:
+      - client-build:
           filters:
             branches:
               only: /.*/
@@ -175,7 +175,7 @@ workflows:
               only: /.*/
       - server-test:
           requires:
-            - server-build
+            - server-lint
           filters:
             branches:
               only: /.*/
