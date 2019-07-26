@@ -44,6 +44,7 @@ export default new Router({
           await store.commit('setMe', resp.data)
           next('/')
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error(e)
         }
       }
