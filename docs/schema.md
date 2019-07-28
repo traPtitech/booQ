@@ -3,49 +3,62 @@
 ### items
  | Name | Type | NULL | Key | Default | Extra | 説明 |
  | --- | --- | --- | --- | --- | --- | --- |
- | id | int | NO | PRI |  |
- | name | varchar(20) | NO |  |  |  |  |
+ | **id** | int | NO | PRI |  |
+ | name | varchar(64) | NO |  |  |  | 物品名 |
+ | type | int | NO |  |  |  | 物品のタイプ(0: 備品, 1: 本(備品以外)) |
  | code | int |  |  |  |  | ISBNコードとか物品管理コードとか |
- | owner_id | int | NO |  |  |  | 所有者のユーザーID |
  | description | text |  |  |  |  | 物品の説明文 |
  | img_url | text |  |  |  |  | 画像のURL(外部に頼る) |
- | del_flg | boolean | NO |  |  |  | 削除されてないかどうか |
- | created_at | datetime | NO |  |  |  |  |
- | updated_at | datetime | NO |  |  |  |  |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
 
 ### comments
  | Name | Type | NULL | Key | Default | Extra | 説明 |
  | --- | --- | --- | --- | --- | --- | --- |
- | id | int | NO | PRI |  |  |  |
+ | **id** | int | NO | PRI |  |  |  |
  | item_id | int | NO |  |  |  |  |
  | user_id | int | NO |  |  |  |  |
- | comment | text | NO |  |  |  |  |
- | del_flg | boolean | NO |  |  |  |  |
- | created_at | datetime | NO |  |  |  |  |
- | updated_at | datetime |  |  |  |  |  |
+ | text | text | NO |  |  |  | コメントの中身 |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
 
 ### users
  | Name | Type | NULL | Key | Default | Extra | 説明 |
  | --- | --- | --- | --- | --- | --- | --- |
- | id | int | NO | PRI |  |  |  |
- | name | varchar(20) | NO | UNI |  |  | 同じ名前はありえない(はず) |
- | authority | boolean | NO |  |  |  | 特権ユーザー的なやつ |
+ | **id** | int | NO | PRI |  |  |  |
+ | name | varchar(32) | NO | UNI |  |  | 同じ名前はありえない(はず) |
+ | displayName | varchar(64) | NO |  |  |  |  |
+ | iconFileID | uuid(varchar(36)) | NO |  |  |  |  |
+ | admin | boolean | NO |  | false |  | 特権ユーザー的なやつ |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
+ 
 
-### histories
+### logs
  | Name | Type | NULL | Key | Default | Extra | 説明 |
  | --- | --- | --- | --- | --- | --- | --- |
- | id | int | NO | PRI |  |  |  |
+ | **id** | int | NO | PRI |  |  |  |
  | item_id | int | NO |  |  |  |  |
- | user_id | varchar(20) | NO |  |  |  |  |
- | type | int | NO |  |  |  | 0:返した(フリー) 1:予約(借りたい) 2:貸した(貸し出し中) 初期値は0 |
- | created_at | datetime | NO |  |  |  |  |
- | deleted_at | int |  |  |  |  | 消えるというよりは取り消したかどうか、こうすると取り消した日時も格納できるね |
+ | user_id | int | NO |  |  |  | アクションを起こす人 |
+ | owner_id | int | NO |  |  |  | 物品の所有者 |
+ | type | int | NO |  |  |  | 0:借りた, 1:返した  |
+ | purpose | text |  |  |  |  | 借りる目的 |
+ | due_date | datetime |  |  |  |  | 返却予定日 |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **update_at** | datetime | NO |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
 
 ### tags
  | Name | Type | NULL | Key | Default | Extra | 説明 |
  | --- | --- | --- | --- | --- | --- | --- |
- | id | int | NO | PRI |  |  |  |
- | name | varchar(20) | NO | UNI |  |  |  |
+ | **id** | int | NO | PRI |  |  |  |
+ | name | varchar(32) | NO | UNI |  |  |  |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
 
 ### tagmaps
  | Name | Type | NULL | Key | Default | Extra | 説明 |
@@ -53,4 +66,27 @@
  | id | int | NO | PRI |  |  |  |
  | tag_id | int | NO |  |  |  |  |
  | item_id | int | NO |  |  |  |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
 
+### ownershipmaps
+ | Name | Type | NULL | Key | Default | Extra | 説明 |
+ | --- | --- | --- | --- | --- | --- | --- |
+ | id | int | NO | PRI |  |  |  |
+ | item_id | int | NO |  |  |  |  |
+ | user_id | int | NO |  |  |  |
+ | rentalable | boolean | NO |  | true |  | 今貸し出し可能か否か |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
+
+### likemaps
+ | Name | Type | NULL | Key | Default | Extra | 説明 |
+ | --- | --- | --- | --- | --- | --- | --- |
+ | id | int | NO | PRI |  |  |  |
+ | item_id | int | NO |  |  |  |  |
+ | user_id | int | NO |  |  |  |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
