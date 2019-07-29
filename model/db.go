@@ -48,7 +48,13 @@ func Migrate() error {
 
 	traP, err := GetUser(User{Name: "traP"})
 	if traP.Name == "" {
-		_, err = CreateUser(User{Name: "traP", Admin: 1})
+		user := User{
+			Name:        "traP",
+			DisplayName: "とらっぷ",
+			IconFileID:  "099eed74-3ab3-4655-ac37-bc7df1139b3d",
+			Admin:       1,
+		}
+		_, err = CreateUser(user)
 	}
 
 	return err

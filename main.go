@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	
+
 	// gorm mysql driver
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 
@@ -38,7 +38,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routing
-	router.SetupRouting(e)
+	router.SetupRouting(e, &router.TraqClient{})
 
 	// Start server
 	e.Logger.Fatal(e.Start(":3001"))
