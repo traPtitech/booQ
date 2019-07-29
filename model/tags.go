@@ -9,10 +9,10 @@ import (
 // Tag tagの構造体
 type Tag struct {
 	gorm.Model
-	Name      string	`json:"name"`
+	Name string `gorm:"type:varchar(32);not null" json:"name"`
 }
 
-// // TableName dbのテーブル名を指定する
-// func (tag *Tag) TableName() string {
-// 	return "tags"
-// }
+// TableName dbのテーブル名を指定する
+func (tag *Tag) TableName() string {
+	return "tags"
+}

@@ -12,7 +12,7 @@ type User struct {
 	Name        string `gorm:"unique;not null;size:50" json:"name"`
 	DisplayName string `json:"displayName"`
 	IconFileID  string `json:"iconFileId"`
-	Admin       bool    `gorm:"default:false" json:"admin"`
+	Admin       bool   `gorm:"default:false" json:"admin"`
 }
 
 // TableName dbのテーブル名を指定する

@@ -7,13 +7,13 @@ import (
 )
 
 // Likemaps likemapsの構造体
-type Likemaps struct {
+type Likemap struct {
 	gorm.Model
-	ItemID      int		`json:"item_id"`
-	UserID		int		`json:"user_id"`
+	ItemID int `gorm:"type:int;not null" json:"item_id"`
+	UserID int `gorm:"type:int;not null" json:"user_id"`
 }
 
-// // TableName dbのテーブル名を指定する
-// func (likemaps *Likemaps) TableName() string {
-// 	return "likemapss"
-// }
+// TableName dbのテーブル名を指定する
+func (likemap *Likemap) TableName() string {
+	return "likemaps"
+}
