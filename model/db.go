@@ -48,7 +48,7 @@ func Migrate() error {
 
 	traP, err := GetUser(User{Name: "traP"})
 	if traP.Name == "" {
-		_, err = CreateUser(User{Name: "traP", Admin: 1})
+		_, err = CreateUser(User{Name: "traP", Admin: true})
 	}
 
 	return err

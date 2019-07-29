@@ -14,7 +14,7 @@ func SetupRouting(e *echo.Echo) {
 
 	api := e.Group("/api", middlewareAuthUser)
 	{
-		apiUsers := api.Group("/users")
+		apiUsers := api.Group("/user")
 		{
 			apiUsers.GET("/me", GetUsersMe)
 		}
