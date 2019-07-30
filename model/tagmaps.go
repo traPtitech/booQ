@@ -15,5 +15,5 @@ type Tagmap struct {
 
 // TableName dbのテーブル名を指定する
 func (tagmap *Tagmap) TableName() string {
-	return "tag_maps"
+	return "tagmaps"
 }
