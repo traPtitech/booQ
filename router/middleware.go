@@ -21,7 +21,7 @@ type Traq interface {
 
 // TraqClient 本番用のclient
 type TraqClient struct {
-	client Traq
+	Traq
 }
 
 // MockTraqClient テスト用のモックclient

@@ -50,7 +50,7 @@ func Migrate() error {
 	if traP.Name == "" {
 		user := User{
 			Name:        "traP",
-			DisplayName: "とらっぷ",
+			DisplayName: "traP",
 			IconFileID:  "099eed74-3ab3-4655-ac37-bc7df1139b3d",
 			Admin:       true,
 		}
