@@ -34,7 +34,7 @@ type MockTraqClient struct {
 func (client *TraqClient) GetUsersMe(c echo.Context) (echo.Context, error) {
 	token := c.Request().Header.Get("Authorization")
 	if token == "" {
-		return c, errors.New("認証に失敗しました(Headerにトークンが存在しません)")
+		return c, errors.New("認証に失敗しました(Headerに必要な情報が存在しません)")
 	}
 	req, _ := http.NewRequest("GET", baseURL+"/users/me", nil)
 	req.Header.Set("Authorization", token)
@@ -45,10 +45,7 @@ func (client *TraqClient) GetUsersMe(c echo.Context) (echo.Context, error) {
 	}
 	body, _ := ioutil.ReadAll(res.Body)
 	user := model.User{}
-	err := json.Unmarshal(body, &user)
-	if err != nil {
-		return c, errors.New("jsonのパースに失敗しました、管理者に問い合わせてください")
-	}
+	_ = json.Unmarshal(body, &user)
 	c.Set("user", user)
 	return c, nil
 }
