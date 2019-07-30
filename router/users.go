@@ -8,8 +8,8 @@ import (
 	"github.com/traPtitech/booQ/model"
 )
 
-// GetUsersMe GET /users/me
-func GetUsersMe(c echo.Context) error {
+// GetUserMe GET /user/me
+func GetUserMe(c echo.Context) error {
 	user := c.Get("user").(model.User)
 	res, err := model.GetUser(user)
 	if err != nil {

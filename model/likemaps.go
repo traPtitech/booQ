@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Likemaps likemapsの構造体
+// Likemap likemapsの構造体
 type Likemap struct {
 	gorm.Model
 	ItemID int `gorm:"type:int;not null" json:"item_id"`

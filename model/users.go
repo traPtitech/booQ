@@ -9,9 +9,9 @@ import (
 // User userの構造体
 type User struct {
 	gorm.Model
-	Name        string `gorm:"unique;not null;size:50" json:"name"`
-	DisplayName string `json:"displayName"`
-	IconFileID  string `json:"iconFileId"`
+	Name        string `gorm:"type:varchar(32);unique;not null;size:50" json:"name"`
+	DisplayName string `gorm:"type:varchar(64);not null" json:"displayName"`
+	IconFileID  string `gorm:"type:varchar(36);not null" json:"iconFileId"`
 	Admin       bool   `gorm:"default:false" json:"admin"`
 }
 
