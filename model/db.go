@@ -52,7 +52,7 @@ func Migrate() error {
 			Name:        "traP",
 			DisplayName: "とらっぷ",
 			IconFileID:  "099eed74-3ab3-4655-ac37-bc7df1139b3d",
-			Admin:       1,
+			Admin:       true,
 		}
 		_, err = CreateUser(user)
 	}

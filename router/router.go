@@ -14,7 +14,7 @@ func SetupRouting(e *echo.Echo, client Traq) {
 
 	api := e.Group("/api", client.MiddlewareAuthUser)
 	{
-		apiUsers := api.Group("/users")
+		apiUsers := api.Group("/user")
 		{
 			apiUsers.GET("/me", GetUsersMe)
 		}
