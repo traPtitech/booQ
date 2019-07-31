@@ -45,6 +45,6 @@ func UpdateUser(user User,name string) (User, error) {
 		return User{}, errors.New("管理者権限がありません")
 	}
 	res := User{}
-	db.Model(&res).Where("name = ?", name).Update("admin","true")
+	db.Model(&res).Where("name = ?", name).Update("admin", true)
 	return res, nil
 }
