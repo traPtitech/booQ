@@ -65,8 +65,8 @@ func TestUpdateUser(t *testing.T) {
 		assert := assert.New(t)
 
 		user1, err1 := CreateUser(User{Name: "test2"})
-		assert.Error(err1)
-		assert.Empty(user1)
+		assert.NoError(err1)
+		assert.NotEmpty(user1)
 
 		user, err := UpdateUser(User{},user1.Name)
 		assert.Error(err)
@@ -77,8 +77,8 @@ func TestUpdateUser(t *testing.T) {
 		assert := assert.New(t)
 
 		user1, err1 := CreateUser(User{Name: "test3"})
-		assert.Error(err1)
-		assert.Empty(user1)
+		assert.NoError(err1)
+		assert.NotEmpty(user1)
 
 		user, err := UpdateUser(User{Admin: true},user1.Name)
 		assert.NoError(err)
