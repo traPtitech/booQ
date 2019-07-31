@@ -83,6 +83,6 @@ func TestUpdateUser(t *testing.T) {
 		user, err := UpdateUser(User{Admin: true},user1.Name)
 		assert.NoError(err)
 		assert.NotEmpty(user)
-		assert.Equal(true, user.Admin)
+		assert.Equal(true, user1.Admin)
 	})
 }

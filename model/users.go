@@ -44,6 +44,7 @@ func UpdateUser(user User,name string) (User, error) {
 	if !user.Admin {
 		return User{}, errors.New("管理者権限がありません")
 	}
-	db.Model(&user).Where("name = ?", name).Update("admin","true")
-	return user, nil
+	res := User{}
+	db.Model(&res).Where("name = ?", name).Update("admin","true")
+	return res, nil
 }
