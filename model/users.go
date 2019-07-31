@@ -38,3 +38,12 @@ func CreateUser(user User) (User, error) {
 	db.Create(&user)
 	return user, nil
 }
+
+// UpdateUser userに管理者権限を付与する
+func UpdateUser(user User) (User, error) {
+	if user.Admin == false {
+		return User{}, errors.New("管理者権限がありません")
+	}
+	db.Model(&user).Where("name = ?", user.Name).Update("admin","true")
+	return user, nil
+}

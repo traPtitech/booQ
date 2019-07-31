@@ -57,3 +57,28 @@ func TestCreateUser(t *testing.T) {
 		assert.NotEmpty(user)
 	})
 }
+
+func TestUpdateUser(t *testing.T) {
+	t.Parallel()
+
+	t.Run("failures", func(t *testing.T) {
+		assert := assert.New(t)
+
+		user, err := UpdateUser(User{})
+		assert.Error(err)
+		assert.Empty(user)
+
+		user, err = GetUser(User{Admin: false})
+		assert.NoError(err)
+		assert.Empty(user)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+
+		user, err := UpdateUser(User{Admin: true})
+		assert.NoError(err)
+		assert.NotEmpty(user)
+		assert.Equal(true, user.Admin)
+	})
+}
