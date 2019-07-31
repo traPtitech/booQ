@@ -64,19 +64,19 @@ func TestUpdateUser(t *testing.T) {
 	t.Run("failures", func(t *testing.T) {
 		assert := assert.New(t)
 
-		user, err := UpdateUser(User{})
-		assert.Error(err)
-		assert.Empty(user)
+		user1, err := CreateUser(User{Name: "test"})
 
-		user, err = GetUser(User{Admin: false})
-		assert.NoError(err)
+		user, err := UpdateUser(User{},user1.Name)
+		assert.Error(err)
 		assert.Empty(user)
 	})
 
 	t.Run("success", func(t *testing.T) {
 		assert := assert.New(t)
 
-		user, err := UpdateUser(User{Admin: true})
+		user1, err := CreateUser(User{Name: "test"})
+
+		user, err := UpdateUser(User{},user1.Name)
 		assert.NoError(err)
 		assert.NotEmpty(user)
 		assert.Equal(true, user.Admin)
