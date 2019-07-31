@@ -41,7 +41,7 @@ func CreateUser(user User) (User, error) {
 
 // UpdateUser userに管理者権限を付与する
 func UpdateUser(user User,name string) (User, error) {
-	if user.Admin == false {
+	if !user.Admin {
 		return User{}, errors.New("管理者権限がありません")
 	}
 	db.Model(&user).Where("name = ?", name).Update("admin","true")
