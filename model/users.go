@@ -39,7 +39,7 @@ func CreateUser(user User) (User, error) {
 	return user, nil
 }
 
-// UpdateUser userに管理者権限を付与する
+// UpdateUser userの情報(表示される名前やアイコン、管理者権限)の変更
 func UpdateUser(newUser User) (User, error) {
 	res := User{}
 	db.Model(&res).Where("name = ?", newUser.Name).Updates(newUser)
