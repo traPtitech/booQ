@@ -40,11 +40,13 @@ func CreateUser(user User) (User, error) {
 }
 
 // UpdateUser userに管理者権限を付与する
-func UpdateUser(user User,name string) (User, error) {
-	if !user.Admin {
-		return User{}, errors.New("管理者権限がありません")
+func UpdateUser(user User,newUser User) (User, error) {
+	nowUser := User{}
+	db.Where("name = ?", newUser.Name).First(&nowUser)
+	if nowUser.IconFileID == newUser.IconFileID && nowUser.DisplayName == newUser.DisplayName && nowUser.Admin == newUser.Admin  {
+		return User{}, errors.New("更新されるべき情報がありません")
 	}
 	res := User{}
-	db.Model(&res).Where("name = ?", name).Update("admin", true)
+	db.Model(&res).Where("name = ?", newUser.Name).Updates(newUser)
 	return res, nil
 }

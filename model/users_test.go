@@ -68,7 +68,7 @@ func TestUpdateUser(t *testing.T) {
 		assert.NoError(err1)
 		assert.NotEmpty(user1)
 
-		user, err := UpdateUser(User{},user1.Name)
+		user, err := UpdateUser(User{},user1)
 		assert.Error(err)
 		assert.Empty(user)
 	})
@@ -80,9 +80,9 @@ func TestUpdateUser(t *testing.T) {
 		assert.NoError(err1)
 		assert.NotEmpty(user1)
 
-		user, err := UpdateUser(User{Admin: true},user1.Name)
+		user, err := UpdateUser(User{},User{Name:"test3",IconFileID:"testfile"})
 		assert.NoError(err)
 		assert.NotEmpty(user)
-		assert.Equal(true, user.Admin)
+		assert.Equal("testfile", user.IconFileID)
 	})
 }
