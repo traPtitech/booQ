@@ -13,7 +13,7 @@ type Item struct {
 	Type        int    `gorm:"type:int;not null" json:"type"`
 	Code        int    `gorm:"type:int;" json:"code"`
 	Description string `gorm:"type:text;" json:"description"`
-	ImgUrl      string `gorm:"type:text;" json:"img_url"`
+	ImgURL      string `gorm:"type:text;" json:"img_url"`
 }
 
 // TableName dbのテーブル名を指定する

@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Ownershipmaps ownershipmapsの構造体
+// Ownershipmap ownershipmapsの構造体
 type Ownershipmap struct {
 	gorm.Model
 	ItemID     int  `gorm:"type:int;not null" json:"item_id"`
