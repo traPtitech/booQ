@@ -38,3 +38,10 @@ func CreateUser(user User) (User, error) {
 	db.Create(&user)
 	return user, nil
 }
+
+// UpdateUser userの情報(表示される名前やアイコン、管理者権限)の変更
+func UpdateUser(newUser User) (User, error) {
+	res := User{}
+	db.Model(&res).Where("name = ?", newUser.Name).Updates(newUser)
+	return res, nil
+}
