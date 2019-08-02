@@ -68,10 +68,6 @@ func TestUpdateUser(t *testing.T) {
 		user, err := UpdateUser(User{IconFileID:"testfile"})
 		assert.Error(err)
 		assert.Empty(user)
-
-		user, err = UpdateUser(User{Name:"nothing user",IconFileID:"testfile"})
-		assert.Error(err)
-		assert.Empty(user)
 	})
 
 	t.Run("success", func(t *testing.T) {
