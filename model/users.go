@@ -42,6 +42,9 @@ func CreateUser(user User) (User, error) {
 // UpdateUser userの情報(表示される名前やアイコン、管理者権限)の変更
 func UpdateUser(newUser User) (User, error) {
 	res := User{}
+	if newUser.Name == "" {
+		return User{}, errors.New("Nameが存在しません")
+	}
 	db.Model(&res).Where("name = ?", newUser.Name).Updates(newUser)
 	return res, nil
 }
