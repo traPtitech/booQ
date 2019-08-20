@@ -22,3 +22,28 @@ func GetUserMe(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, res)
 }
+
+//GetUsers GET /users
+func GetUsers(c echo.Context) error {
+	req := model.RequestUserName{}
+	err := c.Bind(&req)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	var res []model.User
+	for _, value := range req.Name {
+		result, err := model.GetUserByName(value)
+		if err != nil {
+			break
+		}
+		if result.Name == "" {
+			continue
+		}
+		res = append(res, result)
+	}
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	} else {
+		return c.JSON(http.StatusOK, res)
+	}
+}

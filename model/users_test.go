@@ -36,6 +36,31 @@ func TestGetUser(t *testing.T) {
 	})
 }
 
+func TestGetUserByName(t *testing.T) {
+	t.Parallel()
+
+	t.Run("failures", func(t *testing.T) {
+		assert := assert.New(t)
+
+		user, err := GetUserByName("")
+		assert.Error(err)
+		assert.Empty(user)
+
+		user, err = GetUserByName("nothing user")
+		assert.NoError(err)
+		assert.Empty(user)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+
+		user, err := GetUserByName("traP")
+		assert.NoError(err)
+		assert.NotEmpty(user)
+		assert.Equal("traP", user.Name)
+	})
+}
+
 func TestCreateUser(t *testing.T) {
 	t.Parallel()
 
@@ -68,7 +93,7 @@ func TestUpdateUser(t *testing.T) {
 		assert.NoError(err1)
 		assert.NotEmpty(user1)
 
-		user, err := UpdateUser(User{Name:"test3",IconFileID:"testfile"})
+		user, err := UpdateUser(User{Name: "test3", IconFileID: "testfile"})
 		assert.NoError(err)
 		assert.NotEmpty(user)
 		assert.Equal("testfile", user.IconFileID)
