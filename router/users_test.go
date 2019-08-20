@@ -13,8 +13,8 @@ import (
 	"github.com/traPtitech/booQ/model"
 )
 
-// TestGetUserMe /user/me のテスト
-func TestGetUserMe(t *testing.T) {
+// TestGetUsersMe /users/me のテスト
+func TestGetUsersMe(t *testing.T) {
 	t.Parallel()
 
 	t.Run("admin user", func(t *testing.T) {
@@ -29,7 +29,7 @@ func TestGetUserMe(t *testing.T) {
 
 		e := echoSetupWithAdminUser()
 
-		req := httptest.NewRequest(echo.GET, "/api/user/me", nil)
+		req := httptest.NewRequest(echo.GET, "/api/users/me", nil)
 		rec := httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
 
@@ -57,7 +57,7 @@ func TestGetUserMe(t *testing.T) {
 
 		e := echoSetupWithUser()
 
-		req := httptest.NewRequest(echo.GET, "/api/user/me", nil)
+		req := httptest.NewRequest(echo.GET, "/api/users/me", nil)
 		rec := httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
 

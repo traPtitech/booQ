@@ -46,5 +46,5 @@ export function revokeAuthToken (token) {
 }
 
 export function getMe () {
-  return axios.get(`/api/user/me`)
+  return axios.get(`/api/users/me`)
 }
