@@ -21,6 +21,9 @@ func (item *Item) TableName() string {
 	return "items"
 }
 
-// // GetItems 全itemを取得する
-// func GetItems() ([]Item, error) {
-// }
+// GetItems 全itemを取得する
+func GetItems() ([]Item, error) {
+	res := []Item{}
+	db.Find(&res)
+	return res, nil
+}
