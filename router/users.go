@@ -22,3 +22,37 @@ func GetUsersMe(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, res)
 }
+
+// PutUsers PUT /users
+func PutUsers(c echo.Context) error {
+	req := model.User{}
+	err := c.Bind(&req)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	user := c.Get("user").(model.User)
+	res, err := model.UpdateUser(req)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	if user.Name != req.Name && !user.Admin {
+
+		return c.NoContent(http.StatusForbidden)
+
+	} else if !user.Admin {
+
+		if req.Name != user.Name {
+			return c.NoContent(http.StatusForbidden)
+		} else if req.Admin {
+			return c.NoContent(http.StatusForbidden)
+		} else {
+			return c.JSON(http.StatusOK, res)
+		}
+
+	} else {
+
+		return c.JSON(http.StatusOK, res)
+
+	}
+}
