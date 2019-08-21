@@ -74,7 +74,7 @@ paths:
             name: "小説　天気の子"
             code: 9784041026403
             type: 1
-            description:  "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。 （C）2019「天気の子」製作委員会"
+            description:  "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。"
             img_url: "https://cover.openbd.jp/9784041026403.jpg"
       responses:
         201:
@@ -83,6 +83,7 @@ paths:
             $ref: "#/definitions/item"
         400:
           description: "リクエストボディが不正です。"
+
   /items/:id:
     get:
       tags:
@@ -104,7 +105,6 @@ paths:
       parameters:
       - in: "body"
         name: "RequestBody"
-        description: "全部なくても可。ないものはそのままとなります。"
         required: true
         schema:
           type: "object"
@@ -134,6 +134,7 @@ paths:
           description: "OK"
         403:
           description: "権限がありません。"
+
   /items/:id/comments:
     post:
       tags:
@@ -153,14 +154,16 @@ paths:
         201:
           description: "Created"
           schema:
-            $ref: "#/definitions/comment1"
+            $ref: "#/definitions/comment"
         400:
           description: "リクエストボディが不正です。"
+
   /items/:id/logs:
     post:
       tags:
       - "logs"
       summary: "履歴を新しく登録します。"
+      description: "itemとownerが紐づいていない場合はエラー(400)を返す必要があります。"
       produces:
       - "application/json"
       parameters:
@@ -170,14 +173,104 @@ paths:
         schema:
           type: "object"
           example:
-            type: "0"
+            owner_id: 1
+            type: 0
+            purpose: "読みたかったから。"
+            due_date: "2019/07/30 23:30:00"
       responses:
         201:
           description: "Created"
           schema:
-            $ref: "#/definitions/log1"
+            $ref: "#/definitions/log"
         400:
           description: "リクエストボディが不正です。"
+
+  /items/:id/likes:
+    post:
+      tags:
+      - "likes"
+      summary: "物品にいいねをつけます。"
+      description: "すでにいいねしている状態の場合、エラー(400)を返します。"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "エラーが発生しました。"
+    delete:
+      tags:
+      - "likes"
+      summary: "物品のいいねを取り消します。"
+      description: "すでに所有済み状態の場合、エラー(400)を返します。"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "エラーが発生しました。"
+
+  /items/:id/owners:
+    post:
+      tags:
+      - "owners"
+      summary: "物品の所有者を追加します。"
+      description: "他者の所有権を操作する場合は権限が必要です。"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "RequestBody"
+        required: true
+        schema:
+          type: "object"
+          example:
+            user_id: 1
+            rentalable: true
+      responses:
+        201:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/ownership"
+        403:
+          description: "権限がありません。"
+    put:
+      tags:
+      - "owners"
+      summary: "物品の所有者を編集します。(所有者と管理者のみ)"
+      description: "他者の所有権を操作する場合は権限が必要です。"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "RequestBody"
+        required: true
+        schema:
+          type: "object"
+          example:
+            user_id: 1
+            rentalable: true
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/ownership"
+        403:
+          description: "権限がありません。"
+    delete:
+      tags:
+      - "owners"
+      summary: "物品の所有権を削除します。(所有者と管理者のみ)"
+      description: "他者の所有権を操作する場合は権限が必要です。"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+        403:
+          description: "権限がありません。"
+
   /items/:id/tags:
     post:
       tags:
@@ -188,37 +281,30 @@ paths:
       parameters:
       - in: "body"
         name: "RequestBody"
-        description: "複数一気に作成するので配列である必要があります。"
+        description: "複数一気に登録するので配列である必要があります。"
         required: true
         schema:
           type: "object"
           example:
-            - name: "蟻本"
-            - name: "algorithm"
+            id: [1, 2]
       responses:
         200:
           description: "OK"
-  /items/:itemId/tags/:tagId:
-    delete:
-      tags:
-      - "tags"
-      summary: "物品に登録されているタグを削除します。"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "OK"
-          
+          schema:
+            type: "object"
+            example:
+              - id: 1
+                name: "小説"
+              - id: 2
+                name: "天気の子"
+        400:
+          description: "リクエストボディが不正です。"
+
   /tags:
     get:
       tags:
       - "tags"
       summary: "タグ一覧を取得します。"
-      parameters:
-      - name: "sort"
-        in: "query"
-        description: "ソート方法を指定します。考えてるのは登録順(created)と五十音順(name)とよく使われてる順(popular)。"
-        type: "string"
       produces:
       - "application/json"
       responses:
@@ -228,10 +314,48 @@ paths:
             type: "object"
             example:
               - id: 1
-                name: "蟻本"
+                name: "小説"
               - id: 2
-                name: "algorithm"
-  
+                name: "天気の子"
+    post:
+      tags:
+      - "tags"
+      summary: "タグを追加します。"
+      parameters:
+      - in: "body"
+        name: "RequestBody"
+        required: true
+        schema:
+          type: "object"
+          example:
+            name: "小説"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            example:
+              id: 1
+              name: "小説"
+        400:
+          description: "リクエストボディが不正です。"
+
+  /items/:itemId/tags/:tagId:
+    delete:
+      tags:
+      - "tags"
+      summary: "物品に登録されているタグを削除します。"
+      description: "itemとtagが紐づいていない場合はエラー(400)を返す必要があります。"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "エラーが発生しました。"
+
   /comments:
     get:
       tags:
@@ -259,53 +383,54 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/get_comments"
+
   /comments/:id:
-    get:
-      tags:
-      - "comments"
-      summary: "特定のコメントを取得します。"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            $ref: "#/definitions/get_comments"
     put:
       tags:
       - "comments"
       summary: "コメントを編集します。"
+      description: "実行できるのは投稿したユーザーと管理者だけです。"
       produces:
       - "application/json"
       parameters:
       - in: "body"
         name: "RequestBody"
+        description: "実行できるのは投稿したユーザーと管理者だけです。変更できるのはtextのみです。"
         required: true
         schema:
           type: "object"
           example:
-            comment: "みんな読んでるので読むべきだと思います。"
+            text: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
       responses:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/comment2"
+            $ref: "#/definitions/comment"
+        403:
+          description: "権限がありません。"
     delete:
       tags:
       - "comments"
       summary: "コメントを削除します。"
+      description: "実行できるのは投稿したユーザーと管理者だけです。"
       produces:
       - "application/json"
       responses:
         200:
           description: "OK"
-          
+        403:
+          description: "権限がありません。"
+
   /logs:
     get:
       tags:
       - "logs"
       summary: "履歴の一覧を取得します。"
       parameters:
+      - name: "user"
+        in: "query"
+        description: "特定のユーザーの履歴一覧を取得します。"
+        type: "string"
       - name: "limit"
         in: "query"
         description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
@@ -314,10 +439,6 @@ paths:
         in: "query"
         description: "取得したいデータの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
         type: "integer"
-      - name: "user"
-        in: "query"
-        description: "特定のユーザーの履歴一覧を取得します。"
-        type: "string"
       produces:
       - "application/json"
       responses:
@@ -327,22 +448,21 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/get_logs"
+
   /logs/:id:
     delete:
       tags:
       - "logs"
-      summary: "履歴を取り消します。"
-      consumes:
-      - "application/json"
+      summary: "履歴を取り消します。(管理者のみ)"
       produces:
       - "application/json"
       responses:
         200:
           description: "OK"
-          schema:
-            $ref: "#/definitions/log2"
-  
-  /user/me:
+        403:
+          description: "権限がありません。"
+
+  /users/me:
     get:
       tags:
       - "users"
@@ -354,6 +474,7 @@ paths:
           description: "OK"
           schema:
             $ref: "#/definitions/user"
+
   /users:
     get:
       tags:
@@ -419,7 +540,7 @@ definitions:
         example: 1
       description:
         type: "string"
-        example: "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。 （C）2019「天気の子」製作委員会"
+        example: "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。"
       img_url:
         type: "string"
         example: "https://cover.openbd.jp/9784041026403.jpg"
@@ -431,7 +552,7 @@ definitions:
         type: "string"
         format: "date-time"
         example: "2019/07/28 22:00:00"
-  comment1:
+  comment:
     type: "object"
     properties:
       id:
@@ -446,29 +567,6 @@ definitions:
       text:
         type: "string"
         example: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
-      created_at:
-        type: "string"
-        format: "date-time"
-        example: "2019/07/28 22:00:00"
-      updated_at:
-        type: "string"
-        format: "date-time"
-        example: "2019/07/28 22:00:00"
-  comment2:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        example: 1
-      item_id:
-        type: "integer"
-        example: 1
-      user_id:
-        type: "integer"
-        example: 1
-      text:
-        type: "string"
-        example: "うわあああよかったなあ"
       created_at:
         type: "string"
         format: "date-time"
@@ -497,7 +595,7 @@ definitions:
       admin:
         type: "boolean"
         example: true
-  log1:
+  log:
     type: "object"
     properties:
       id:
@@ -515,6 +613,13 @@ definitions:
       type:
         type: "integer"
         example: 0
+      purpose:
+        type: "string"
+        example: "読みたかったから。"
+      due_date:
+        type: "string"
+        format: "date-time"
+        example: "2019/07/30 23:30:00"
       created_at:
         type: "string"
         format: "date-time"
@@ -523,30 +628,22 @@ definitions:
         type: "string"
         format: "date-time"
         example: "2019/07/28 22:00:00"
-  log2:
+  ownership:
     type: "object"
     properties:
       id:
         type: "integer"
-        example: 2
+        example: 1
       item_id:
         type: "integer"
         example: 1
       user_id:
         type: "integer"
-        example: 2
-      type:
-        type: "integer"
         example: 1
-      created_at:
-        type: "string"
-        format: "date-time"
-        example: "2019/07/28 22:00:00"
-      updated_at:
-        type: "string"
-        format: "date-time"
-        example: "2019/07/28 22:00:00"
-  tag1:
+      rentalable:
+        type: "boolean"
+        example: true
+  tag:
     type: "object"
     properties:
       id:
@@ -571,6 +668,13 @@ definitions:
       type:
         type: "integer"
         example: 0
+      purpose:
+        type: "string"
+        example: "読みたかったから。"
+      due_date:
+        type: "string"
+        format: "date-time"
+        example: "2019/07/30 23:30:00"
       created_at:
         type: "string"
         format: "date-time"
@@ -579,6 +683,14 @@ definitions:
         type: "string"
         format: "date-time"
         example: "2019/07/28 22:00:00"
+  get_ownerships:
+    type: "object"
+    properties:
+      user:
+        $ref: "#/definitions/user"
+      rentalable:
+        type: "boolean"
+        example: true
   get_comments:
     type: "object"
     properties:
@@ -619,11 +731,15 @@ definitions:
       owners:
         type: "array"
         items:
-          $ref: "#/definitions/user"
+          $ref: "#/definitions/get_ownerships"
       latest_logs:
         type: "array"
         items:
           $ref: "#/definitions/get_logs"
+      tags:
+        type: "array"
+        items:
+          $ref: "#/definitions/tag"
       like_counts:
         type: "integer"
         example: 1
@@ -656,10 +772,10 @@ definitions:
       owners:
         type: "array"
         items:
-          $ref: "#/definitions/user"
+          $ref: "#/definitions/get_ownerships"
       description:
         type: "string"
-        example: "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。 （C）2019「天気の子」製作委員会"
+        example: "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。"
       comments:
         type: "array"
         items:
@@ -671,7 +787,11 @@ definitions:
       tags:
         type: "array"
         items:
-          $ref: "#/definitions/tag1"
+          $ref: "#/definitions/tag"
+      likes:
+        type: "array"
+        items:
+          $ref: "#/definitions/user"
       img_url:
         type: "string"
         example: "https://cover.openbd.jp/9784041026403.jpg"
