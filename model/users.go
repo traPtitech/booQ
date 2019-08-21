@@ -15,10 +15,6 @@ type User struct {
 	Admin       bool   `gorm:"default:false" json:"admin"`
 }
 
-type RequestUserName struct {
-	Name []string `json:"name"`
-}
-
 // TableName dbのテーブル名を指定する
 func (user *User) TableName() string {
 	return "users"
@@ -36,11 +32,11 @@ func GetUser(user User) (User, error) {
 
 //GetUserByName userをNameから取得する
 func GetUserByName(name string) (User, error) {
-	if name == "" {
-		return User{}, errors.New("Nameが空です")
-	}
 	res := User{}
 	db.Where("name = ?", name).First(&res)
+	if res.Name == "" {
+		return User{}, errors.New("Nameが不正です")
+	}
 	return res, nil
 }
 

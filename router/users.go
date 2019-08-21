@@ -25,25 +25,14 @@ func GetUserMe(c echo.Context) error {
 
 //GetUsers GET /users
 func GetUsers(c echo.Context) error {
-	req := model.RequestUserName{}
-	err := c.Bind(&req)
+	req := c.QueryParam("name")
+	if req == "" {
+		err := "クエリパラメータが空です"
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	result, err := model.GetUserByName(req)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	var res []model.User
-	for _, value := range req.Name {
-		result, err := model.GetUserByName(value)
-		if err != nil {
-			break
-		}
-		if result.Name == "" {
-			continue
-		}
-		res = append(res, result)
-	}
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	} else {
-		return c.JSON(http.StatusOK, res)
-	}
+	return c.JSON(http.StatusOK, result)
 }

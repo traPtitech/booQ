@@ -42,12 +42,8 @@ func TestGetUserByName(t *testing.T) {
 	t.Run("failures", func(t *testing.T) {
 		assert := assert.New(t)
 
-		user, err := GetUserByName("")
+		user, err := GetUserByName("nothing user")
 		assert.Error(err)
-		assert.Empty(user)
-
-		user, err = GetUserByName("nothing user")
-		assert.NoError(err)
 		assert.Empty(user)
 	})
 
