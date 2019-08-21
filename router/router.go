@@ -18,5 +18,9 @@ func SetupRouting(e *echo.Echo, client Traq) {
 		{
 			apiUsers.GET("/me", GetUserMe)
 		}
+		apiItems := api.Group("/items")
+		{
+			apiItems.POST("", PostItems)
+		}
 	}
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/traPtitech/booQ/model"
 )
 
-// PostItems POST /user/me
+// PostItems POST /items
 func PostItems(c echo.Context) error {
 	item := model.Item{}
 	if err := c.Bind(&item); err != nil {
@@ -19,5 +19,5 @@ func PostItems(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	return c.JSON(http.StatusOK, res)
+	return c.JSON(http.StatusCreated, res)
 }
