@@ -27,12 +27,12 @@ func GetUserMe(c echo.Context) error {
 func GetUsers(c echo.Context) error {
 	req := c.QueryParam("name")
 	if req == "" {
-		err := "クエリパラメータが空です"
-		return c.JSON(http.StatusBadRequest, err)
+		res := model.GetUsers
+		return c.JSON(http.StatusOK, res)
 	}
 	result, err := model.GetUserByName(req)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusNotFound, err)
 	}
 	return c.JSON(http.StatusOK, result)
 }
