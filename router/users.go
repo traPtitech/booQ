@@ -25,12 +25,12 @@ func GetUserMe(c echo.Context) error {
 
 //GetUsers GET /users
 func GetUsers(c echo.Context) error {
-	req := c.QueryParam("name")
-	if req == "" {
+	name := c.QueryParam("name")
+	if name == "" {
 		res := model.GetUsers
 		return c.JSON(http.StatusOK, res)
 	}
-	result, err := model.GetUserByName(req)
+	result, err := model.GetUserByName(name)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
 	}
