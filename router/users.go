@@ -27,7 +27,7 @@ func GetUserMe(c echo.Context) error {
 func GetUsers(c echo.Context) error {
 	name := c.QueryParam("name")
 	if name == "" {
-		res := model.GetUsers
+		res := model.GetUsers()
 		return c.JSON(http.StatusOK, res)
 	}
 	result, err := model.GetUserByName(name)
