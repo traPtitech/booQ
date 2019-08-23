@@ -82,6 +82,15 @@ func TestCreateUser(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	t.Parallel()
 
+	t.Run("failures", func(t *testing.T) {
+		t.Parallel()
+		assert := assert.New(t)
+
+		user, err := UpdateUser(User{IconFileID:"testfile"})
+		assert.Error(err)
+		assert.Empty(user)
+	})
+
 	t.Run("success", func(t *testing.T) {
 		assert := assert.New(t)
 

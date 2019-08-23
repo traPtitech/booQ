@@ -1,7 +1,7 @@
 package model
 
 import (
-	// "errors"
+	"errors"
 
 	"github.com/jinzhu/gorm"
 )
@@ -21,6 +21,18 @@ func (item *Item) TableName() string {
 	return "items"
 }
 
-// // GetItems 全itemを取得する
-// func GetItems() ([]Item, error) {
-// }
+// GetItems 全itemを取得する
+func GetItems() ([]Item, error) {
+	res := []Item{}
+	db.Find(&res)
+	return res, nil
+}
+
+// CreateItem 新しいItemを登録する
+func CreateItem(item Item) (Item, error) {
+	if item.Name == "" {
+		return Item{}, errors.New("Nameが存在しません")
+	}
+	db.Create(&item)
+	return item, nil
+}
