@@ -65,11 +65,9 @@
 
 <script>
 // Utilities
-import {
-  mapMutations,
-  mapState
-} from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 export default {
+  name: 'SideBar',
   data () {
     return {
       logo: './img/logo.png',
@@ -80,7 +78,7 @@ export default {
           text: 'Dashboard'
         },
         {
-          to: '/about',
+          to: `/user/wip`,
           icon: 'mdi-account',
           text: 'User Profile'
         }

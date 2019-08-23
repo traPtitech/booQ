@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from './store'
 import Home from './components/Home.vue'
+import DashBoard from './components/DashBoard.vue'
+import UserPage from './components/UserPage.vue'
 import { fetchAuthToken, setAuthToken, getMe } from './utils/api'
 
 setAuthToken(store.state.authToken)
@@ -14,6 +16,17 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'dashboard',
+      component: DashBoard
+    },
+    {
+      path: '/user/:name',
+      name: 'User Page',
+      component: UserPage
+    },
+    {
+      // TODO: 初期ページなのである程度検証したら消す
+      path: '/home',
       name: 'home',
       component: Home
     },
