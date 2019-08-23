@@ -43,7 +43,7 @@ func TestPostItems(t *testing.T) {
 		rec := httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
 
-		assert.Equal(http.StatusOK, rec.Code)
+		assert.Equal(http.StatusCreated, rec.Code)
 
 		item := model.Item{}
 		_ = json.NewDecoder(rec.Body).Decode(&item)
@@ -73,7 +73,7 @@ func TestPostItems(t *testing.T) {
 		rec = httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
 
-		assert.Equal(http.StatusOK, rec.Code)
+		assert.Equal(http.StatusCreated, rec.Code)
 
 		item := model.Item{}
 		_ = json.NewDecoder(rec.Body).Decode(&item)
