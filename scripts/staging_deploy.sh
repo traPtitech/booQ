@@ -29,7 +29,7 @@ if [ -n "$client" ] ; then
   echo "client deploying..."
   docker-compose build --no-cache booq-client
   docker-compose down
-  docker-compose up
+  docker-compose up -d
 fi
 
 docker image prune -f
