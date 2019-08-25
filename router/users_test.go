@@ -126,5 +126,13 @@ func TestPutUsers(t *testing.T) {
 		e.ServeHTTP(rec, req)
 
 		assert.Equal(http.StatusForbidden, rec.Code)
+
+		// user := model.User{}
+		// _ = json.NewDecoder(rec.Body).Decode(&user)
+
+		// assert.NotEqual(testUser.Name, user.Name)
+		// assert.NotEqual(testUser.DisplayName, user.DisplayName)
+		// assert.NotEqual(testUser.IconFileID, user.IconFileID)
+		// assert.NotEqual(testUser.Admin, user.Admin)
 	})
 }

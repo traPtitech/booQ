@@ -46,22 +46,16 @@ func PutUsers(c echo.Context) error {
 	}
 
 	user := c.Get("user").(model.User)
+	err = model.CheckAimedOrAdmin(user, req)
+	if err != nil {
+		return c.JSON(http.StatusForbidden, err)
+	}
+	if !user.Admin && req.Admin {
+		return c.NoContent(http.StatusForbidden)
+	}
 	res, err := model.UpdateUser(req)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusNotFound, err)
 	}
-
-	if user.Name != req.Name && !user.Admin {
-		return c.NoContent(http.StatusForbidden)
-	} else if !user.Admin {
-		if req.Name != user.Name {
-			return c.NoContent(http.StatusForbidden)
-		} else if req.Admin {
-			return c.NoContent(http.StatusForbidden)
-		} else {
-			return c.JSON(http.StatusOK, res)
-		}
-	} else {
-		return c.JSON(http.StatusOK, res)
-	}
+	return c.JSON(http.StatusOK, res)
 }

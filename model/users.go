@@ -31,7 +31,7 @@ func GetUser(user User) (User, error) {
 }
 
 // GetUsers 全userを取得する
-func GetUsers() ([]User) {
+func GetUsers() []User {
 	res := []User{}
 	db.Find(&res)
 	return res
@@ -64,4 +64,14 @@ func UpdateUser(newUser User) (User, error) {
 	}
 	db.Model(&res).Where("name = ?", newUser.Name).Updates(newUser)
 	return res, nil
+}
+
+func CheckAimedOrAdmin(user, reqUser User) error {
+	if user.Name == "" || reqUser.Name == "" {
+		return errors.New("Nameが存在しません")
+	}
+	if !user.Admin && reqUser.Name != user.Name {
+		return errors.New("あなたは管理者でもなければ対象のUser本人でもありません")
+	}
+	return nil
 }
