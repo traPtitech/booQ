@@ -19,7 +19,7 @@ func TestPostItems(t *testing.T) {
 	testBodyTrap := model.Item{
 		Name:        "testTrapItem",
 		Type:        1,
-		Code:        1920093013000,
+		Code:        "1920093013000",
 		Description: "これは備品のテストです",
 		ImgURL:      "http://example.com/testTrap.jpg",
 	}
@@ -27,7 +27,7 @@ func TestPostItems(t *testing.T) {
 	testBodyKojin := model.Item{
 		Name:        "testKojinItem",
 		Type:        0,
-		Code:        9784049123944,
+		Code:        "9784049123944",
 		Description: "これは個人所有物のテストです",
 		ImgURL:      "http://example.com/testKojin.jpg",
 	}
