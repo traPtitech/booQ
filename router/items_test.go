@@ -3,7 +3,6 @@ package router
 import (
 	"bytes"
 	"encoding/json"
-	// "io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -19,18 +18,18 @@ func TestPostItems(t *testing.T) {
 
 	testBodyTrap := model.Item{
 		Name:        "testTrapItem",
-		Type:0,
-		Code:1920093013000,
-		Description:"これは備品のテストです",
-		ImgURL:"http://testTrap.jpg",
+		Type:        1,
+		Code:        1920093013000,
+		Description: "これは備品のテストです",
+		ImgURL:      "http://example.com/testTrap.jpg",
 	}
 
 	testBodyKojin := model.Item{
 		Name:        "testKojinItem",
-		Type:2,
-		Code:9784049123944,
-		Description:"これは個人所有物のテストです",
-		ImgURL:"http://testKojin.jpg",
+		Type:        0,
+		Code:        9784049123944,
+		Description: "これは個人所有物のテストです",
+		ImgURL:      "http://example.com/testKojin.jpg",
 	}
 
 	t.Run("admin user", func(t *testing.T) {

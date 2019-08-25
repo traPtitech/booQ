@@ -15,8 +15,8 @@ func PostItems(c echo.Context) error {
 	if err := c.Bind(&item); err != nil {
 		return err
 	}
-	// item.Type=0⇒trap所有、1⇒支援課、2⇒個人
-	if item.Type !=2 && !user.Admin {
+	// item.Type=0⇒個人、1⇒trap所有、2⇒支援課
+	if item.Type != 0 && !user.Admin {
 		return c.NoContent(http.StatusForbidden)
 	}
 	res, err := model.CreateItem(item)
