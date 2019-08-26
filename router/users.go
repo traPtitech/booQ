@@ -46,7 +46,7 @@ func PutUsers(c echo.Context) error {
 	}
 
 	user := c.Get("user").(model.User)
-	err = model.CheckAimedOrAdmin(user, req)
+	err = model.CheckTargetedOrAdmin(user, req)
 	if err != nil {
 		return c.JSON(http.StatusForbidden, err)
 	}

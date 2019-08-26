@@ -66,7 +66,7 @@ func UpdateUser(newUser User) (User, error) {
 	return res, nil
 }
 
-func CheckAimedOrAdmin(user, reqUser User) error {
+func CheckTargetedOrAdmin(user, reqUser User) error {
 	if user.Name == "" || reqUser.Name == "" {
 		return errors.New("Nameが存在しません")
 	}

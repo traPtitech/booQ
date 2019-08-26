@@ -105,26 +105,26 @@ func TestUpdateUser(t *testing.T) {
 	})
 }
 
-func TestCheckAimedOrAdmin(t *testing.T) {
+func TestCheckTargetedOrAdmin(t *testing.T) {
 	t.Parallel()
 
 	t.Run("failures", func(t *testing.T) {
 		t.Parallel()
 		assert := assert.New(t)
 
-		user, err := CreateUser(User{Name: "test_aimed1"})
+		user, err := CreateUser(User{Name: "target_user1"})
 		assert.NoError(err)
 		assert.NotEmpty(user)
 		reqUser, err := CreateUser(User{Name: "another_test1"})
 		assert.NoError(err)
 		assert.NotEmpty(reqUser)
-		err = CheckAimedOrAdmin(user, reqUser)
+		err = CheckTargetedOrAdmin(user, reqUser)
 		assert.Error(err)
 
 		reqUser, err = CreateUser(User{Name: "another_test2", Admin: true})
 		assert.NoError(err)
 		assert.NotEmpty(reqUser)
-		err = CheckAimedOrAdmin(user, reqUser)
+		err = CheckTargetedOrAdmin(user, reqUser)
 		assert.Error(err)
 	})
 
@@ -132,19 +132,19 @@ func TestCheckAimedOrAdmin(t *testing.T) {
 		t.Parallel()
 		assert := assert.New(t)
 
-		user, err := CreateUser(User{Name: "test_aimed2"})
+		user, err := CreateUser(User{Name: "target_user2"})
 		assert.NoError(err)
 		assert.NotEmpty(user)
-		err = CheckAimedOrAdmin(user, user)
+		err = CheckTargetedOrAdmin(user, user)
 		assert.NoError(err)
 
-		user, err = CreateUser(User{Name: "test_aimed3", Admin: true})
+		user, err = CreateUser(User{Name: "target_user3", Admin: true})
 		assert.NoError(err)
 		assert.NotEmpty(user)
 		reqUser, err := CreateUser(User{Name: "another_test3"})
 		assert.NoError(err)
 		assert.NotEmpty(reqUser)
-		err = CheckAimedOrAdmin(user, reqUser)
+		err = CheckTargetedOrAdmin(user, reqUser)
 		assert.NoError(err)
 	})
 }
