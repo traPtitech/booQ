@@ -6,7 +6,7 @@
  | **id** | int | NO | PRI |  |
  | name | varchar(64) | NO |  |  |  | 物品名 |
  | type | int | NO |  |  |  | 物品のタイプ(0: 備品, 1: 本(備品以外)) |
- | code | text |  |  |  |  | ISBNコードとか物品管理コードとか |
+ | code | varchar(13) |  |  |  |  | ISBNコードとか物品管理コードとか |
  | description | text |  |  |  |  | 物品の説明文 |
  | img_url | text |  |  |  |  | 画像のURL(外部に頼る) |
  | **created_at** | datetime | NO |  |  |  |  |
