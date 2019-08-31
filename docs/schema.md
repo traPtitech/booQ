@@ -9,9 +9,6 @@
  | code | varchar(13) |  |  |  |  | ISBNコードとか物品管理コードとか |
  | description | text |  |  |  |  | 物品の説明文 |
  | img_url | text |  |  |  |  | 画像のURL(外部に頼る) |
- | item_owners | owner |  |  |  |  | /booQ/model/items.go参照 |
- | item_tags | tag |  |  |  |  | /booQ/model/items.go参照 |
- | item_like_users | user |  |  |  |  | /booQ/model/users.go参照 |
  | **created_at** | datetime | NO |  |  |  |  |
  | **updated_at** | datetime |  |  |  |  |  |
  | **deleted_at** | datetime |  |  |  |  |  |
@@ -59,6 +56,37 @@
  | --- | --- | --- | --- | --- | --- | --- |
  | **id** | int | NO | PRI |  |  |  |
  | name | varchar(32) | NO | UNI |  |  |  |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
+
+### tagmaps
+ | Name | Type | NULL | Key | Default | Extra | 説明 |
+ | --- | --- | --- | --- | --- | --- | --- |
+ | id | int | NO | PRI |  |  |  |
+ | tag_id | int | NO |  |  |  |  |
+ | item_id | int | NO |  |  |  |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
+
+### ownershipmaps
+ | Name | Type | NULL | Key | Default | Extra | 説明 |
+ | --- | --- | --- | --- | --- | --- | --- |
+ | id | int | NO | PRI |  |  |  |
+ | item_id | int | NO |  |  |  |  |
+ | user_id | int | NO |  |  |  |
+ | rentalable | boolean | NO |  | true |  | 今貸し出し可能か否か |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
+
+### likemaps
+ | Name | Type | NULL | Key | Default | Extra | 説明 |
+ | --- | --- | --- | --- | --- | --- | --- |
+ | id | int | NO | PRI |  |  |  |
+ | item_id | int | NO |  |  |  |  |
+ | user_id | int | NO |  |  |  |
  | **created_at** | datetime | NO |  |  |  |  |
  | **updated_at** | datetime |  |  |  |  |  |
  | **deleted_at** | datetime |  |  |  |  |  |

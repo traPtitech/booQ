@@ -14,7 +14,7 @@ type Item struct {
 	Code        string  `gorm:"type:varchar(13);" json:"code"`
 	Description string  `gorm:"type:text;" json:"description"`
 	ImgURL      string  `gorm:"type:text;" json:"img_url"`
-	Owners      []Owner `gorm:"many2many:item_owners;" json:"owners"`
+	Owners      []Owner `gorm:"many2many:ownership_maps;" json:"owners"`
 }
 
 type Owner struct {
@@ -31,6 +31,10 @@ type RequestPostOwnersBody struct {
 // TableName dbのテーブル名を指定する
 func (item *Item) TableName() string {
 	return "items"
+}
+
+func (item *Owner) TableName() string {
+	return "owners"
 }
 
 // GetItemByID IDからitemを取得する
@@ -61,6 +65,7 @@ func CreateItem(item Item) (Item, error) {
 
 // RegisterItem 新しい所有者を登録する
 func RegisterOwner(owner Owner, item Item) (Item, error) {
+	db.Create(&owner)
 	db.Model(&item).Association("Owners").Append(&owner)
 	return item, nil
 }
