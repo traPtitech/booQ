@@ -24,6 +24,7 @@ func SetupRouting(e *echo.Echo, client Traq) {
 		apiItems := api.Group("/items")
 		{
 			apiItems.POST("", PostItems)
+			apiItems.POST("/:id/owners", PostOwners)
 		}
 	}
 }

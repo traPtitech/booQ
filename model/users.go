@@ -31,7 +31,7 @@ func GetUser(user User) (User, error) {
 }
 
 // GetUsers 全userを取得する
-func GetUsers() ([]User) {
+func GetUsers() []User {
 	res := []User{}
 	db.Find(&res)
 	return res
@@ -41,6 +41,16 @@ func GetUsers() ([]User) {
 func GetUserByName(name string) (User, error) {
 	res := User{}
 	db.Where("name = ?", name).First(&res)
+	if res.Name == "" {
+		return User{}, errors.New("Nameが不正です")
+	}
+	return res, nil
+}
+
+// GetUserByID userをIDから取得する
+func GetUserByID(id int) (User, error) {
+	res := User{}
+	db.Where("id = ?", id).First(&res)
 	if res.Name == "" {
 		return User{}, errors.New("Nameが不正です")
 	}

@@ -2,6 +2,7 @@ package router
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo"
 
@@ -10,9 +11,14 @@ import (
 
 // PostItems POST /items
 func PostItems(c echo.Context) error {
+	user := c.Get("user").(model.User)
 	item := model.Item{}
 	if err := c.Bind(&item); err != nil {
 		return err
+	}
+	// item.Type=0⇒個人、1⇒trap所有、2⇒支援課
+	if item.Type != 0 && !user.Admin {
+		return c.NoContent(http.StatusForbidden)
 	}
 	res, err := model.CreateItem(item)
 	if err != nil {
@@ -20,4 +26,38 @@ func PostItems(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, res)
+}
+
+// PostOwners POST /items/:id/owners
+func PostOwners(c echo.Context) error {
+	ID := c.Param("id")
+	body := model.RequestPostOwnersBody{}
+	if err := c.Bind(&body); err != nil {
+		return err
+	}
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	user, err := model.GetUserByID(body.UserID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, err := model.GetItemByID(itemID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	// item.Type=0⇒個人、1⇒trap所有、2⇒支援課
+	if item.Type == 1 && user.ID != 1 {
+		return c.NoContent(http.StatusForbidden)
+	}
+	if item.Type == 2 && user.ID != 2 {
+		return c.NoContent(http.StatusForbidden)
+	}
+	res, err := model.RegisterOwner(user, item)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, res)
 }
