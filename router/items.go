@@ -47,14 +47,17 @@ func PostOwners(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	// item.Type=0⇒個人、1⇒trap所有、2⇒支援課
+	// item.Type=0⇒個人、1⇒trap(id:1)所有、2⇒支援課(id:2)
 	if item.Type == 1 && user.ID != 1 {
 		return c.NoContent(http.StatusForbidden)
 	}
 	if item.Type == 2 && user.ID != 2 {
 		return c.NoContent(http.StatusForbidden)
 	}
-	res, err := model.RegisterOwner(user, item)
+	var owner model.Owner
+	owner.Owner = user
+	owner.Rentalable = body.Rentalable
+	res, err := model.RegisterOwner(owner, item)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

@@ -52,7 +52,7 @@ func GetUserByID(id int) (User, error) {
 	res := User{}
 	db.Where("id = ?", id).First(&res)
 	if res.Name == "" {
-		return User{}, errors.New("Nameが不正です")
+		return User{}, errors.New("該当するNameがありません")
 	}
 	return res, nil
 }

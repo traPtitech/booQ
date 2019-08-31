@@ -9,14 +9,18 @@ import (
 // Item itemの構造体
 type Item struct {
 	gorm.Model
-	Name        string `gorm:"type:varchar(64);not null" json:"name"`
-	Type        int    `gorm:"type:int;not null" json:"type"`
-	Code        string `gorm:"type:varchar(13);" json:"code"`
-	Description string `gorm:"type:text;" json:"description"`
-	ImgURL      string `gorm:"type:text;" json:"img_url"`
-	Owners      []User `gorm:"many2many:item_owners;"`
-	Tags        []Tag  `gorm:"many2many:item_tags;"`
-	LikeUsers   []User `gorm:"many2many:item_like_users;"`
+	Name        string  `gorm:"type:varchar(64);not null" json:"name"`
+	Type        int     `gorm:"type:int;not null" json:"type"`
+	Code        string  `gorm:"type:varchar(13);" json:"code"`
+	Description string  `gorm:"type:text;" json:"description"`
+	ImgURL      string  `gorm:"type:text;" json:"img_url"`
+	Owners      []Owner `gorm:"many2many:item_owners;" json:"owners"`
+}
+
+type Owner struct {
+	gorm.Model
+	Owner      User `gorm:"many2many:owner_user;" json:"owner"`
+	Rentalable bool `gorm:"type:bool;" json:"rentalable"`
 }
 
 type RequestPostOwnersBody struct {
@@ -34,7 +38,7 @@ func GetItemByID(id int) (Item, error) {
 	res := Item{}
 	db.Where("id = ?", id).First(&res)
 	if res.Name == "" {
-		return Item{}, errors.New("Nameが不正です")
+		return Item{}, errors.New("該当するNameがありません")
 	}
 	return res, nil
 }
@@ -56,13 +60,7 @@ func CreateItem(item Item) (Item, error) {
 }
 
 // RegisterItem 新しい所有者を登録する
-func RegisterOwner(user User, item Item) (Item, error) {
-	if user.Name == "" {
-		return Item{}, errors.New("UserのNameが存在しません")
-	}
-	if item.Name == "" {
-		return Item{}, errors.New("ItemのNameが存在しません")
-	}
-	db.Model(&item).Association("Owners").Append(&user)
+func RegisterOwner(owner Owner, item Item) (Item, error) {
+	db.Model(&item).Association("Owners").Append(&owner)
 	return item, nil
 }
