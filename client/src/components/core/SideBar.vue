@@ -81,7 +81,12 @@ export default {
           to: `/user/wip`,
           icon: 'mdi-account',
           text: 'User Profile'
-        }
+        },
+        {
+          to: `/items/new`,
+          // icon: 'mdi-account', あとで
+          text: ' Register Item'
+        },
       ],
       responsive: false
     }

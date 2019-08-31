@@ -4,6 +4,7 @@ import store from './store'
 import Home from './components/Home.vue'
 import DashBoard from './components/DashBoard.vue'
 import UserPage from './components/UserPage.vue'
+import RegisterItemPage from './components/RegisterItemPage'
 import { fetchAuthToken, setAuthToken, getMe } from './utils/api'
 
 setAuthToken(store.state.authToken)
@@ -23,6 +24,11 @@ export default new Router({
       path: '/user/:name',
       name: 'User Page',
       component: UserPage
+    },
+    {
+      path: '/items/new',
+      name: 'Register Item Page',
+      component: RegisterItemPage
     },
     {
       // TODO: 初期ページなのである程度検証したら消す
