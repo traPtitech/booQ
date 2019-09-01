@@ -7,6 +7,7 @@ import UserPage from './components/UserPage.vue'
 import RegisterItemPage from './components/RegisterItemPage'
 import ItemDetailPage from './components/ItemDetailPage'
 import RegisterOwnerForm from './components/RegisterOwnerForm'
+import RentalForm from './components/RentalForm'
 import { fetchAuthToken, setAuthToken, getMe } from './utils/api'
 
 setAuthToken(store.state.authToken)
@@ -47,6 +48,10 @@ export default new Router({
     {
       path: '/register_owner_form',
       component: RegisterOwnerForm
+    },
+    {
+      path: '/rental_form',
+      component: RentalForm
     },
     {
       // TODO: 初期ページなのである程度検証したら消す

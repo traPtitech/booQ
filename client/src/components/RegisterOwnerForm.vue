@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: 'UserPage',
+  name: 'RegisterOwnerForm',
   data() {
     return{
       ownerID: 0,

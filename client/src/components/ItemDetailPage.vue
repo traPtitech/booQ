@@ -15,7 +15,8 @@
       <div class="content">
         <h4>{{data.name}}</h4>
         <div v-for="owner in data.owners" :key="owner.user.id">
-          <p>{{owner.user.name}}   {{checkRentalable(owner.user.id)}}</p>
+          <p v-if="checkRentalable(owner.user.id)">{{owner.user.name}}  {{checkRentalable(owner.user.id)}}</p>
+          <p v-else v-on:click="clickRental">{{owner.user.name}}  貸し出し可</p>
         </div>
         <button v-on:click="clickAddOwner">所有者を追加</button>
         <div v-for="comment in data.comments" :key="comment.id" class="comment">
@@ -122,14 +123,18 @@ export default {
   methods: {
     checkRentalable(ownerID) {
       // いい感じにしてください。同じownerが複数いるときのロジックがわかりませんでした
-      return "貸し出し可"
+      // 貸し出し可ならfalseを返し不可なら'ryohaが借りてます'みたいなのを返すと思ってます
+      return false
     },
     like() {
       // axios.post(/likes)みたいな感じ？
     },
     clickAddOwner() {
       window.open('/register_owner_form', 'newwindow', 'width=400,height=300')
-    }
+    },
+    clickRental() {
+      window.open('/rental_form', 'newwindow', 'width=400,height=300')
+    },
   }
 }
 </script>
