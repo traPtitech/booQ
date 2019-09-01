@@ -49,6 +49,10 @@
         <button v-on:click="remove">削除</button>
       </div>
     </div>
+    <div>
+      <p>個数</p>
+      <input v-model.number="count" type="number">
+    </div>
     <button v-on:click="register">登録</button>
   </div>
 </template>
@@ -76,6 +80,7 @@ export default {
       name: '',
       description: '',
       img_name: '',
+      count: 1,
     };
   },
   methods: {

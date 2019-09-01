@@ -2,7 +2,9 @@
   <div>
     <h1>DashBoard Page</h1>
     <!-- aタグでリンクしてるの頭悪そう(Vuexのいいところ？の読み込みが入らないところがなくなっているため) -->
-    <a href="/items/new">物品の新規登録</a>
+    <div><a href="/items/new">物品の新規登録</a></div>
+    <!-- あとで↓けす -->
+    <div><a href="/items_test">物品の詳細</a></div>
   </div>
 </template>
 
