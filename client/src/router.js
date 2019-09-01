@@ -6,6 +6,7 @@ import DashBoard from './components/DashBoard.vue'
 import UserPage from './components/UserPage.vue'
 import RegisterItemPage from './components/RegisterItemPage'
 import ItemDetailPage from './components/ItemDetailPage'
+import RegisterOwnerForm from './components/RegisterOwnerForm'
 import { fetchAuthToken, setAuthToken, getMe } from './utils/api'
 
 setAuthToken(store.state.authToken)
@@ -43,6 +44,10 @@ export default new Router({
       component: ItemDetailPage
     },
     // ここまで消す
+    {
+      path: '/register_owner_form',
+      component: RegisterOwnerForm
+    },
     {
       // TODO: 初期ページなのである程度検証したら消す
       path: '/home',

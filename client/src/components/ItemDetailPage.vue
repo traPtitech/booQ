@@ -17,7 +17,7 @@
         <div v-for="owner in data.owners" :key="owner.user.id">
           <p>{{owner.user.name}}   {{checkRentalable(owner.user.id)}}</p>
         </div>
-        <button>所有者を追加</button>
+        <button v-on:click="clickAddOwner">所有者を追加</button>
         <div v-for="comment in data.comments" :key="comment.id" class="comment">
           <v-avatar size="40">
             <img :src="'https://q.trap.jp/api/1.0/files/' + comment.user.iconFileId" />
@@ -120,12 +120,15 @@ export default {
     this.data = this.sampleData
   },
   methods: {
-    checkRentalable(owner_id) {
+    checkRentalable(ownerID) {
       // いい感じにしてください。同じownerが複数いるときのロジックがわかりませんでした
       return "貸し出し可"
     },
     like() {
       // axios.post(/likes)みたいな感じ？
+    },
+    clickAddOwner() {
+      window.open('/register_owner_form', 'newwindow', 'width=400,height=300')
     }
   }
 }

@@ -65,14 +65,14 @@ export default {
       typeID: 1,
       typeOptions: {
         1: '本',
-        2: '備品',
+        0: '備品',
       },
-      ownerID: 1,
+      ownerID: 0,
       ownerOptions: {
-        1: '個人',
+        0: '個人',
         //以下はAdminUserのみ表示されるように(おそらく後のissueのタスク)
-        2: 'traP',
-        3: '支援課'
+        1: 'traP',
+        2: '支援課'
       },
       checked: true,
       code: '',
