@@ -8,6 +8,8 @@ import RegisterItemPage from './components/RegisterItemPage'
 import ItemDetailPage from './components/ItemDetailPage'
 import RegisterOwnerForm from './components/RegisterOwnerForm'
 import RentalForm from './components/RentalForm'
+import AdminPage from './components/AdminPage'
+import AllItemPage from './components/AllItemPage'
 import { fetchAuthToken, setAuthToken, getMe } from './utils/api'
 
 setAuthToken(store.state.authToken)
@@ -38,13 +40,25 @@ export default new Router({
       name: 'Item',
       component: ItemDetailPage
     },
+    {
+      path: '/items/:id/owner/new',
+      component: RegisterOwnerForm
+    },
+    {
+      path: '/items/:id/rental',
+      component: RentalForm
+    },
+    {
+      path: '/items',
+      name: 'All Item',
+      component: AllItemPage
+    },
     // ここから
     {
       path: '/items_test',
       name: 'Item',
       component: ItemDetailPage
     },
-    // ここまで消す
     {
       path: '/register_owner_form',
       component: RegisterOwnerForm
@@ -52,6 +66,11 @@ export default new Router({
     {
       path: '/rental_form',
       component: RentalForm
+    },
+    // ここまで消す
+    {
+      path: '/admin',
+      component: AdminPage
     },
     {
       // TODO: 初期ページなのである程度検証したら消す

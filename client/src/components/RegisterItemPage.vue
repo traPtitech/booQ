@@ -1,60 +1,60 @@
 <template>
-  <div>
+  <v-container>
     <h1>物品登録ページ</h1>
     <h4>物品の種類を選択してください</h4>
-    <div>
+    <v-container>
       <label v-for="(label,id) in typeOptions" v-bind:key="label">
         <input type="radio" name="type" :value="id" v-model="typeID">{{ label }}
       </label>
       <br>
       <span>登録する物品の種類: {{ typeOptions[typeID] }}</span>
-    </div>
-    <div>
+    </v-container>
+    <v-container>
       <label v-for="(label,id) in ownerOptions" v-bind:key="label">
         <input type="radio" name="owner" :value="id" v-model="ownerID">{{ label }}
       </label>
       <br>
       <span>登録する物品の所有者: {{ ownerOptions[ownerID] }}</span>
-    </div>
-    <div>
+    </v-container>
+    <v-container>
       <input type="checkbox" id="checkbox" v-model="checked">
       <label for="checkbox">貸し出し可</label>
-    </div>
-    <div>
-      <input v-model="code" placeholder="ISBN-10 or ASIN">
-      <button v-on:click="img = 'http://images-jp.amazon.com/images/P/' + code + '.09.LZZZZZZZ.jpg';img_name = 'by amazon'">MakeImage</button>
-    </div>
-    <div>
-      <div>物品名</div>
-      <input v-model="name" placeholder="Name">
-    </div>
-    <div>
-      <div>物品詳細</div>
-      <textarea v-model="description" placeholder="Description"></textarea>
-    </div>
-    <div>
-      <div>物品イメージ</div>
+    </v-container>
+    <v-container>
+      <v-text-field solo v-model="code" placeholder="ISBN-10 or ASIN"/>
+      <v-btn class="green green-text darken-2" v-on:click="img = 'http://images-jp.amazon.com/images/P/' + code + '.09.LZZZZZZZ.jpg';img_name = 'by amazon'">MakeImage</v-btn>
+    </v-container>
+    <v-container>
+      <v-container>物品名</v-container>
+      <v-text-field class="mt-0" solo required v-model="name" placeholder="Name"/>
+    </v-container>
+    <v-container>
+      <v-container>物品詳細</v-container>
+      <v-textarea class="mt-0" solo label="Solo textarea" rows="1" auto-grow v-model="description" placeholder="Description"></v-textarea>
+    </v-container>
+    <v-container>
+      <v-container>物品イメージ</v-container>
       <label class="input-item__label">
         <input type="file" @change="onFileChange" />
       </label>
-      <div class="preview-item">
+      <v-container class="preview-item">
         <img
           v-show="img"
           :src="img"
           alt=""
         />
-        <div>
+        <v-container>
           <p>{{ img_name }}</p>
-        </div>
-        <button v-on:click="remove">削除</button>
-      </div>
-    </div>
-    <div>
+        </v-container>
+        <v-btn class="red" @click="remove">削除</v-btn>
+      </v-container>
+    </v-container>
+    <v-container>
       <p>個数</p>
-      <input v-model.number="count" type="number">
-    </div>
-    <button v-on:click="register">登録</button>
-  </div>
+      <v-text-field class="mt-0" solo required v-model.number="count" type="number"/>
+    </v-container>
+    <v-btn @click="register">登録</v-btn>
+  </v-container>
 </template>
 
 <script>
