@@ -47,6 +47,16 @@ func GetUserByName(name string) (User, error) {
 	return res, nil
 }
 
+// GetUserByID userをIDから取得する
+func GetUserByID(id int) (User, error) {
+	res := User{}
+	db.Where("id = ?", id).First(&res)
+	if res.Name == "" {
+		return User{}, errors.New("該当するNameがありません")
+	}
+	return res, nil
+}
+
 // CreateUser userを作成する
 func CreateUser(user User) (User, error) {
 	if user.Name == "" {
