@@ -75,3 +75,13 @@ func UpdateUser(newUser User) (User, error) {
 	db.Model(&res).Where("name = ?", newUser.Name).Updates(newUser)
 	return res, nil
 }
+
+func CheckTargetedOrAdmin(user, reqUser User) error {
+	if user.Name == "" || reqUser.Name == "" {
+		return errors.New("Nameが存在しません")
+	}
+	if !user.Admin && reqUser.Name != user.Name {
+		return errors.New("あなたは管理者でもなければ対象のUser本人でもありません")
+	}
+	return nil
+}

@@ -94,6 +94,24 @@ func TestPutUsers(t *testing.T) {
 		Admin:       true,
 	}
 
+	t.Run("not admin user", func(t *testing.T) {
+		assert := assert.New(t)
+		e := echoSetupWithUser()
+
+		reqBody, _ := json.Marshal(testBody)
+		req := httptest.NewRequest(echo.PUT, "/api/users", bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusForbidden, rec.Code)
+
+		user, err := model.GetUserByName(testUser.Name)
+		assert.NoError(err)
+		assert.Equal(user.DisplayName, testUser.DisplayName)
+		assert.Equal(user.IconFileID, testUser.IconFileID)
+	})
+
 	t.Run("admin user", func(t *testing.T) {
 		assert := assert.New(t)
 		e := echoSetupWithAdminUser()
@@ -113,18 +131,5 @@ func TestPutUsers(t *testing.T) {
 		assert.Equal(testBody.DisplayName, user.DisplayName)
 		assert.Equal(testBody.IconFileID, user.IconFileID)
 		assert.Equal(testBody.Admin, user.Admin)
-	})
-
-	t.Run("not admin user", func(t *testing.T) {
-		assert := assert.New(t)
-		e := echoSetupWithUser()
-
-		reqBody, _ := json.Marshal(testBody)
-		req := httptest.NewRequest(echo.PUT, "/api/users", bytes.NewReader(reqBody))
-		req.Header.Set("Content-Type", "application/json")
-		rec := httptest.NewRecorder()
-		e.ServeHTTP(rec, req)
-
-		assert.Equal(http.StatusForbidden, rec.Code)
 	})
 }
