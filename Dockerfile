@@ -9,6 +9,9 @@ RUN apk add --update --no-cache git && \
   rm -rf /var/cache/apk/* && \
   wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
   tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
+  # service mysqld stop && \
+  # rm /usr/local/var/mysql/booq_test/items.ibd && \
+  # service mysqld start && \
   rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 WORKDIR /go/src/github.com/traPtitech/booQ

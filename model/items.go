@@ -67,5 +67,6 @@ func CreateItem(item Item) (Item, error) {
 func RegisterOwner(owner Owner, item Item) (Item, error) {
 	db.Create(&owner)
 	db.Model(&item).Association("Owners").Append(&owner)
+	// db.First(&item).Related(&item.Owners, "Owners")
 	return item, nil
 }
