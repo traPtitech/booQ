@@ -53,10 +53,10 @@ func PostOwners(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	// item.Type=0⇒個人、1⇒trap(id:1)所有、2⇒支援課(id:2)
-	if item.Type == 1 && user.ID != 1 {
+	if item.Type == 1 && user.Name != "traP" {
 		return c.NoContent(http.StatusForbidden)
 	}
-	if item.Type == 2 && user.ID != 2 {
+	if item.Type == 2 && user.Name != "sienka" {
 		return c.NoContent(http.StatusForbidden)
 	}
 	var owner model.Owner
