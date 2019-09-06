@@ -31,6 +31,7 @@ func PostItems(c echo.Context) error {
 // PostOwners POST /items/:id/owners
 func PostOwners(c echo.Context) error {
 	ID := c.Param("id")
+	me := c.Get("user").(model.User)
 	body := model.RequestPostOwnersBody{}
 	if err := c.Bind(&body); err != nil {
 		return err
@@ -42,6 +43,10 @@ func PostOwners(c echo.Context) error {
 	user, err := model.GetUserByID(body.UserID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
+	}
+	err = model.CheckTargetedOrAdmin(me, user)
+	if err != nil {
+		return c.JSON(http.StatusForbidden, err)
 	}
 	item, err := model.GetItemByID(itemID)
 	if err != nil {

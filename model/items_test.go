@@ -51,7 +51,6 @@ func TestRegisterOwner(t *testing.T) {
 
 		assert.NoError(err)
 		assert.NotEmpty(item)
-		// fmt.Println(item)
-		// assert.Equal(item.Owners[1].Owner.Name, user.Name)
+		assert.Equal(item.Owners[0].Owner.Name, user.Name)
 	})
 }
