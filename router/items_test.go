@@ -115,8 +115,10 @@ func TestPostOwners(t *testing.T) {
 		assert := assert.New(t)
 		e := echoSetupWithAdminUser()
 
+		createdBihin, _ := model.GetItemByName("testTrapItem")
+		bihinID := int(createdBihin.ID)
 		reqBody, _ := json.Marshal(testOwnerTrap)
-		req := httptest.NewRequest(echo.POST, "/api/items/1/owners", bytes.NewReader(reqBody))
+		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(bihinID)+"/owners", bytes.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 		rec := httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
@@ -140,8 +142,10 @@ func TestPostOwners(t *testing.T) {
 		assert := assert.New(t)
 		e := echoSetupWithUser()
 
+		createdBihin, _ := model.GetItemByName("testTrapItem")
+		bihinID := int(createdBihin.ID)
 		reqBody, _ := json.Marshal(testOwnerKojin)
-		req := httptest.NewRequest(echo.POST, "/api/items/1/owners", bytes.NewReader(reqBody))
+		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(bihinID)+"/owners", bytes.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 		rec := httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
