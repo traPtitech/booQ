@@ -46,7 +46,7 @@ func CreateUser(user User) (User, error) {
 	if user.Name == "" {
 		return User{}, errors.New("Nameが存在しません")
 	}
-	db.Create(&user)
+	
 	return user, nil
 }
 

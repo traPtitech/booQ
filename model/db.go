@@ -46,7 +46,8 @@ func Migrate() error {
 		return err
 	}
 
-	traP, err := GetUser(User{Name: "traP"})
+	//traP, err := GetUser(User{Name: "traP"})
+	traP, err := GetUserByName("traP")
 	if traP.Name == "" {
 		user := User{
 			Name:        "traP",
