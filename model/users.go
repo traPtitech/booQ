@@ -35,7 +35,7 @@ func GetUserByName(name string) (User, error) {
 	db.Where("name = ?", name).First(&res)
 	if res.Name == "" {
 		res.Name = name
-		db.Create(&res)
+		
 		return res, errors.New("nameを新規登録しました")
 	}
 	return res, nil
@@ -46,7 +46,7 @@ func CreateUser(user User) (User, error) {
 	if user.Name == "" {
 		return User{}, errors.New("Nameが存在しません")
 	}
-	
+	db.Create(&res)
 	return user, nil
 }
 
