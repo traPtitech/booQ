@@ -54,7 +54,7 @@
           @click="$router.push('/about')"
         >
           <v-avatar size="40">
-            <img :src="`https://q.trap.jp/api/1.0/files/${$store.state.me.iconFileId}`">
+            <img :src="`https://q.trap.jp/api/1.0/public/icon/${$store.state.me.name}`">
           </v-avatar>
         </v-btn>
         <router-link
