@@ -11,6 +11,7 @@ func TestUserTableName(t *testing.T) {
 	assert.Equal(t, "users", (&User{}).TableName())
 }
 
+/*
 func TestGetUser(t *testing.T) {
 	t.Parallel()
 
@@ -35,7 +36,7 @@ func TestGetUser(t *testing.T) {
 		assert.Equal("traP", user.Name)
 	})
 }
-
+*/
 func TestGetUserByName(t *testing.T) {
 	t.Parallel()
 
