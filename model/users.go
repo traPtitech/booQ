@@ -30,19 +30,14 @@ func GetUser(user User) (User, error) {
 	return res, nil
 }
 
-// GetUsers 全userを取得する
-func GetUsers() ([]User) {
-	res := []User{}
-	db.Find(&res)
-	return res
-}
 
 // GetUserByName userをNameから取得する
 func GetUserByName(name string) (User, error) {
 	res := User{}
 	db.Where("name = ?", name).First(&res)
 	if res.Name == "" {
-		return User{}, errors.New("Nameが不正です")
+		db.Create(&name)
+		return name, errors.New("nameを新規登録しました")
 	}
 	return res, nil
 }
