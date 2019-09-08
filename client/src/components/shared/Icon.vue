@@ -1,7 +1,7 @@
 <template>
   <!-- <div> -->
     <v-avatar size="40">
-      <v-img :src="'https://q.trap.jp/api/1.0/files/' + user.iconFileId" width="100%" alt=""/>
+      <v-img :src="'https://q.trap.jp/api/1.0/public/icon/' + user.name" width="100%" alt=""/>
     </v-avatar>
   <!-- </div> -->
 </template>

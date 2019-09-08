@@ -25,7 +25,6 @@ export default {
                 id: 1,
                 name: "nagatech",
                 displayName: "ながてち",
-                iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b",
                 admin: true
             },
             rentalable: true
@@ -40,7 +39,6 @@ export default {
                 id: 1,
                 name: "nagatech",
                 displayName: "ながてち",
-                iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b",
                 admin: true
             },
             comment: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。",
@@ -56,14 +54,12 @@ export default {
                 id: 1,
                 name: "nagatech",
                 displayName: "ながてち",
-                iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b",
                 admin: true
             },
             owner: {
                 id: 1,
                 name: "nagatech",
                 displayName: "ながてち",
-                iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b",
                 admin: true
             },
             type: 0,
@@ -84,7 +80,6 @@ export default {
             id: 1,
             name: "nagatech",
             displayName: "ながてち",
-            iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b",
             admin: true
             }
         ],
@@ -103,7 +98,6 @@ export default {
                 id: 1,
                 name: "nagatech",
                 displayName: "ながてち",
-                iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b",
                 admin: true
             },
             rentalable: true
@@ -118,7 +112,6 @@ export default {
                 id: 1,
                 name: "nagatech",
                 displayName: "ながてち",
-                iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b",
                 admin: true
             },
             comment: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。",
@@ -134,14 +127,12 @@ export default {
                 id: 1,
                 name: "nagatech",
                 displayName: "ながてち",
-                iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b",
                 admin: true
             },
             owner: {
                 id: 1,
                 name: "nagatech",
                 displayName: "ながてち",
-                iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b",
                 admin: true
             },
             type: 0,
@@ -162,7 +153,6 @@ export default {
             id: 1,
             name: "nagatech",
             displayName: "ながてち",
-            iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b",
             admin: true
             }
         ],
