@@ -11,7 +11,7 @@ import (
 // GetUsersMe GET /users/me ***Waver修正 l.14 GetUser->GetUserByName
 func GetUsersMe(c echo.Context) error {
 	user := c.Get("user").(model.User)
-	res, err := model.GetUserByName(user.Name)
+	res, _ := model.GetUserByName(user.Name)
 	/*
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
