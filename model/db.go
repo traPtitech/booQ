@@ -64,7 +64,6 @@ func Migrate() error {
 		user := User{
 			Name:        "sienka",
 			DisplayName: "支援課",
-			IconFileID:  "",
 			Admin:       true,
 		}
 		_, err = CreateUser(user)
