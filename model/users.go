@@ -33,8 +33,8 @@ func GetUsers() []User {
 func GetUserByName(name string) (User, error) {
 	res := User{}
 	db.Where("name = ?", name).First(&res)
-	if res.Name == "" {		
-		return res, errors.New("Nameが不正です")
+	if name == "" {
+		return User{}, errors.New("nameが存在しません")
 	}
 	return res, nil
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/traPtitech/booQ/model"
 )
 
-// GetUsersMe GET /users/me ***Waver修正 l.14 GetUser->GetUserByName
+// GetUsersMe GET /users/me
 func GetUsersMe(c echo.Context) error {
 	user := c.Get("user").(model.User)
 	res, _ := model.GetUserByName(user.Name)
