@@ -13,6 +13,7 @@ var allTables = []interface{}{
 	User{},
 	Item{},
 	Owner{},
+	Log{},
 }
 
 // EstablishConnection DBに接続する
