@@ -35,7 +35,10 @@ func GetItem(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	item, _ := model.GetItemByID(itemID)
+	item, err := model.GetItemByID(itemID)
+	if err != nil {
+		return c.JSON(http.StatusForbidden, err)
+	}
 
 	return c.JSON(http.StatusOK, item)
 }
