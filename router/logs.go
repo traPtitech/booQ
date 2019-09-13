@@ -24,13 +24,14 @@ func PostLogs(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	var log model.Log
-	log.ItemID = itemID
-	log.UserID = int(user.ID)
-	log.OwnerID = body.OwnerID
-	log.Type = body.Type
-	log.Purpose = body.Purpose
-	log.DueDate = body.DueDate
+	log := model.Log{
+		ItemID:  itemID,
+		UserID:  int(user.ID),
+		OwnerID: body.OwnerID,
+		Type:    body.Type,
+		Purpose: body.Purpose,
+		DueDate: body.DueDate,
+	}
 
 	res, err := model.CreateLog(log)
 	if err != nil {
