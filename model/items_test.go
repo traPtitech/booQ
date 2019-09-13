@@ -32,3 +32,29 @@ func TestCreateItem(t *testing.T) {
 		assert.NotEmpty(item)
 	})
 }
+
+func TestGetItems(t *testing.T) {
+	t.Parallel()
+
+	user, _ := CreateUser(User{Name: "testAllItemUser"})
+	var owner Owner
+	owner.Owner = user
+	owner.Rentalable = true
+	item, _ := CreateItem(Item{Name: "testAllItemItem"})
+	_, _ = RegisterOwner(owner, item)
+	t.Run("success", func(t *testing.T) {
+		t.Parallel()
+		assert := assert.New(t)
+
+		items, err := GetItems()
+		for _, value := range items {
+			if value.Name == "testAllItemItem" {
+				assert.Equal("testAllItemUser", value.Owners[0].Owner.Name)
+				break
+			}
+			continue
+		}
+		assert.NoError(err)
+		assert.NotEmpty(items)
+	})
+}
