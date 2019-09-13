@@ -28,6 +28,18 @@ func PostItems(c echo.Context) error {
 	return c.JSON(http.StatusCreated, res)
 }
 
+// GetItem GET /items/:id
+func GetItem(c echo.Context) error {
+	ID := c.Param("id")
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, _ := model.GetItemByID(itemID)
+
+	return c.JSON(http.StatusOK, item)
+}
+
 // PostOwners POST /items/:id/owners
 func PostOwners(c echo.Context) error {
 	ID := c.Param("id")
