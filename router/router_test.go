@@ -23,9 +23,11 @@ func dbSetup() {
 		panic(err)
 	}
 
-	err = model.Migrate()
-	if err != nil {
-		panic(err)
+	if !model.HasUsersTable() {
+		err = model.Migrate()
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 

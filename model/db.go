@@ -60,3 +60,8 @@ func Migrate() error {
 
 	return err
 }
+
+// HasUsersTable DBにusersテーブルが存在するか確認する
+func HasUsersTable() bool {
+	return db.HasTable("users")
+}

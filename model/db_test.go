@@ -19,8 +19,10 @@ func setup() {
 		panic(err)
 	}
 
-	err = Migrate()
-	if err != nil {
-		panic(err)
+	if !HasUsersTable() {
+		err = Migrate()
+		if err != nil {
+			panic(err)
+		}
 	}
 }
