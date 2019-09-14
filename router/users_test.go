@@ -24,7 +24,6 @@ func TestGetUsersMe(t *testing.T) {
 		adminUser := model.User{
 			Name:        "traP",
 			DisplayName: "traP",
-			IconFileID:  "099eed74-3ab3-4655-ac37-bc7df1139b3d",
 			Admin:       true,
 		}
 
@@ -42,7 +41,6 @@ func TestGetUsersMe(t *testing.T) {
 
 		assert.Equal(user.Name, adminUser.Name)
 		assert.Equal(user.DisplayName, adminUser.DisplayName)
-		assert.Equal(user.IconFileID, adminUser.IconFileID)
 		assert.Equal(user.Admin, adminUser.Admin)
 	})
 
@@ -52,7 +50,6 @@ func TestGetUsersMe(t *testing.T) {
 		testUser := model.User{
 			Name:        "testUser",
 			DisplayName: "テストユーザー",
-			IconFileID:  "099eed74-3ab3-4655-ac37-bc7df1139b3d",
 			Admin:       false,
 		}
 
@@ -70,7 +67,6 @@ func TestGetUsersMe(t *testing.T) {
 
 		assert.Equal(user.Name, testUser.Name)
 		assert.Equal(user.DisplayName, testUser.DisplayName)
-		assert.Equal(user.IconFileID, testUser.IconFileID)
 		assert.Equal(user.Admin, testUser.Admin)
 	})
 }
@@ -82,7 +78,6 @@ func TestPutUsers(t *testing.T) {
 	testUser := model.User{
 		Name:        "PutUser",
 		DisplayName: "テストユーザー",
-		IconFileID:  "099eed74-3ab3-4655-ac37-bc7df1139b3d",
 		Admin:       false,
 	}
 	_, _ = model.CreateUser(testUser)
@@ -90,7 +85,6 @@ func TestPutUsers(t *testing.T) {
 	testBody := model.User{
 		Name:        "PutUser",
 		DisplayName: "変更されたテストユーザー",
-		IconFileID:  "099eed74-3ab3-4655-ac37-testtesttest",
 		Admin:       true,
 	}
 
@@ -109,7 +103,6 @@ func TestPutUsers(t *testing.T) {
 		user, err := model.GetUserByName(testUser.Name)
 		assert.NoError(err)
 		assert.Equal(user.DisplayName, testUser.DisplayName)
-		assert.Equal(user.IconFileID, testUser.IconFileID)
 	})
 
 	t.Run("admin user", func(t *testing.T) {
@@ -129,7 +122,6 @@ func TestPutUsers(t *testing.T) {
 
 		assert.Equal(testBody.Name, user.Name)
 		assert.Equal(testBody.DisplayName, user.DisplayName)
-		assert.Equal(testBody.IconFileID, user.IconFileID)
 		assert.Equal(testBody.Admin, user.Admin)
 	})
 }

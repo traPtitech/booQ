@@ -30,7 +30,6 @@
  | **id** | int | NO | PRI |  |  |  |
  | name | varchar(32) | NO | UNI |  |  | 同じ名前はありえない(はず) |
  | displayName | varchar(64) | NO |  |  |  |  |
- | iconFileID | uuid(varchar(36)) | NO |  |  |  |  |
  | admin | boolean | NO |  | false |  | 特権ユーザー的なやつ |
  | **created_at** | datetime | NO |  |  |  |  |
  | **updated_at** | datetime |  |  |  |  |  |
