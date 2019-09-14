@@ -19,15 +19,7 @@ func (user *User) TableName() string {
 	return "users"
 }
 
-// GetUser userを取得する
-func GetUser(user User) (User, error) {
-	if user.Name == "" {
-		return User{}, errors.New("Nameが存在しません")
-	}
-	res := User{}
-	db.Where("name = ?", user.Name).First(&res)
-	return res, nil
-}
+
 
 // GetUsers 全userを取得する
 func GetUsers() []User {
@@ -40,8 +32,8 @@ func GetUsers() []User {
 func GetUserByName(name string) (User, error) {
 	res := User{}
 	db.Where("name = ?", name).First(&res)
-	if res.Name == "" {
-		return User{}, errors.New("Nameが不正です")
+	if name == "" {
+		return User{}, errors.New("nameが存在しません")
 	}
 	return res, nil
 }

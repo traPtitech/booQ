@@ -11,31 +11,6 @@ func TestUserTableName(t *testing.T) {
 	assert.Equal(t, "users", (&User{}).TableName())
 }
 
-func TestGetUser(t *testing.T) {
-	t.Parallel()
-
-	t.Run("failures", func(t *testing.T) {
-		assert := assert.New(t)
-
-		user, err := GetUser(User{})
-		assert.Error(err)
-		assert.Empty(user)
-
-		user, err = GetUser(User{Name: "nothing user"})
-		assert.NoError(err)
-		assert.Empty(user)
-	})
-
-	t.Run("success", func(t *testing.T) {
-		assert := assert.New(t)
-
-		user, err := GetUser(User{Name: "traP"})
-		assert.NoError(err)
-		assert.NotEmpty(user)
-		assert.Equal("traP", user.Name)
-	})
-}
-
 func TestGetUserByName(t *testing.T) {
 	t.Parallel()
 
@@ -43,7 +18,7 @@ func TestGetUserByName(t *testing.T) {
 		assert := assert.New(t)
 
 		user, err := GetUserByName("nothing user")
-		assert.Error(err)
+		assert.NoError(err)
 		assert.Empty(user)
 	})
 

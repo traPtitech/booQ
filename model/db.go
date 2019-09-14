@@ -48,25 +48,31 @@ func Migrate() error {
 		return err
 	}
 
-	traP, _ := GetUser(User{Name: "traP"})
+	traP, _ := GetUserByName("traP")
 	if traP.Name == "" {
 		user := User{
 			Name:        "traP",
 			DisplayName: "traP",
 			Admin:       true,
 		}
-		_, _ = CreateUser(user)
+		_, err := CreateUser(user)
+		if err != nil {
+			return err
+		}
 	}
 
-	sienka, err := GetUser(User{Name: "sienka"})
+	sienka, _ := GetUserByName("sienka")
 	if sienka.Name == "" {
 		user := User{
 			Name:        "sienka",
 			DisplayName: "支援課",
 			Admin:       true,
 		}
-		_, err = CreateUser(user)
+		_, err := CreateUser(user)
+		if err != nil {
+			return err
+		}
 	}
 
-	return err
+	return nil
 }
