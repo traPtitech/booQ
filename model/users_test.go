@@ -18,7 +18,7 @@ func TestGetUserByName(t *testing.T) {
 		assert := assert.New(t)
 
 		user, err := GetUserByName("nothing user")
-		assert.Error(err)
+		assert.NoError(err)
 		assert.Empty(user)
 	})
 
