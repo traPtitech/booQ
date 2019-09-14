@@ -6,7 +6,7 @@
  | **id** | int | NO | PRI |  |
  | name | varchar(64) | NO |  |  |  | 物品名 |
  | type | int | NO |  |  |  | 物品のタイプ(0: 備品, 1: 本(備品以外)) |
- | code | int |  |  |  |  | ISBNコードとか物品管理コードとか |
+ | code | varchar(13) |  |  |  |  | ISBNコードとか物品管理コードとか |
  | description | text |  |  |  |  | 物品の説明文 |
  | img_url | text |  |  |  |  | 画像のURL(外部に頼る) |
  | **created_at** | datetime | NO |  |  |  |  |
@@ -30,7 +30,6 @@
  | **id** | int | NO | PRI |  |  |  |
  | name | varchar(32) | NO | UNI |  |  | 同じ名前はありえない(はず) |
  | displayName | varchar(64) | NO |  |  |  |  |
- | iconFileID | uuid(varchar(36)) | NO |  |  |  |  |
  | admin | boolean | NO |  | false |  | 特権ユーザー的なやつ |
  | **created_at** | datetime | NO |  |  |  |  |
  | **updated_at** | datetime |  |  |  |  |  |

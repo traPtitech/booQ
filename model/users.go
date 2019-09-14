@@ -11,7 +11,6 @@ type User struct {
 	gorm.Model
 	Name        string `gorm:"type:varchar(32);unique;not null;size:50" json:"name"`
 	DisplayName string `gorm:"type:varchar(64);not null" json:"displayName"`
-	IconFileID  string `gorm:"type:varchar(36);not null" json:"iconFileId"`
 	Admin       bool   `gorm:"default:false" json:"admin"`
 }
 
@@ -39,6 +38,16 @@ func GetUserByName(name string) (User, error) {
 	return res, nil
 }
 
+// GetUserByID userをIDから取得する
+func GetUserByID(id int) (User, error) {
+	res := User{}
+	db.Where("id = ?", id).First(&res)
+	if res.Name == "" {
+		return User{}, errors.New("該当するNameがありません")
+	}
+	return res, nil
+}
+
 // CreateUser userを作成する
 func CreateUser(user User) (User, error) {
 	if user.Name == "" {
@@ -56,4 +65,14 @@ func UpdateUser(newUser User) (User, error) {
 	}
 	db.Model(&res).Where("name = ?", newUser.Name).Updates(newUser)
 	return res, nil
+}
+
+func CheckTargetedOrAdmin(user, reqUser User) error {
+	if user.Name == "" || reqUser.Name == "" {
+		return errors.New("Nameが存在しません")
+	}
+	if !user.Admin && reqUser.Name != user.Name {
+		return errors.New("あなたは管理者でもなければ対象のUser本人でもありません")
+	}
+	return nil
 }

@@ -61,7 +61,7 @@ func TestUpdateUser(t *testing.T) {
 		t.Parallel()
 		assert := assert.New(t)
 
-		user, err := UpdateUser(User{IconFileID:"testfile"})
+		user, err := UpdateUser(User{DisplayName: "test3display"})
 		assert.Error(err)
 		assert.Empty(user)
 	})
@@ -73,9 +73,53 @@ func TestUpdateUser(t *testing.T) {
 		assert.NoError(err1)
 		assert.NotEmpty(user1)
 
-		user, err := UpdateUser(User{Name: "test3", IconFileID: "testfile"})
+		user, err := UpdateUser(User{Name: "test3", DisplayName: "test3display"})
 		assert.NoError(err)
 		assert.NotEmpty(user)
-		assert.Equal("testfile", user.IconFileID)
+		assert.Equal("test3display", user.DisplayName)
+	})
+}
+
+func TestCheckTargetedOrAdmin(t *testing.T) {
+	t.Parallel()
+
+	t.Run("failures", func(t *testing.T) {
+		t.Parallel()
+		assert := assert.New(t)
+
+		user, err := CreateUser(User{Name: "target_user1"})
+		assert.NoError(err)
+		assert.NotEmpty(user)
+		reqUser, err := CreateUser(User{Name: "another_test1"})
+		assert.NoError(err)
+		assert.NotEmpty(reqUser)
+		err = CheckTargetedOrAdmin(user, reqUser)
+		assert.Error(err)
+
+		reqUser, err = CreateUser(User{Name: "another_test2", Admin: true})
+		assert.NoError(err)
+		assert.NotEmpty(reqUser)
+		err = CheckTargetedOrAdmin(user, reqUser)
+		assert.Error(err)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		t.Parallel()
+		assert := assert.New(t)
+
+		user, err := CreateUser(User{Name: "target_user2"})
+		assert.NoError(err)
+		assert.NotEmpty(user)
+		err = CheckTargetedOrAdmin(user, user)
+		assert.NoError(err)
+
+		user, err = CreateUser(User{Name: "target_user3", Admin: true})
+		assert.NoError(err)
+		assert.NotEmpty(user)
+		reqUser, err := CreateUser(User{Name: "another_test3"})
+		assert.NoError(err)
+		assert.NotEmpty(reqUser)
+		err = CheckTargetedOrAdmin(user, reqUser)
+		assert.NoError(err)
 	})
 }
