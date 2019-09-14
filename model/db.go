@@ -12,6 +12,7 @@ var db *gorm.DB
 var allTables = []interface{}{
 	User{},
 	Item{},
+	Owner{},
 }
 
 // EstablishConnection DBに接続する
@@ -47,11 +48,21 @@ func Migrate() error {
 		return err
 	}
 
-	traP, err := GetUser(User{Name: "traP"})
+	traP, _ := GetUser(User{Name: "traP"})
 	if traP.Name == "" {
 		user := User{
 			Name:        "traP",
 			DisplayName: "traP",
+			Admin:       true,
+		}
+		_, _ = CreateUser(user)
+	}
+
+	sienka, err := GetUser(User{Name: "sienka"})
+	if sienka.Name == "" {
+		user := User{
+			Name:        "sienka",
+			DisplayName: "支援課",
 			Admin:       true,
 		}
 		_, err = CreateUser(user)

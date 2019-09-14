@@ -47,6 +47,16 @@ func GetItemByID(id int) (Item, error) {
 	return res, nil
 }
 
+// GetItemByName Nameからitemを取得する
+func GetItemByName(name string) (Item, error) {
+	res := Item{}
+	db.Where("name = ?", name).First(&res)
+	if res.Name == "" {
+		return Item{}, errors.New("該当するNameがありません")
+	}
+	return res, nil
+}
+
 // GetItems 全itemを取得する
 func GetItems() ([]Item, error) {
 	res := []Item{}
