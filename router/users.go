@@ -11,10 +11,12 @@ import (
 // GetUsersMe GET /users/me
 func GetUsersMe(c echo.Context) error {
 	user := c.Get("user").(model.User)
-	res, err := model.GetUser(user)
+	res, _ := model.GetUserByName(user.Name)
+	/*
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+	*/
 
 	if res.Name == "" {
 		res, _ = model.CreateUser(user)
@@ -49,6 +51,9 @@ func PutUsers(c echo.Context) error {
 	err = model.CheckTargetedOrAdmin(user, req)
 	if err != nil {
 		return c.JSON(http.StatusForbidden, err)
+	}
+	if user.Name != req.Name && !user.Admin {
+		return c.NoContent(http.StatusForbidden)
 	}
 	if !user.Admin && req.Admin {
 		return c.NoContent(http.StatusForbidden)
