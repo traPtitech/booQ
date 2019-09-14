@@ -182,6 +182,12 @@ workflows:
             tags:
               only: /.*/
       - deploy-staging:
+          requires:
+            - server-build
+            - client-build
+            - server-lint
+            - client-lint
+            - server-test
           filters:
             branches:
               only: master

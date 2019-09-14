@@ -50,6 +50,9 @@ func PutUsers(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusForbidden, err)
 	}
+	if user.Name != req.Name && !user.Admin {
+		return c.NoContent(http.StatusForbidden)
+	}
 	if !user.Admin && req.Admin {
 		return c.NoContent(http.StatusForbidden)
 	}
