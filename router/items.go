@@ -46,6 +46,7 @@ func GetItem(c echo.Context) error {
 // PostOwners POST /items/:id/owners
 func PostOwners(c echo.Context) error {
 	ID := c.Param("id")
+	me := c.Get("user").(model.User)
 	body := model.RequestPostOwnersBody{}
 	if err := c.Bind(&body); err != nil {
 		return err
@@ -58,15 +59,19 @@ func PostOwners(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+	err = model.CheckTargetedOrAdmin(me, user)
+	if err != nil {
+		return c.JSON(http.StatusForbidden, err)
+	}
 	item, err := model.GetItemByID(itemID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	// item.Type=0⇒個人、1⇒trap(id:1)所有、2⇒支援課(id:2)
-	if item.Type == 1 && user.ID != 1 {
+	if item.Type == 1 && user.Name != "traP" {
 		return c.NoContent(http.StatusForbidden)
 	}
-	if item.Type == 2 && user.ID != 2 {
+	if item.Type == 2 && user.Name != "sienka" {
 		return c.NoContent(http.StatusForbidden)
 	}
 	var owner model.Owner
