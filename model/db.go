@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/jinzhu/gorm"
@@ -47,7 +48,7 @@ func Migrate() error {
 	if err := db.AutoMigrate(allTables...).Error; err != nil {
 		return err
 	}
-
+	
 	traP, err := GetUser(User{Name: "traP"})
 	if traP.Name == "" {
 		user := User{
