@@ -12,6 +12,7 @@ var db *gorm.DB
 var allTables = []interface{}{
 	User{},
 	Item{},
+	Log{},
 }
 
 // EstablishConnection DBに接続する
