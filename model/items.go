@@ -40,9 +40,9 @@ func (item *Owner) TableName() string {
 // GetItemByID IDからitemを取得する
 func GetItemByID(id int) (Item, error) {
 	res := Item{}
-	db.Where("id = ?", id).First(&res)
+	db.First(&res, id).Related(&res.Owners, "Owners")
 	if res.Name == "" {
-		return Item{}, errors.New("該当するNameがありません")
+		return Item{}, errors.New("該当するItemがありません")
 	}
 	return res, nil
 }
