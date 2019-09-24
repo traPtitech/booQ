@@ -41,7 +41,9 @@
         <v-img
           :src="img"
           aspect-ratio="1"
+          position="left"
           :contain="true"
+          max-height="500px"
         />
         <v-container>
           <p>{{ img_name }}</p>
