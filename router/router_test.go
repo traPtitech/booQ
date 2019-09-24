@@ -36,7 +36,6 @@ func echoSetupWithUser() *echo.Echo {
 			user := model.User{
 				Name:        "testUser",
 				DisplayName: "テストユーザー",
-				IconFileID:  "099eed74-3ab3-4655-ac37-bc7df1139b3d",
 				Admin:       false,
 			}
 			c.Set("user", user)
@@ -54,7 +53,6 @@ func echoSetupWithAdminUser() *echo.Echo {
 			adminUser := model.User{
 				Name:        "traP",
 				DisplayName: "traP",
-				IconFileID:  "099eed74-3ab3-4655-ac37-bc7df1139b3d",
 				Admin:       true,
 			}
 			c.Set("user", adminUser)

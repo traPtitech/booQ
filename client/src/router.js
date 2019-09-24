@@ -1,7 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from './store'
-import Home from './views/Home.vue'
+import Home from './components/Home.vue'
+import DashBoard from './components/DashBoard.vue'
+import UserPage from './components/UserPage.vue'
+import RegisterItemPage from './components/RegisterItemPage'
+import ItemDetailPage from './components/ItemDetailPage'
+import RegisterOwnerForm from './components/RegisterOwnerForm'
+import RentalForm from './components/RentalForm'
+import AdminPage from './components/AdminPage'
+import AllItemPage from './components/AllItemPage'
 import { fetchAuthToken, setAuthToken, getMe } from './utils/api'
 
 setAuthToken(store.state.authToken)
@@ -14,6 +22,59 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'dashboard',
+      component: DashBoard
+    },
+    {
+      path: '/user/:name',
+      name: 'User Page',
+      component: UserPage
+    },
+    {
+      path: '/items/new',
+      name: 'Register Item Page',
+      component: RegisterItemPage
+    },
+    {
+      path: '/items/:id',
+      name: 'Item',
+      component: ItemDetailPage
+    },
+    {
+      path: '/items/:id/owner/new',
+      component: RegisterOwnerForm
+    },
+    {
+      path: '/items/:id/rental',
+      component: RentalForm
+    },
+    {
+      path: '/items',
+      name: 'All Item',
+      component: AllItemPage
+    },
+    // ここから
+    {
+      path: '/items_test',
+      name: 'Item',
+      component: ItemDetailPage
+    },
+    {
+      path: '/register_owner_form',
+      component: RegisterOwnerForm
+    },
+    {
+      path: '/rental_form',
+      component: RentalForm
+    },
+    // ここまで消す
+    {
+      path: '/admin',
+      component: AdminPage
+    },
+    {
+      // TODO: 初期ページなのである程度検証したら消す
+      path: '/home',
       name: 'home',
       component: Home
     },
@@ -23,12 +84,12 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: () => import(/* webpackChunkName: "about" */ './components/About.vue')
     },
     {
       path: '/callback',
       name: 'callback',
-      component: () => import('./views/Home.vue'),
+      component: () => import('./components/Home.vue'),
       beforeEnter: async (to, from, next) => {
         const code = to.query.code
         const state = to.query.state
