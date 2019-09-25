@@ -1,23 +1,23 @@
 <template>
   <v-container>
     <h1>物品登録ページ</h1>
-    <h4>物品の種類を選択してください</h4>
+    <!-- <h4>物品の種類を選択してください</h4>
     <v-container>
       <label v-for="(label,id) in typeOptions" v-bind:key="label">
         <input type="radio" name="type" :value="id" v-model="typeID">{{ label }}
       </label>
       <br>
       <span>登録する物品の種類: {{ typeOptions[typeID] }}</span>
-    </v-container>
-    <v-container>
+    </v-container> -->
+    <v-container v-if="$store.state.me.admin">
+      <span>登録する物品の所有者: {{ ownerOptions[ownerID] }}</span>
+      <br>
       <label v-for="(label,id) in ownerOptions" v-bind:key="label">
         <input type="radio" name="owner" :value="id" v-model="ownerID">{{ label }}
       </label>
-      <br>
-      <span>登録する物品の所有者: {{ ownerOptions[ownerID] }}</span>
     </v-container>
     <v-container>
-      <input type="checkbox" id="checkbox" v-model="checked">
+      <input type="checkbox" id="checkbox" v-model="rentalable">
       <label for="checkbox">貸し出し可</label>
     </v-container>
     <v-container>
@@ -38,10 +38,12 @@
         <input type="file" @change="onFileChange" />
       </label>
       <v-container class="preview-item">
-        <img
-          v-show="img"
+        <v-img
           :src="img"
-          alt=""
+          aspect-ratio="1"
+          position="left"
+          :contain="true"
+          max-height="500px"
         />
         <v-container>
           <p>{{ img_name }}</p>
@@ -53,39 +55,61 @@
       <p>個数</p>
       <v-text-field class="mt-0" solo required v-model.number="count" type="number"/>
     </v-container>
-    <v-btn @click="register">登録</v-btn>
+    <v-btn class="blue" @click="register">登録</v-btn>
   </v-container>
 </template>
 
 <script>
+import axios from 'axios'
+import { getMe } from '@/utils/api'
+
 export default {
   name: 'RegisterItemPage',
   data() {
     return{
-      typeID: 1,
-      typeOptions: {
-        1: '本',
-        0: '備品',
-      },
+      // typeID: 1,
+      // typeOptions: {
+      //   1: '本',
+      //   0: '備品',
+      // },
       ownerID: 0,
       ownerOptions: {
         0: '個人',
-        //以下はAdminUserのみ表示されるように(おそらく後のissueのタスク)
         1: 'traP',
         2: '支援課'
       },
-      checked: true,
+      rentalable: true,
       code: '',
       img: 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail', //ここは適当に変えてください
       name: '',
       description: '',
       img_name: '',
+      img_url: '',
       count: 1,
+      res: ""
     };
   },
   methods: {
     register: function () {
-        //axios.post~~~
+      if (this.img_name != '') {
+        //img_urlに画像のURLをセットしてください
+      }
+      axios.post(`/api/items`, { name: this.name, code: this.code, type: this.ownerID, description: this.description, img_url:this.img_url})
+        .then(res => {
+          if (this.ownerID==0) {
+            axios.post(`/api/items/` + res.data.ID + `/owners`, {user_id: this.$store.state.me.ID, rentalable: this.rentalable})
+              .then(res => {
+                alert("Registered ”" + res.data.name + "”!所有者は" + this.$store.state.me.name + "です。")
+              }).catch( e => {alert(e)})
+          } else {
+            axios.post(`/api/items/` + res.data.ID + `/owners`, {user_id: this.ownerID, rentalable: this.rentalable})
+              .then(res => {
+                alert("Registered ”" + res.data.name + "”!所有者は" + this.ownerOptions[this.ownerID] + "です。")
+              }).catch( e => {alert(e)})
+          }
+        }).catch( e => {
+          alert(e)
+        })
     },
     onFileChange(e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -102,7 +126,7 @@ export default {
     remove() {
       this.img = 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail';
       this.img_name = ''
-    },
+    }
   }
 }
 </script>
