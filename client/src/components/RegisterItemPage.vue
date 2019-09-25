@@ -61,7 +61,6 @@
 
 <script>
 import axios from 'axios'
-import { getMe } from '@/utils/api'
 
 export default {
   name: 'RegisterItemPage',
@@ -91,12 +90,12 @@ export default {
   },
   methods: {
     register: function () {
-      if (this.img_name != '') {
+      if (this.img_name) {
         //img_urlに画像のURLをセットしてください
       }
       axios.post(`/api/items`, { name: this.name, code: this.code, type: this.ownerID, description: this.description, img_url:this.img_url})
         .then(res => {
-          if (this.ownerID==0) {
+          if (this.ownerID === 0) {
             axios.post(`/api/items/` + res.data.ID + `/owners`, {user_id: this.$store.state.me.ID, rentalable: this.rentalable})
               .then(res => {
                 alert("Registered ”" + res.data.name + "”!所有者は" + this.$store.state.me.name + "です。")
