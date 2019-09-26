@@ -9,6 +9,16 @@ import (
 	"github.com/traPtitech/booQ/model"
 )
 
+// GetItems GET /items
+func GetItems(c echo.Context) error {
+	res, err := model.GetItems()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusCreated, res)
+}
+
 // PostItems POST /items
 func PostItems(c echo.Context) error {
 	user := c.Get("user").(model.User)
@@ -26,6 +36,21 @@ func PostItems(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, res)
+}
+
+// GetItem GET /items/:id
+func GetItem(c echo.Context) error {
+	ID := c.Param("id")
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, err := model.GetItemByID(itemID)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, err)
+	}
+
+	return c.JSON(http.StatusOK, item)
 }
 
 // PostOwners POST /items/:id/owners

@@ -78,6 +78,11 @@ export default {
           text: 'Dashboard'
         },
         {
+          to: '/items',
+          icon: 'mdi-view-list',
+          text: 'Item List'
+        },
+        {
           to: `/user/wip`,
           icon: 'mdi-account',
           text: 'User Profile'
@@ -86,7 +91,7 @@ export default {
           to: `/items/new`,
           // icon: 'mdi-account', あとで
           text: ' Register Item'
-        },
+        }
       ],
       responsive: false
     }

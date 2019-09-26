@@ -10,13 +10,13 @@
 <script>
 export default {
   name: 'AdminPage',
-  data() {
-    return{
-      target: '',
+  data () {
+    return {
+      target: ''
     }
   },
   methods: {
-    attach() {
+    attach () {
       // this.targetとかをaxios.postで
     }
   }

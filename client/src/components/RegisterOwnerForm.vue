@@ -11,19 +11,19 @@
 <script>
 export default {
   name: 'RegisterOwnerForm',
-  data() {
-    return{
+  data () {
+    return {
       ownerID: 0,
       ownerOptions: {
         0: '自身',
-        //以下はAdminUserのみ表示されるように(おそらく後のissueのタスク)
+        // 以下はAdminUserのみ表示されるように(おそらく後のissueのタスク)
         1: 'traP',
         2: '支援課'
-      },
+      }
     }
   },
   methods: {
-    add(num) {
+    add (num) {
       // axios.postで
     }
   }

@@ -16,14 +16,14 @@
 <script>
 export default {
   name: 'RentalForm',
-  data() {
-    return{
+  data () {
+    return {
       porpose: '',
       dueDate: ''
     }
   },
   methods: {
-    submit() {
+    submit () {
       // this.porposeとかをaxios.postで
     }
   }
