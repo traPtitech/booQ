@@ -9,6 +9,16 @@ import (
 	"github.com/traPtitech/booQ/model"
 )
 
+// GetItems GET /items
+func GetItems(c echo.Context) error {
+	res, err := model.GetItems()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusCreated, res)
+}
+
 // PostItems POST /items
 func PostItems(c echo.Context) error {
 	user := c.Get("user").(model.User)

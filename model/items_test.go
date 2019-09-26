@@ -33,24 +33,28 @@ func TestCreateItem(t *testing.T) {
 	})
 }
 
-func TestRegisterOwner(t *testing.T) {
+func TestGetItems(t *testing.T) {
 	t.Parallel()
 
-	// failする要素が分らなかったのでfailを書いてません
-
+	user, _ := CreateUser(User{Name: "testAllItemUser"})
+	var owner Owner
+	owner.Owner = user
+	owner.Rentalable = true
+	item, _ := CreateItem(Item{Name: "testAllItemItem"})
+	_, _ = RegisterOwner(owner, item)
 	t.Run("success", func(t *testing.T) {
 		t.Parallel()
 		assert := assert.New(t)
 
-		user, _ := CreateUser(User{Name: "registerTestOwner"})
-		var owner Owner
-		owner.Owner = user
-		owner.Rentalable = true
-		item, _ := CreateItem(Item{Name: "registerTestItem"})
-		item, err := RegisterOwner(owner, item)
-
+		items, err := GetItems()
+		for _, value := range items {
+			if value.Name == "testAllItemItem" {
+				assert.Equal("testAllItemUser", value.Owners[0].Owner.Name)
+				break
+			}
+			continue
+		}
 		assert.NoError(err)
-		assert.NotEmpty(item)
-		assert.Equal(item.Owners[0].Owner.Name, user.Name)
+		assert.NotEmpty(items)
 	})
 }

@@ -61,6 +61,11 @@ func GetItemByName(name string) (Item, error) {
 func GetItems() ([]Item, error) {
 	res := []Item{}
 	db.Find(&res)
+	for i, item := range res {
+		itemWithOwner := Item{}
+		db.First(&itemWithOwner).Related(&item.Owners, "Owners").Where("name=?", item.Name)
+		res[i] = itemWithOwner
+	}
 	return res, nil
 }
 
