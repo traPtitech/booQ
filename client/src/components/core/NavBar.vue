@@ -77,7 +77,7 @@ import { getMe } from '@/utils/api'
 export default {
   data () {
     return {
-      logo: './img/logo.png',
+      logo: '/img/logo.png',
       title: null,
       responsive: false,
       responsiveInput: false

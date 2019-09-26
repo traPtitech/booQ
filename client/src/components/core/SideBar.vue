@@ -70,7 +70,7 @@ export default {
   name: 'SideBar',
   data () {
     return {
-      logo: './img/logo.png',
+      logo: '/img/logo.png',
       links: [
         {
           to: '/',
