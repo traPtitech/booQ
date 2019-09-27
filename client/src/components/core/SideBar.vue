@@ -44,14 +44,6 @@
           v-text="link.text"
         />
       </v-list-item>
-      <v-list-item
-        active-class="primary"
-        class="nav-footer"
-      >
-        <div class="font-weight-light body-1">
-          
-        </div>
-      </v-list-item>
     </v-list>
     <template v-slot:append>
       <v-list nav>
