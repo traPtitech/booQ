@@ -70,12 +70,17 @@ export default {
   name: 'SideBar',
   data () {
     return {
-      logo: './img/logo.png',
+      logo: '/img/logo.png',
       links: [
         {
           to: '/',
           icon: 'mdi-view-dashboard',
           text: 'Dashboard'
+        },
+        {
+          to: '/items',
+          icon: 'mdi-view-list',
+          text: 'Item List'
         },
         {
           to: `/user/wip`,
@@ -86,7 +91,7 @@ export default {
           to: `/items/new`,
           // icon: 'mdi-account', あとで
           text: ' Register Item'
-        },
+        }
       ],
       responsive: false
     }

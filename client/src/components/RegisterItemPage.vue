@@ -64,22 +64,23 @@ import axios from 'axios'
 
 export default {
   name: 'RegisterItemPage',
-  data() {
-    return{
-      // typeID: 1,
-      // typeOptions: {
-      //   1: '本',
-      //   0: '備品',
-      // },
+  data () {
+    return {
+      typeID: 1,
+      typeOptions: {
+        1: '本',
+        0: '備品'
+      },
       ownerID: 0,
       ownerOptions: {
         0: '個人',
+        // 以下はAdminUserのみ表示されるように(おそらく後のissueのタスク)
         1: 'traP',
         2: '支援課'
       },
       rentalable: true,
       code: '',
-      img: 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail', //ここは適当に変えてください
+      img: 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail', // ここは適当に変えてください
       name: '',
       description: '',
       img_name: '',
@@ -110,20 +111,20 @@ export default {
           alert(e)
         })
     },
-    onFileChange(e) {
-      const files = e.target.files || e.dataTransfer.files;
-      this.createImage(files[0]);
-      this.img_name = files[0].name;
+    onFileChange (e) {
+      const files = e.target.files || e.dataTransfer.files
+      this.createImage(files[0])
+      this.img_name = files[0].name
     },
-    createImage(file) {
-      const reader = new FileReader();
+    createImage (file) {
+      const reader = new FileReader()
       reader.onload = e => {
-        this.img = e.target.result;
-      };
-      reader.readAsDataURL(file);
+        this.img = e.target.result
+      }
+      reader.readAsDataURL(file)
     },
-    remove() {
-      this.img = 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail';
+    remove () {
+      this.img = 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail'
       this.img_name = ''
     }
   }
