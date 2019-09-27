@@ -9,57 +9,65 @@
     mobile-break-point="991"
     width="260"
   >
-    <v-layout
-      class="fill-height"
-      column
-    >
-      <v-list
-        style="display: contents;"
+    <v-list-item two-line>
+      <v-list-item-avatar>
+        <v-img
+          :src="logo"
+          height="45"
+        />
+      </v-list-item-avatar>
+      <v-list-item-title class="title">
+        booQ
+      </v-list-item-title>
+    </v-list-item>
+    <v-divider/>
+    <v-list nav>
+      <v-list-item>
+        <v-text-field
+          class="purple-input search-input"
+          label="Search..."
+          color="purple"
+        />
+      </v-list-item>
+      <v-list-item
+        v-for="(link, i) in links"
+        :key="i"
+        :to="link.to"
+        :active-class="color"
+        avatar
+        class="v-list-item"
       >
-        <v-list-tile avatar>
-          <v-list-tile-avatar>
-            <v-img
-              :src="logo"
-              height="45"
-            />
-          </v-list-tile-avatar>
-          <v-list-tile-title class="title">
-            booQ
-          </v-list-tile-title>
-        </v-list-tile>
-        <v-divider/>
-        <v-list-tile>
-          <v-text-field
-            class="purple-input search-input"
-            label="Search..."
-            color="purple"
-          />
-        </v-list-tile>
-        <v-list-tile
-          v-for="(link, i) in links"
-          :key="i"
-          :to="link.to"
-          :active-class="color"
-          avatar
-          class="v-list-item"
+        <v-list-item-action>
+          <v-icon>{{ link.icon }}</v-icon>
+        </v-list-item-action>
+        <v-list-item-title
+          v-text="link.text"
+        />
+      </v-list-item>
+      <v-list-item
+        active-class="primary"
+        class="nav-footer"
+      >
+        <div class="font-weight-light body-1">
+          
+        </div>
+      </v-list-item>
+    </v-list>
+    <template v-slot:append>
+      <v-list nav>
+        <v-list-item
+          href="https://github.com/traPtitech/booQ"
         >
-          <v-list-tile-action>
-            <v-icon>{{ link.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title
-            v-text="link.text"
-          />
-        </v-list-tile>
-        <v-list-tile
-          active-class="primary"
-          class="nav-footer"
-        >
-          <div class="font-weight-light body-1">
-            <a href="https://github.com/traPtitech/booQ" target="_blank">booQ Project</a>
-          </div>
-        </v-list-tile>
+          <v-list-item-action>
+            <v-icon>mdi-book</v-icon>
+          </v-list-item-action>
+
+          <v-list-item-title class="font-weight-light">
+            booQ Project
+          </v-list-item-title>
+        </v-list-item>
       </v-list>
-    </v-layout>
+    </template>
   </v-navigation-drawer>
 </template>
 
@@ -132,27 +140,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-  #app-drawer {
-    .v-list__tile {
-      border-radius: 4px;
-    }
-    .nav-footer {
-      margin-top: auto;
-      margin-bottom: 5px;
-    }
-    .v-image__image--contain {
-      top: 9px;
-      height: 60%;
-    }
-    .search-input {
-      margin-bottom: 30px !important;
-      padding-left: 15px;
-      padding-right: 15px;
-    }
-    div.v-responsive.v-image > div.v-responsive__content {
-      overflow-y: auto;
-    }
-  }
-</style>

@@ -20,6 +20,6 @@ export default {
 
 <style>
 #core-view {
-  padding: 64px 0 100px 15px;
+  padding: 15px 0 100px 15px;
 }
 </style>

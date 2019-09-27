@@ -1,37 +1,32 @@
 <template>
-  <v-toolbar
-    id="core-toolbar"
+  <v-app-bar
+    id="core-app-bar"
     fixed
-    prominent
+    app
+    height="70"
     style="background: #eee;"
   >
-    <div class="v-toolbar-title">
-      <v-toolbar-title
-        v-if="responsive"
-        class="tertiary--text title"
+    <v-toolbar-title
+      v-if="responsive"
+      class="tertiary--text align-self-center"
+    >
+      <v-btn
+        dark
+        icon
+        @click.stop="onClickBtn"
       >
-        <v-btn
-          class="default v-btn--simple"
-          dark
-          icon
-          @click.stop="onClickBtn"
-        >
-          <v-img
-            :src="logo"
-            height="35"
-          />
-        </v-btn>
-        booQ
-      </v-toolbar-title>
-      <v-toolbar-title
-        v-else
-        class="tertiary--text title"
-        style="padding-left: 260px;"
-      >
-        {{ title }}
-      </v-toolbar-title>
-    </div>
-
+        <v-avatar>
+          <v-img :src="logo" />
+        </v-avatar>
+      </v-btn>
+      booQ
+    </v-toolbar-title>
+    <v-toolbar-title
+      v-else
+      class="tertiary--text align-self-center"
+    >
+      {{ title }}
+    </v-toolbar-title>
     <v-spacer />
     <v-toolbar-items>
       <v-flex
@@ -67,7 +62,7 @@
         </router-link>
       </v-flex>
     </v-toolbar-items>
-  </v-toolbar>
+  </v-app-bar>
 </template>
 
 <script>
@@ -129,7 +124,10 @@ export default {
 </script>
 
 <style>
-  #core-toolbar a {
+  #core-app-bar {
+    width: auto;
+  }
+  #core-app-bar a {
     text-decoration: none;
   }
 </style>
