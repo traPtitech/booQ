@@ -38,10 +38,12 @@
         <input type="file" @change="onFileChange" />
       </label>
       <v-container class="preview-item">
-        <img
-          v-show="img"
+        <v-img
           :src="img"
-          alt=""
+          aspect-ratio="1"
+          position="left"
+          :contain="true"
+          max-height="500px"
         />
         <v-container>
           <p>{{ img_name }}</p>
