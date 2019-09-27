@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from './store'
 import Home from './components/Home.vue'
+import About from './components/About.vue'
 import DashBoard from './components/DashBoard.vue'
 import UserPage from './components/UserPage.vue'
 import RegisterItemPage from './components/RegisterItemPage'
@@ -22,11 +23,16 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'dashboard',
+      name: 'Dashboard',
       component: DashBoard
     },
     {
-      path: '/user/:name',
+      path: '/users',
+      name: 'All Users',
+      component: UserPage
+    },
+    {
+      path: '/users/:name',
       name: 'User Page',
       component: UserPage
     },
@@ -50,7 +56,7 @@ export default new Router({
     },
     {
       path: '/items',
-      name: 'All Item',
+      name: 'All Items',
       component: AllItemPage
     },
     // ここから
@@ -80,11 +86,8 @@ export default new Router({
     },
     {
       path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './components/About.vue')
+      name: 'About',
+      component: About
     },
     {
       path: '/callback',

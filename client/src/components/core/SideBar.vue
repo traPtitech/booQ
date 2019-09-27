@@ -34,8 +34,7 @@
         :key="i"
         :to="link.to"
         :active-class="color"
-        avatar
-        class="v-list-item"
+        exact
       >
         <v-list-item-action>
           <v-icon>{{ link.icon }}</v-icon>
@@ -46,19 +45,33 @@
       </v-list-item>
     </v-list>
     <template v-slot:append>
-      <v-list nav>
-        <v-list-item
-          href="https://github.com/traPtitech/booQ"
+      <v-flex layout>
+        <v-list nav>
+          <v-list-item
+            href="https://github.com/traPtitech/booQ"
+          >
+            <v-list-item-title class="font-weight-light">
+              booQ Project v0.0.0
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+        <v-list
+          nav
+          width="55"
         >
-          <v-list-item-action>
-            <v-icon>mdi-book</v-icon>
-          </v-list-item-action>
-
-          <v-list-item-title class="font-weight-light">
-            booQ Project
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
+          <v-list-item
+            to="/about"
+            :active-class="color"
+          >
+            <v-list-item-action>
+              <v-icon>mdi-help</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>
+              about
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-flex>
     </template>
   </v-navigation-drawer>
 </template>
@@ -83,14 +96,14 @@ export default {
           text: 'Item List'
         },
         {
-          to: `/user/wip`,
+          to: `/users`,
           icon: 'mdi-account',
-          text: 'User Profile'
+          text: 'User List'
         },
         {
           to: `/items/new`,
-          // icon: 'mdi-account', あとで
-          text: ' Register Item'
+          icon: 'add_box',
+          text: 'Register Item'
         }
       ],
       responsive: false
