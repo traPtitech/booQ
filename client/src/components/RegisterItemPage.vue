@@ -66,15 +66,14 @@ export default {
   name: 'RegisterItemPage',
   data () {
     return {
-      typeID: 1,
-      typeOptions: {
-        1: '本',
-        0: '備品'
-      },
+      // typeID: 1,
+      // typeOptions: {
+      //   1: '本',
+      //   0: '備品'
+      // },
       ownerID: 0,
       ownerOptions: {
         0: '個人',
-        // 以下はAdminUserのみ表示されるように(おそらく後のissueのタスク)
         1: 'traP',
         2: '支援課'
       },
@@ -86,28 +85,28 @@ export default {
       img_name: '',
       img_url: '',
       count: 1,
-      res: ""
-    };
+      res: ''
+    }
   },
   methods: {
     register: function () {
       if (this.img_name) {
-        //img_urlに画像のURLをセットしてください
+        // img_urlに画像のURLをセットしてください
       }
-      axios.post(`/api/items`, { name: this.name, code: this.code, type: this.ownerID, description: this.description, img_url:this.img_url})
+      axios.post(`/api/items`, { name: this.name, code: this.code, type: this.ownerID, description: this.description, img_url: this.img_url })
         .then(res => {
           if (this.ownerID === 0) {
-            axios.post(`/api/items/` + res.data.ID + `/owners`, {user_id: this.$store.state.me.ID, rentalable: this.rentalable})
+            axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable })
               .then(res => {
-                alert("Registered ”" + res.data.name + "”!所有者は" + this.$store.state.me.name + "です。")
-              }).catch( e => {alert(e)})
+                alert('Registered ”' + res.data.name + '”!所有者は' + this.$store.state.me.name + 'です。"')
+              }).catch(e => { alert(e) })
           } else {
-            axios.post(`/api/items/` + res.data.ID + `/owners`, {user_id: this.ownerID, rentalable: this.rentalable})
+            axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable })
               .then(res => {
-                alert("Registered ”" + res.data.name + "”!所有者は" + this.ownerOptions[this.ownerID] + "です。")
-              }).catch( e => {alert(e)})
+                alert('Registered ”' + res.data.name + '”!所有者は' + this.ownerOptions[this.ownerID] + 'です。')
+              }).catch(e => { alert(e) })
           }
-        }).catch( e => {
+        }).catch(e => {
           alert(e)
         })
     },
