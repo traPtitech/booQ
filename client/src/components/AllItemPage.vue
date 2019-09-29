@@ -1,7 +1,5 @@
 <template>
-  <v-container>
-    <ItemList :items="data" />
-  </v-container>
+  <ItemList :items="data" />
 </template>
 
 <script>
@@ -16,150 +14,274 @@ export default {
       data: null,
       sampleData: [
         {
-          id: 1,
-          name: '小説　天気の子',
-          code: '9784041026403',
-          type: 1,
-          owners: [
+          'id': 1,
+          'name': '小説　天気の子',
+          'code': 9784041026403,
+          'type': 1,
+          'owners': [
             {
-              user: {
-                id: 1,
-                name: 'nagatech',
-                displayName: 'ながてち',
-                admin: true
+              'user': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
               },
-              rentalable: true
+              'rentalable': true
             }
           ],
-          description: '高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。',
-          comments: [
+          'latest_logs': [
             {
-              id: 1,
-              item_id: 1,
-              user: {
-                id: 1,
-                name: 'nagatech',
-                displayName: 'ながてち',
-                admin: true
+              'id': 1,
+              'item_id': 1,
+              'user': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
               },
-              comment: '小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。',
-              created_at: '2019/07/28 22:00:00',
-              updated_at: '2019/07/28 22:00:00'
-            }
-          ],
-          logs: [
-            {
-              id: 1,
-              item_id: 1,
-              user: {
-                id: 1,
-                name: 'nagatech',
-                displayName: 'ながてち',
-                admin: true
+              'owner': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
               },
-              owner: {
-                id: 1,
-                name: 'nagatech',
-                displayName: 'ながてち',
-                admin: true
-              },
-              type: 0,
-              purpose: '読みたかったから。',
-              due_date: '2019/07/30 23:30:00',
-              created_at: '2019/07/28 22:00:00',
-              updated_at: '2019/07/28 22:00:00'
+              'type': 0,
+              'purpose': '読みたかったから。',
+              'due_date': '2019/07/30 23:30:00',
+              'created_at': '2019/07/28 22:00:00',
+              'updated_at': '2019/07/28 22:00:00'
             }
           ],
-          tags: [
+          'tags': [
             {
-              id: 1,
-              name: '小説'
+              'id': 1,
+              'name': '小説'
             }
           ],
-          likes: [
-            {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              admin: true
-            }
-          ],
-          img_url: 'https://cover.openbd.jp/9784041026403.jpg',
-          created_at: '2019/07/28 22:00:00',
-          updated_at: '2019/07/28 22:00:00'
+          'like_counts': 1,
+          'img_url': 'https://cover.openbd.jp/9784041026403.jpg',
+          'created_at': '2019/07/28 22:00:00',
+          'updated_at': '2019/07/28 22:00:00'
         },
         {
-          id: 1,
-          name: '小説　天気の子',
-          code: '9784041026403',
-          type: 1,
-          owners: [
+          'id': 2,
+          'name': '小説　天気の子',
+          'code': 9784041026403,
+          'type': 1,
+          'owners': [
             {
-              user: {
-                id: 1,
-                name: 'nagatech',
-                displayName: 'ながてち',
-                admin: true
+              'user': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
               },
-              rentalable: true
-            }
-          ],
-          description: '高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。',
-          comments: [
+              'rentalable': true
+            },
             {
-              id: 1,
-              item_id: 1,
-              user: {
-                id: 1,
-                name: 'nagatech',
-                displayName: 'ながてち',
-                admin: true
+              'user': {
+                'id': 2,
+                'name': 'ryoha',
+                'displayName': 'りょは',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
               },
-              comment: '小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。',
-              created_at: '2019/07/28 22:00:00',
-              updated_at: '2019/07/28 22:00:00'
+              'rentalable': false
             }
           ],
-          logs: [
+          'latest_logs': [
             {
-              id: 1,
-              item_id: 1,
-              user: {
-                id: 1,
-                name: 'nagatech',
-                displayName: 'ながてち',
-                admin: true
+              'id': 1,
+              'item_id': 1,
+              'user': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
               },
-              owner: {
-                id: 1,
-                name: 'nagatech',
-                displayName: 'ながてち',
-                admin: true
+              'owner': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
               },
-              type: 0,
-              purpose: '読みたかったから。',
-              due_date: '2019/07/30 23:30:00',
-              created_at: '2019/07/28 22:00:00',
-              updated_at: '2019/07/28 22:00:00'
+              'type': 0,
+              'purpose': '読みたかったから。',
+              'due_date': '2019/07/30 23:30:00',
+              'created_at': '2019/07/28 22:00:00',
+              'updated_at': '2019/07/28 22:00:00'
             }
           ],
-          tags: [
+          'tags': [
             {
-              id: 1,
-              name: '小説'
+              'id': 1,
+              'name': '小説'
             }
           ],
-          likes: [
+          'like_counts': 114,
+          'img_url': 'https://cover.openbd.jp/9784041026403.jpg',
+          'created_at': '2019/07/28 22:00:00',
+          'updated_at': '2019/07/28 22:00:00'
+        },
+        {
+          'id': 3,
+          'name': '天気の子　天気の子　天気の子　天気の子　天気の子',
+          'code': 9784041026403,
+          'type': 1,
+          'owners': [
             {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              admin: true
+              'user': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
+              },
+              'rentalable': true
+            },
+            {
+              'user': {
+                'id': 2,
+                'name': 'ryoha',
+                'displayName': 'りょは',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
+              },
+              'rentalable': false
+            },
+            {
+              'user': {
+                'id': 3,
+                'name': 'series2',
+                'displayName': 'series2',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': false
+              },
+              'rentalable': false
             }
           ],
-          img_url: 'https://cover.openbd.jp/9784041026403.jpg',
-          created_at: '2019/07/28 22:00:00',
-          updated_at: '2019/07/28 22:00:00'
+          'latest_logs': [
+            {
+              'id': 1,
+              'item_id': 1,
+              'user': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
+              },
+              'owner': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
+              },
+              'type': 0,
+              'purpose': '読みたかったから。',
+              'due_date': '2019/07/30 23:30:00',
+              'created_at': '2019/07/28 22:00:00',
+              'updated_at': '2019/07/28 22:00:00'
+            }
+          ],
+          'tags': [
+            {
+              'id': 1,
+              'name': '小説'
+            }
+          ],
+          'img_url': 'https://q.trap.jp/api/1.0/files/f20a1393-4edf-4bcd-993e-9564d2f72293/thumbnail',
+          'created_at': '2019/07/28 22:00:00',
+          'updated_at': '2019/07/28 22:00:00'
+        },
+        {
+          'id': 4,
+          'name': '天気の子',
+          'code': 9784041026403,
+          'type': 1,
+          'owners': [
+            {
+              'user': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
+              },
+              'rentalable': true
+            },
+            {
+              'user': {
+                'id': 2,
+                'name': 'ryoha',
+                'displayName': 'りょは',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
+              },
+              'rentalable': false
+            },
+            {
+              'user': {
+                'id': 3,
+                'name': 'series2',
+                'displayName': 'series2',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': false
+              },
+              'rentalable': false
+            },
+            {
+              'user': {
+                'id': 4,
+                'name': 'Adwaver_4157',
+                'displayName': 'Waver',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': false
+              },
+              'rentalable': false
+            }
+          ],
+          'latest_logs': [
+            {
+              'id': 1,
+              'item_id': 1,
+              'user': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
+              },
+              'owner': {
+                'id': 1,
+                'name': 'nagatech',
+                'displayName': 'ながてち',
+                'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
+                'admin': true
+              },
+              'type': 0,
+              'purpose': '読みたかったから。',
+              'due_date': '2019/07/30 23:30:00',
+              'created_at': '2019/07/28 22:00:00',
+              'updated_at': '2019/07/28 22:00:00'
+            }
+          ],
+          'tags': [
+            {
+              'id': 1,
+              'name': '小説'
+            }
+          ],
+          'img_url': 'https://q.trap.jp/api/1.0/files/f3aefd3d-8205-46ff-a121-ef19ea85517a/thumbnail',
+          'created_at': '2019/07/28 22:00:00',
+          'updated_at': '2019/07/28 22:00:00'
         }
       ]
     }

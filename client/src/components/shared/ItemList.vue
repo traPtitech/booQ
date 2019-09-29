@@ -1,21 +1,40 @@
 <template>
-  <v-container>
-    <div class="wrapper" v-for="item in items" :key="item.id">
-      <div>
-        <v-col md="auto">
-          <img :src="item.img_url" />
-        </v-col>
-      </div>
-      <div>
-        <v-col lg="2">
-          <h3>{{item.name}}</h3>
-          <div v-for="owner in item.owners" :key="owner.id">
-            <p>{{owner.user.name}}</p>
-          </div>
-        </v-col>
-      </div>
-    </div>
-  </v-container>
+  <div>
+    <v-card
+      class="mx-auto"
+      width="1500"
+      elevation="5"
+      tile
+    >
+      <v-list
+        two-line
+        avatar
+        nav
+      >
+        <v-list-item-group v-model="items" color="primary">
+          <v-list-item
+            v-for="item in items"
+            :key="item.id"
+            :to="`/items/${item.id}`"
+            style="height: 100px;"
+          >
+            <img
+              :src="item.img_url"
+              class="item-list-image"
+            />
+            <v-list-item-content style="padding-left: 15px;">
+              <v-list-item-title class="headline mb-1">{{ item.name }}</v-list-item-title>
+              <v-list-item-subtitle>{{ item.owners.map(i => i.user.name).join(', ') }}</v-list-item-subtitle>
+            </v-list-item-content>
+             <v-list-item-icon v-if="item.like_counts">
+              <v-icon>thumb_up_alt</v-icon>
+              {{ item.like_counts }}
+            </v-list-item-icon>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -28,12 +47,8 @@ export default {
 </script>
 
 <style>
-.wrapper {
-    display:flex;
-    display:-ms-flexbox;/* --- IE10用 11はこの設定は不要 --- */
-    display:-webkit-box;/*--- Android用 ---*/
-    /*画面中央に表示されるように margin: auto;を設定している*/
-    margin: auto;
-    /* justify-content:stretch; */
+.item-list-image {
+  max-height: 100px;
+  max-width: 120px;
 }
 </style>
