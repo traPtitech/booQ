@@ -30,23 +30,14 @@
     <v-spacer />
     <v-toolbar-items>
       <v-flex
-        align-center
         layout
         py-2
       >
-        <router-link
-          v-ripple
-          class="toolbar-items"
-          to="/"
-        >
-          <v-icon color="tertiary">mdi-view-dashboard</v-icon>
-        </router-link>
         <v-btn
           v-if="$store.state.me"
-          class="default v-btn--simple"
           dark
           icon
-          @click="$router.push('/about')"
+          :to="`/users/${$store.state.me.name}`"
         >
           <v-avatar size="40">
             <img :src="`https://q.trap.jp/api/1.0/public/icon/${$store.state.me.name}`">
@@ -55,7 +46,6 @@
         <router-link
           v-else
           v-ripple
-          class="toolbar-items"
           to="/about"
         >
           <v-icon color="tertiary">mdi-account</v-icon>
