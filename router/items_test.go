@@ -111,6 +111,7 @@ func TestPostOwners(t *testing.T) {
 	testOwnerTrap := model.RequestPostOwnersBody{
 		UserID:     int(trap.ID),
 		Rentalable: true,
+		Count:      1,
 	}
 
 	t.Run("admin user", func(t *testing.T) {
@@ -151,6 +152,7 @@ func TestPostOwners(t *testing.T) {
 		testOwnerKojin := model.RequestPostOwnersBody{
 			UserID:     userID,
 			Rentalable: true,
+			Count:      1,
 		}
 		assert := assert.New(t)
 		e := echoSetupWithUser()

@@ -90,6 +90,10 @@ func PostOwners(c echo.Context) error {
 	var owner model.Owner
 	owner.Owner = user
 	owner.Rentalable = body.Rentalable
+	owner.Count = body.Count
+	if owner.Count < 1 {
+		return c.NoContent(http.StatusBadRequest)
+	}
 	res, err := model.RegisterOwner(owner, item)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
