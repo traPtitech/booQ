@@ -17,10 +17,6 @@
       </label>
     </v-container>
     <v-container>
-      <input type="checkbox" id="checkbox" v-model="rentalable">
-      <label for="checkbox">貸し出し可</label>
-    </v-container>
-    <v-container>
       <v-text-field solo v-model="code" placeholder="ISBN-10 or ASIN"/>
       <v-btn class="green green-text darken-2" v-on:click="img = 'http://images-jp.amazon.com/images/P/' + code + '.09.LZZZZZZZ.jpg';img_name = 'by amazon'">MakeImage</v-btn>
     </v-container>
@@ -54,6 +50,10 @@
     <v-container>
       <p>個数</p>
       <v-text-field class="mt-0" solo required v-model.number="count" type="number"/>
+    </v-container>
+    <v-container>
+      <input type="checkbox" id="checkbox" v-model="rentalable">
+      <label for="checkbox">貸し出し可</label>
     </v-container>
     <v-btn class="blue" @click="register">登録</v-btn>
   </v-container>
@@ -89,17 +89,17 @@ export default {
     }
   },
   methods: {
-    async register() {
+    async register () {
       if (this.img_name) {
         // img_urlに画像のURLをセットしてください
       }
       const res = await axios.post(`/api/items`, { name: this.name, code: this.code, type: this.ownerID, description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
       if (this.ownerID === 0) {
-        res = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable }).catch(e => { alert(e) })
-        alert('Registered ”' + res.data.name + '”!所有者は' + this.$store.state.me.name + 'です。"')
+        const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable }).catch(e => { alert(e) })
+        alert('Registered ”' + res2.data.name + '”!所有者は' + this.$store.state.me.name + 'です。"')
       } else {
-        res = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable }).catch(e => { alert(e) })
-        alert('Registered ”' + res.data.name + '”!所有者は' + this.ownerOptions[this.ownerID] + 'です。')
+        const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable }).catch(e => { alert(e) })
+        alert('Registered ”' + res2.data.name + '”!所有者は' + this.ownerOptions[this.ownerID] + 'です。')
       }
     },
     onFileChange (e) {
