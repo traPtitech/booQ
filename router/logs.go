@@ -23,19 +23,55 @@ func PostLogs(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-
-	log := model.Log{
-		ItemID:  itemID,
-		UserID:  int(user.ID),
-		OwnerID: body.OwnerID,
-		Type:    body.Type,
-		Purpose: body.Purpose,
-		DueDate: body.DueDate,
+	item, _ := model.GetItemByID(itemID)
+	var itemCount int
+	for _, owner := range item.Owners {
+		if int(owner.Owner.ID) == body.OwnerID {
+			if !owner.Rentalable {
+				return c.NoContent(http.StatusForbidden)
+			}
+			itemCount = owner.Count
+		}
 	}
-
-	res, err := model.CreateLog(log)
+	latestLog, err := model.GetLatestLog(itemID, body.OwnerID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
+	}
+	var res model.Log
+	if body.Type == 0 {
+		if latestLog.Count-body.Count < 0 {
+			return c.NoContent(http.StatusBadRequest)
+		}
+		log := model.Log{
+			ItemID:  itemID,
+			UserID:  int(user.ID),
+			OwnerID: body.OwnerID,
+			Type:    body.Type,
+			Purpose: body.Purpose,
+			DueDate: body.DueDate,
+			Count:   latestLog.Count + body.Count,
+		}
+		res, err = model.CreateLog(log)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+	} else {
+		if itemCount-latestLog.Count-body.Count < 0 {
+			return c.NoContent(http.StatusBadRequest)
+		}
+		log := model.Log{
+			ItemID:  itemID,
+			UserID:  int(user.ID),
+			OwnerID: body.OwnerID,
+			Type:    body.Type,
+			Purpose: body.Purpose,
+			DueDate: body.DueDate,
+			Count:   latestLog.Count + body.Count,
+		}
+		res, err = model.CreateLog(log)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
 	}
 
 	return c.JSON(http.StatusCreated, res)

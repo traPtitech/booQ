@@ -9,11 +9,11 @@ import (
 // Item itemの構造体
 type Item struct {
 	gorm.Model
-	Name        string  `gorm:"type:varchar(64);not null" json:"name"`
-	Type        int     `gorm:"type:int;not null" json:"type"`
-	Code        string  `gorm:"type:varchar(13);" json:"code"`
-	Description string  `gorm:"type:text;" json:"description"`
-	ImgURL      string  `gorm:"type:text;" json:"img_url"`
+	Name        string   `gorm:"type:varchar(64);not null" json:"name"`
+	Type        int      `gorm:"type:int;not null" json:"type"`
+	Code        string   `gorm:"type:varchar(13);" json:"code"`
+	Description string   `gorm:"type:text;" json:"description"`
+	ImgURL      string   `gorm:"type:text;" json:"img_url"`
 	Owners      []*Owner `gorm:"many2many:ownership_maps;" json:"owners"`
 }
 
@@ -21,7 +21,7 @@ type Owner struct {
 	gorm.Model
 	Owner      User `gorm:"many2many:owner_user;" json:"owner"`
 	Rentalable bool `gorm:"type:bool;" json:"rentalable"`
-	Count      int  `gorm:"type:int;" json:"count"`
+	Count      int  `gorm:"type:int;default:1" json:"count"`
 }
 
 type RequestPostOwnersBody struct {
@@ -82,24 +82,15 @@ func CreateItem(item Item) (Item, error) {
 
 // RegisterItem 新しい所有者を登録する
 func RegisterOwner(owner Owner, item Item) (Item, error) {
-	nowOwners := []Owner{}
-	db.Model(&item).Related(&nowOwners, "Owners")
 	existed := false
-	// db.First(&item).Related(&nowOwners, "Owners").Where("name=?", item.Name)
-	for _, nowOwner := range nowOwners {
-		if nowOwner.Owner == owner.Owner {
-			nowCount := nowOwner.Count
+	db.First(&item).Related(&item.Owners, "Owners").Where("name=?", item.Name)
+	for _, nowOwner := range item.Owners {
+		if nowOwner.Owner.Name == owner.Owner.Name {
 			existed = true
-			nowOwner.Count = nowCount + owner.Count
+			nowOwner.Count = nowOwner.Count + owner.Count
 			db.Save(&nowOwner)
-			// db.Model(&nowOwner).Update("count", nowCount+owner.Count)
 			db.Model(&item).Related(&item.Owners, "Owners")
-			// emptyItem := Item{}
-			// db.Model(&nowOwner).Update("count", nowCount+owner.Count)
-			// db.First(&nowItem).Association("Owners").Find(&nowItem.Owners[i]).Replace(&Owner{Count: nowCount+owner.Count})
-			// return item, nil
 		}
-		
 	}
 	if !existed {
 		db.Create(&owner)
