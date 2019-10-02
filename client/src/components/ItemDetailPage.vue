@@ -1,41 +1,40 @@
 <template>
-  <v-container>
-    <div class="wrapper">
-      <v-container>
-        <v-row no-gutters class="mb-6">
-          <v-col md="auto">
-            <div class="image">
-              <div>
-                <img :src="data.img_url" />
-              </div>
-              <v-btn dark outlined round icon color="indigo" @click="like"> <v-icon dark>mdi-star</v-icon></v-btn>
-              <div>
-                <v-layout row wrap class="d-inline-flex">
-                  <v-flex  xs4 v-for="like in data.likes" :key="like.id" >
-                    <Icon :user="like" />
-                  </v-flex>
-                </v-layout>
-              </div>
+  <div  class="d-flex flex-wrap">
+    <div>
+      <v-row no-gutters>
+        <v-col md="auto">
+          <div class="image">
+            <div>
+              <img
+                :src="data.img_url"
+                style="width: 300px;"
+              />
             </div>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container>
-        <div class="content">
-          <h4>{{data.name}}</h4>
-          <div v-for="owner in data.owners" :key="owner.user.id">
-            <p v-if="checkRentalable(owner.user.id)">{{owner.user.name}}  {{checkRentalable(owner.user.id)}}</p>
-            <p v-else v-on:click="clickRental">{{owner.user.name}}  貸し出し可</p>
+            <v-btn dark outlined rounded icon color="indigo" @click="like"> <v-icon dark>mdi-star</v-icon></v-btn>
+            <div>
+              <v-layout row wrap class="d-inline-flex">
+                <v-flex  xs4 v-for="like in data.likes" :key="like.id" >
+                  <Icon :user="like" />
+                </v-flex>
+              </v-layout>
+            </div>
           </div>
-          <v-btn outline round @click="clickAddOwner" color="indigo">所有者を追加</v-btn>
-          <div v-for="comment in data.comments" :key="comment.id" class="comment">
-            <Icon :user="comment.user" />
-            <p>{{comment.comment}}</p>
-          </div>
-        </div>
-      </v-container>
+        </v-col>
+      </v-row>
     </div>
-  </v-container>
+    <div :style="`width: ${contentWidth}px;`">
+      <h4>{{data.name}}</h4>
+      <div v-for="owner in data.owners" :key="owner.id">
+        <p v-if="checkRentalable(owner.user.id)">{{owner.user.name}}  {{checkRentalable(owner.user.id)}}</p>
+        <p v-else v-on:click="clickRental">{{owner.user.name}}  貸し出し可</p>
+      </div>
+      <v-btn outlined rounded @click="clickAddOwner" color="indigo">所有者を追加</v-btn>
+      <div v-for="comment in data.comments" :key="comment.id">
+        <Icon :user="comment.user" />
+        <p>{{ comment.comment }}</p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -48,6 +47,7 @@ export default {
   data () {
     return {
       data: null,
+      contentWidth: 600,
       sampleData: {
         id: 1,
         name: '小説　天気の子',
@@ -117,57 +117,21 @@ export default {
             admin: true
           },
           {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
+            id: 2,
+            name: 'ryoha',
+            displayName: 'りょは',
             admin: true
           },
           {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
+            id: 3,
+            name: 'Adwaver_4157',
+            displayName: 'Waver',
             admin: true
           },
           {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
+            id: 4,
+            name: 'series2',
+            displayName: 'series2',
             admin: true
           }
         ],
@@ -177,11 +141,27 @@ export default {
       }
     }
   },
-  mounted () {
+  created () {
     // 本番ではaxios.getでマウントしてsampleDataを消してください
     this.data = this.sampleData
   },
+  mounted () {
+    this.conputeWidth()
+    window.addEventListener('resize', this.conputeWidth)
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.conputeWidth)
+  },
   methods: {
+    conputeWidth () {
+      if (window.innerWidth > 961) {
+        this.contentWidth = window.innerWidth - 600
+      } else if (window.innerWidth > 601) {
+        this.contentWidth = window.innerWidth - 340
+      } else {
+        this.contentWidth = window.innerWidth
+      }
+    },
     checkRentalable (ownerID) {
       // いい感じにしてください。同じownerが複数いるときのロジックがわかりませんでした
       // 貸し出し可ならfalseを返し不可なら'ryohaが借りてます'みたいなのを返すと思ってます
@@ -203,30 +183,7 @@ export default {
 </script>
 
 <style>
-  .wrapper {
-    display:flex;
-    display:-ms-flexbox;/* --- IE10用 11はこの設定は不要 --- */
-    display:-webkit-box;/*--- Android用 ---*/
-    /*画面中央に表示されるように margin: auto;を設定している*/
-    margin: auto;
-    /* justify-content:stretch; */
-  }
-  /* .image {
-    margin: 10px;
-    -webkit-flex-basis: 30%;
-    -ms-flex-basis: 30%;
-    flex-basis: 30%;
-    width: 30%;
-    height: 50%;
-  } */
-  .content {
-    margin: 10px;
-  }
-  .comment {
-    display:flex;
-    display:-ms-flexbox;/*--- IE10用 11はこの設定は不要 ---*/
-    display:-webkit-box;/*--- Android用 ---*/
-    /*画面中央に表示されるように margin: auto;を設定している*/
-    margin: auto;
+  .image {
+    padding-right: 10px;
   }
 </style>
