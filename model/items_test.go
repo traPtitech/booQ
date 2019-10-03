@@ -21,13 +21,18 @@ func TestCreateItem(t *testing.T) {
 		item, err := CreateItem(Item{})
 		assert.Error(err)
 		assert.Empty(item)
+
+		_, _ = CreateItem(Item{Name: "testCreateItemFail"})
+		item, err = CreateItem(Item{Name: "testCreateItemFail"})
+		assert.Error(err)
+		assert.Empty(item)
 	})
 
 	t.Run("success", func(t *testing.T) {
 		t.Parallel()
 		assert := assert.New(t)
 
-		item, err := CreateItem(Item{Name: "test"})
+		item, err := CreateItem(Item{Name: "testCreateItemSuccess"})
 		assert.NoError(err)
 		assert.NotEmpty(item)
 	})
