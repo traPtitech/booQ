@@ -22,6 +22,7 @@ func EstablishConnection() (*gorm.DB, error) {
 	if user == "" {
 		user = "root"
 	}
+	fmt.Println("A")
 
 	pass := os.Getenv("MYSQL_PASSWORD")
 	if pass == "" {
