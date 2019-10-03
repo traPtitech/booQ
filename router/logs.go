@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -21,12 +22,13 @@ func PostLogs(c echo.Context) error {
 
 	itemID, err := strconv.Atoi(ID)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		// return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, model.Log{Purpose: "itemid"})
 	}
 	item, _ := model.GetItemByID(itemID)
 	var itemCount int
 	for _, owner := range item.Owners {
-		if int(owner.Owner.ID) == body.OwnerID {
+		if int(owner.OwnerID) == body.OwnerID {
 			if !owner.Rentalable {
 				return c.NoContent(http.StatusForbidden)
 			}
@@ -35,12 +37,59 @@ func PostLogs(c echo.Context) error {
 	}
 	latestLog, err := model.GetLatestLog(itemID, body.OwnerID)
 	if err != nil {
+		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	var res model.Log
 	if body.Type == 0 {
-		if latestLog.Count-body.Count < 0 {
+		if (latestLog.ItemID == 0) && (itemCount-body.Count < 0) {
+			fmt.Println("Rental超過1")
 			return c.NoContent(http.StatusBadRequest)
+		} else {
+			if (latestLog.ItemID != 0) && latestLog.Count-body.Count < 0 {
+				fmt.Println("Rental超過2")
+				return c.NoContent(http.StatusBadRequest)
+			}
+		}
+		if (latestLog == model.Log{}) {
+			log := model.Log{
+				ItemID:  itemID,
+				UserID:  int(user.ID),
+				OwnerID: body.OwnerID,
+				Type:    body.Type,
+				Purpose: body.Purpose,
+				DueDate: body.DueDate,
+				Count:   itemCount - body.Count,
+			}
+			res, err = model.CreateLog(log)
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, err)
+			}
+		} else {
+			log := model.Log{
+				ItemID:  itemID,
+				UserID:  int(user.ID),
+				OwnerID: body.OwnerID,
+				Type:    body.Type,
+				Purpose: body.Purpose,
+				DueDate: body.DueDate,
+				Count:   latestLog.Count - body.Count,
+			}
+			res, err = model.CreateLog(log)
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, err)
+			}
+		}
+	}
+	if body.Type == 1 {
+		if latestLog.ItemID == 0 {
+			fmt.Println("Return超過1")
+			return c.NoContent(http.StatusBadRequest)
+		} else {
+			if (latestLog.ItemID != 0) && itemCount-latestLog.Count-body.Count < 0 {
+				fmt.Println("Return超過2")
+				return c.NoContent(http.StatusBadRequest)
+			}
 		}
 		log := model.Log{
 			ItemID:  itemID,
@@ -55,23 +104,9 @@ func PostLogs(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)
 		}
-	} else {
-		if itemCount-latestLog.Count-body.Count < 0 {
-			return c.NoContent(http.StatusBadRequest)
-		}
-		log := model.Log{
-			ItemID:  itemID,
-			UserID:  int(user.ID),
-			OwnerID: body.OwnerID,
-			Type:    body.Type,
-			Purpose: body.Purpose,
-			DueDate: body.DueDate,
-			Count:   latestLog.Count + body.Count,
-		}
-		res, err = model.CreateLog(log)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
-		}
+	}
+	if res.ItemID == 0 {
+		return c.NoContent(http.StatusBadRequest)
 	}
 
 	return c.JSON(http.StatusCreated, res)

@@ -47,14 +47,13 @@ func TestGetLatestLog(t *testing.T) {
 	itemID := int(item.ID)
 
 	user, _ := GetUserByName("traP")
-	ownerID := int(user.ID)
 	owner := Owner{
-		Owner:      user,
+		OwnerID:    int(user.ID),
 		Rentalable: true,
 		Count:      1,
 	}
 	_, _ = RegisterOwner(owner, item)
-	_, _ = CreateLog(Log{ItemID: itemID, OwnerID: ownerID, Type: 0})
+	_, _ = CreateLog(Log{ItemID: itemID, OwnerID: int(user.ID), Type: 0, Count: 1})
 
 	t.Run("failures", func(t *testing.T) {
 		assert := assert.New(t)
@@ -71,10 +70,10 @@ func TestGetLatestLog(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		assert := assert.New(t)
 
-		log, err := GetLatestLog(itemID, ownerID)
+		log, err := GetLatestLog(itemID, int(user.ID))
 		assert.NoError(err)
 		assert.NotEmpty(log)
-		assert.Equal(ownerID, log.OwnerID)
+		assert.Equal(int(user.ID), log.OwnerID)
 		assert.Equal(itemID, log.ItemID)
 		assert.Equal(0, log.Type)
 	})

@@ -41,7 +41,7 @@
     </div>
     <div>
       <p>個数</p>
-      <v-text-field class="mt-0" solo required v-model.number="count" type="number"/>
+      <v-text-field class="mt-0" required v-model.number="count" type="number"/>
     </div>
     <div>
       <input type="checkbox" id="checkbox" v-model="rentalable">

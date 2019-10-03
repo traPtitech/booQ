@@ -57,7 +57,7 @@ func GetLatestLog(itemID, ownerID int) (Log, error) {
 	}
 	exist := false
 	for _, owner := range item.Owners {
-		if int(owner.ID) == ownerID {
+		if int(owner.OwnerID) == ownerID {
 			exist = true
 		}
 	}
@@ -65,6 +65,6 @@ func GetLatestLog(itemID, ownerID int) (Log, error) {
 		return Log{}, errors.New("指定した所有者はそのItemを所有していません")
 	}
 	log := Log{}
-	db.Last(&log).Where("item_id = ? AND owner_id = ?", itemID, ownerID)
+	db.Order("created_at desc").First(&log).Where("item_id = ? AND owner_id = ?", itemID, ownerID)
 	return log, nil
 }

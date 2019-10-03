@@ -22,12 +22,12 @@ func TestPostLogs(t *testing.T) {
 	itemRentalDenied, _ := model.CreateItem(model.Item{Name: "testItemForPostLogRentalDenied"})
 	trap, _ := model.GetUserByName("traP")
 	owner := model.Owner{
-		Owner:      trap,
+		OwnerID:    int(trap.ID),
 		Rentalable: true,
 		Count:      1,
 	}
 	ownerRentalDenied := model.Owner{
-		Owner:      trap,
+		OwnerID:    int(trap.ID),
 		Rentalable: false,
 		Count:      1,
 	}
@@ -124,10 +124,10 @@ func TestPostLogs(t *testing.T) {
 		log = model.Log{}
 		_ = json.NewDecoder(rec.Body).Decode(&log)
 
-		assert.Equal(testBodyLogRental2.OwnerID, log.OwnerID)
-		assert.Equal(testBodyLogRental2.Type, log.Type)
-		assert.Equal(testBodyLogRental2.Purpose, log.Purpose)
-		assert.Equal(testBodyLogRental2.DueDate, log.DueDate)
+		assert.Equal(testBodyLogReturn1.OwnerID, log.OwnerID)
+		assert.Equal(testBodyLogReturn1.Type, log.Type)
+		assert.Equal(testBodyLogReturn1.Purpose, log.Purpose)
+		assert.Equal(testBodyLogReturn1.DueDate, log.DueDate)
 		assert.Equal(int(trap.ID), log.UserID)
 		assert.Equal(int(item.ID), log.ItemID)
 	})
