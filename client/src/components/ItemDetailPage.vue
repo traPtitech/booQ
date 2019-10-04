@@ -36,15 +36,43 @@
       </v-row>
     </div>
     <div :style="`width: ${contentWidth}px;`">
-      <h4>{{data.name}}</h4>
-      <div v-for="owner in data.owners" :key="owner.id">
-        <p v-if="checkRentalable(owner.user.id)">{{owner.user.name}}  {{checkRentalable(owner.user.id)}}</p>
-        <p v-else v-on:click="clickRental">{{owner.user.name}}  貸し出し可</p>
+      <h1>{{data.name}}</h1>
+      <div class="content">
+        {{ data.description }}
       </div>
-      <v-btn outlined rounded @click="clickAddOwner" color="indigo">所有者を追加</v-btn>
-      <div v-for="comment in data.comments" :key="comment.id">
-        <Icon :user="comment.user" />
-        <p>{{ comment.comment }}</p>
+      <div class="content">
+        <h2>
+          所有者
+          <v-btn x-small outlined fab dark color="primary" @click="addOwner">
+            <v-icon dark>mdi-plus</v-icon>
+          </v-btn>
+        </h2>
+        <div v-for="owner in data.owners" :key="owner.id">
+          <p v-if="checkRentalable(owner.user.id)">{{owner.user.name}}  {{checkRentalable(owner.user.id)}}</p>
+          <p v-else v-on:click="rental">{{owner.user.name}}  貸し出し可</p>
+        </div>
+      </div>
+      <div class="content">
+        <h2>
+          コメント
+          <v-btn x-small outlined fab dark color="primary">
+            <v-icon dark>mdi-plus</v-icon>
+          </v-btn>
+        </h2>
+        <div>
+          <div v-for="comment in data.comments" :key="comment.id">
+            <v-flex>
+              <Icon :user="comment.user" />
+              {{ comment.comment }}
+            </v-flex>
+          </div>
+        </div>
+      </div>
+      <div class="content">
+        <div>
+          <h2>ログ</h2>
+          工事中
+        </div>
       </div>
     </div>
   </div>
@@ -199,11 +227,11 @@ export default {
       this.data.likes = this.data.likes.filter(user => user.name !== this.$store.state.me.name)
       // TODO: axios.delete(/likes)みたいな感じ
     },
-    clickAddOwner () {
+    addOwner () {
       window.open('/register_owner_form', 'newwindow', 'width=400,height=800')
       // window.open('/items/' + this.data.id + '/owner/new', 'newwindow', 'width=400,height=300')
     },
-    clickRental () {
+    rental () {
       window.open('/rental_form', 'newwindow', 'width=400,height=800')
       // window.open('/items/' + this.data.id + '/rental', 'newwindow', 'width=400,height=300')
     }
@@ -211,8 +239,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .image {
     padding-right: 10px;
+  }
+  .content {
+    margin-bottom: 30px;
   }
 </style>
