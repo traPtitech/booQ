@@ -64,7 +64,6 @@ func PostLogs(c echo.Context) error {
 		} else {
 			log.Count = latestLog.Count - body.Count
 		}
-		res, err = model.CreateLog(log)
 	}
 	if body.Type == 1 {
 		if latestLog.ItemID == 0 {
