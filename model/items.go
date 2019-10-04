@@ -40,7 +40,7 @@ func (item *Owner) TableName() string {
 }
 
 // GetItemByID IDからitemを取得する
-func GetItemByID(id int) (Item, error) {
+func GetItemByID(id uint) (Item, error) {
 	res := Item{}
 	db.First(&res, id).Related(&res.Owners, "Owners")
 	if res.Name == "" {

@@ -10,9 +10,9 @@ import (
 // Log logの構造体
 type Log struct {
 	gorm.Model
-	ItemID  int       `gorm:"type:int;not null" json:"item_id"`
-	UserID  int       `gorm:"type:int;not null" json:"user_id"`
-	OwnerID int       `gorm:"type:int;not null" json:"owner_id"`
+	ItemID  uint      `gorm:"type:int;not null" json:"item_id"`
+	UserID  uint      `gorm:"type:int;not null" json:"user_id"`
+	OwnerID uint      `gorm:"type:int;not null" json:"owner_id"`
 	Type    int       `gorm:"type:int;not null" json:"type"`
 	Purpose string    `json:"purpose"`
 	DueDate time.Time `gorm:"type:datetime;" json:"due_date"`
@@ -50,14 +50,14 @@ func CreateLog(log Log) (Log, error) {
 }
 
 // GetLatestLog OwnerIDからLatestLogを取得する
-func GetLatestLog(itemID, ownerID int) (Log, error) {
+func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	item, err := GetItemByID(itemID)
 	if err != nil {
 		return Log{}, err
 	}
 	exist := false
 	for _, owner := range item.Owners {
-		if int(owner.OwnerID) == ownerID {
+		if owner.OwnerID == ownerID {
 			exist = true
 		}
 	}

@@ -20,11 +20,11 @@ func PostLogs(c echo.Context) error {
 		return err
 	}
 
-	itemID, err := strconv.Atoi(ID)
+	itemIDb, err := strconv.Atoi(ID)
 	if err != nil {
-		// return c.JSON(http.StatusBadRequest, err)
-		return c.JSON(http.StatusBadRequest, model.Log{Purpose: "itemid"})
+		return c.JSON(http.StatusBadRequest, err)
 	}
+	itemID := uint(itemIDb)
 	item, _ := model.GetItemByID(itemID)
 	var itemCount int
 	for _, owner := range item.Owners {
@@ -35,10 +35,18 @@ func PostLogs(c echo.Context) error {
 			itemCount = owner.Count
 		}
 	}
-	latestLog, err := model.GetLatestLog(itemID, body.OwnerID)
+	latestLog, err := model.GetLatestLog(itemID, uint(body.OwnerID))
 	if err != nil {
 		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, err)
+	}
+	log := model.Log{
+		ItemID:  itemID,
+		UserID:  user.ID,
+		OwnerID: uint(body.OwnerID),
+		Type:    body.Type,
+		Purpose: body.Purpose,
+		DueDate: body.DueDate,
 	}
 	var res model.Log
 	if body.Type == 0 {
@@ -52,34 +60,11 @@ func PostLogs(c echo.Context) error {
 			}
 		}
 		if (latestLog == model.Log{}) {
-			log := model.Log{
-				ItemID:  itemID,
-				UserID:  int(user.ID),
-				OwnerID: body.OwnerID,
-				Type:    body.Type,
-				Purpose: body.Purpose,
-				DueDate: body.DueDate,
-				Count:   itemCount - body.Count,
-			}
-			res, err = model.CreateLog(log)
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, err)
-			}
+			log.Count = itemCount - body.Count
 		} else {
-			log := model.Log{
-				ItemID:  itemID,
-				UserID:  int(user.ID),
-				OwnerID: body.OwnerID,
-				Type:    body.Type,
-				Purpose: body.Purpose,
-				DueDate: body.DueDate,
-				Count:   latestLog.Count - body.Count,
-			}
-			res, err = model.CreateLog(log)
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, err)
-			}
+			log.Count = latestLog.Count - body.Count
 		}
+		res, err = model.CreateLog(log)
 	}
 	if body.Type == 1 {
 		if latestLog.ItemID == 0 {
@@ -91,19 +76,11 @@ func PostLogs(c echo.Context) error {
 				return c.NoContent(http.StatusBadRequest)
 			}
 		}
-		log := model.Log{
-			ItemID:  itemID,
-			UserID:  int(user.ID),
-			OwnerID: body.OwnerID,
-			Type:    body.Type,
-			Purpose: body.Purpose,
-			DueDate: body.DueDate,
-			Count:   latestLog.Count + body.Count,
-		}
-		res, err = model.CreateLog(log)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
-		}
+		log.Count = latestLog.Count + body.Count
+	}
+	res, err = model.CreateLog(log)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 	if res.ItemID == 0 {
 		return c.NoContent(http.StatusBadRequest)

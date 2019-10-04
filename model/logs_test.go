@@ -32,11 +32,11 @@ func TestCreateLog(t *testing.T) {
 		owner, _ := GetUserByName("traP")
 		item, _ := CreateItem(Item{Name: "testItemForCreateLog"})
 
-		log, err := CreateLog(Log{ItemID: int(item.ID), OwnerID: int(owner.ID), Type: 0})
+		log, err := CreateLog(Log{ItemID: item.ID, OwnerID: owner.ID, Type: 0})
 		assert.NoError(err)
 		assert.NotEmpty(log)
-		assert.Equal(int(owner.ID), log.OwnerID)
-		assert.Equal(int(item.ID), log.ItemID)
+		assert.Equal(owner.ID, log.OwnerID)
+		assert.Equal(item.ID, log.ItemID)
 	})
 }
 
@@ -45,16 +45,16 @@ func TestCreateLog(t *testing.T) {
 // 	t.Parallel()
 
 // 	item, _ := CreateItem(Item{Name: "testGetLatestLogItem"})
-// 	itemID := int(item.ID)
+// 	itemID := item.ID
 
 // 	user, _ := GetUserByName("traP")
 // 	owner := Owner{
-// 		OwnerID:    int(user.ID),
+// 		OwnerID:    user.ID,
 // 		Rentalable: true,
 // 		Count:      1,
 // 	}
 // 	_, _ = RegisterOwner(owner, item)
-// 	_, _ = CreateLog(Log{ItemID: itemID, OwnerID: int(user.ID), Type: 0, Count: 1})
+// 	_, _ = CreateLog(Log{ItemID: itemID, OwnerID: user.ID, Type: 0, Count: 1})
 
 // 	t.Run("failures", func(t *testing.T) {
 // 		assert := assert.New(t)
@@ -71,10 +71,10 @@ func TestCreateLog(t *testing.T) {
 // 	t.Run("success", func(t *testing.T) {
 // 		assert := assert.New(t)
 
-// 		log, err := GetLatestLog(itemID, int(user.ID))
+// 		log, err := GetLatestLog(itemID, user.ID)
 // 		assert.NoError(err)
 // 		assert.NotEmpty(log)
-// 		assert.Equal(int(user.ID), log.OwnerID)
+// 		assert.Equal(user.ID, log.OwnerID)
 // 		assert.Equal(itemID, log.ItemID)
 // 		assert.Equal(0, log.Type)
 // 	})

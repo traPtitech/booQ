@@ -19,8 +19,6 @@ func (user *User) TableName() string {
 	return "users"
 }
 
-
-
 // GetUsers 全userを取得する
 func GetUsers() []User {
 	res := []User{}
@@ -39,7 +37,7 @@ func GetUserByName(name string) (User, error) {
 }
 
 // GetUserByID userをIDから取得する
-func GetUserByID(id int) (User, error) {
+func GetUserByID(id uint) (User, error) {
 	res := User{}
 	db.Where("id = ?", id).First(&res)
 	if res.Name == "" {
