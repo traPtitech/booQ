@@ -59,7 +59,7 @@ func TestRegisterOwner(t *testing.T) {
 		owner.Count = 5
 		item, err := RegisterOwner(owner, item)
 
-		assert.Equal(uint(6), item.Owners[0].Count)
+		assert.Equal(6, item.Owners[0].Count)
 
 		assert.NoError(err)
 		assert.NotEmpty(item)
