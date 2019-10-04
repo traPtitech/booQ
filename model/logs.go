@@ -16,7 +16,7 @@ type Log struct {
 	Type    int       `gorm:"type:int;not null" json:"type"`
 	Purpose string    `json:"purpose"`
 	DueDate time.Time `gorm:"type:datetime;" json:"due_date"`
-	Count   int       `gorm:"type:int;not null" json:"count"`
+	Count   uint      `gorm:"type:int;not null" json:"count"`
 }
 
 type RequestPostLogsBody struct {
@@ -41,7 +41,7 @@ func CreateLog(log Log) (Log, error) {
 	if err != nil {
 		return Log{}, errors.New("Itemが存在しません")
 	}
-	_, err = GetUserByID(log.OwnerID)
+	_, err = GetUserByID(int(log.OwnerID))
 	if err != nil {
 		return Log{}, errors.New("Ownerが存在しません")
 	}

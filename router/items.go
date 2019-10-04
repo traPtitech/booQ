@@ -65,7 +65,7 @@ func PostOwners(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	user, err := model.GetUserByID(uint(body.UserID))
+	user, err := model.GetUserByID(int(body.UserID))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -90,7 +90,7 @@ func PostOwners(c echo.Context) error {
 	var owner model.Owner
 	owner.OwnerID = user.ID
 	owner.Rentalable = body.Rentalable
-	owner.Count = body.Count
+	owner.Count = uint(body.Count)
 	if owner.Count < 1 {
 		return c.NoContent(http.StatusBadRequest)
 	}

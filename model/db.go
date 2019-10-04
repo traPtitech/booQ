@@ -48,7 +48,6 @@ func Migrate() error {
 	if err := db.AutoMigrate(allTables...).Error; err != nil {
 		return err
 	}
-	fmt.Printf("a")
 
 	traP, _ := GetUserByName("traP")
 	if traP.Name == "" {

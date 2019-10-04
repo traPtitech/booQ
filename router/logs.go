@@ -20,13 +20,12 @@ func PostLogs(c echo.Context) error {
 		return err
 	}
 
-	itemIDb, err := strconv.Atoi(ID)
+	itemID, err := strconv.Atoi(ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	itemID := uint(itemIDb)
-	item, _ := model.GetItemByID(itemID)
-	var itemCount int
+	item, _ := model.GetItemByID(uint(itemID))
+	var itemCount uint
 	for _, owner := range item.Owners {
 		if int(owner.OwnerID) == body.OwnerID {
 			if !owner.Rentalable {
@@ -35,13 +34,13 @@ func PostLogs(c echo.Context) error {
 			itemCount = owner.Count
 		}
 	}
-	latestLog, err := model.GetLatestLog(itemID, uint(body.OwnerID))
+	latestLog, err := model.GetLatestLog(uint(itemID), uint(body.OwnerID))
 	if err != nil {
 		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	log := model.Log{
-		ItemID:  itemID,
+		ItemID:  uint(itemID),
 		UserID:  user.ID,
 		OwnerID: uint(body.OwnerID),
 		Type:    body.Type,
@@ -50,19 +49,19 @@ func PostLogs(c echo.Context) error {
 	}
 	var res model.Log
 	if body.Type == 0 {
-		if (latestLog.ItemID == 0) && (itemCount-body.Count < 0) {
+		if (latestLog.ItemID == 0) && (int(itemCount)-body.Count < 0) {
 			fmt.Println("Rental超過1")
 			return c.NoContent(http.StatusBadRequest)
 		} else {
-			if (latestLog.ItemID != 0) && latestLog.Count-body.Count < 0 {
+			if (latestLog.ItemID != 0) && int(latestLog.Count)-body.Count < 0 {
 				fmt.Println("Rental超過2")
 				return c.NoContent(http.StatusBadRequest)
 			}
 		}
 		if (latestLog == model.Log{}) {
-			log.Count = itemCount - body.Count
+			log.Count = itemCount - uint(body.Count)
 		} else {
-			log.Count = latestLog.Count - body.Count
+			log.Count = latestLog.Count - uint(body.Count)
 		}
 	}
 	if body.Type == 1 {
@@ -70,12 +69,12 @@ func PostLogs(c echo.Context) error {
 			fmt.Println("Return超過1")
 			return c.NoContent(http.StatusBadRequest)
 		} else {
-			if (latestLog.ItemID != 0) && itemCount-latestLog.Count-body.Count < 0 {
+			if (latestLog.ItemID != 0) && int(itemCount)-int(latestLog.Count)-body.Count < 0 {
 				fmt.Println("Return超過2")
 				return c.NoContent(http.StatusBadRequest)
 			}
 		}
-		log.Count = latestLog.Count + body.Count
+		log.Count = latestLog.Count + uint(body.Count)
 	}
 	res, err = model.CreateLog(log)
 	if err != nil {
