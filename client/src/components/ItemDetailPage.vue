@@ -7,13 +7,26 @@
             <div>
               <img
                 :src="data.img_url"
-                style="width: 300px;"
+                style="width: 250px;"
               />
             </div>
-            <v-btn dark outlined rounded icon color="indigo" @click="like"> <v-icon dark>mdi-star</v-icon></v-btn>
+            <div>
+              <!-- TODO: 返す場合のボタンの処理を考える -->
+              <v-btn block color="primary">借りる</v-btn>
+            </div>
+            <div>
+              <v-btn v-if="isLiked" block @click="removeLike">
+                <v-icon left color="indigo">mdi-thumb-up</v-icon>
+                いいね {{ likeCount }}
+              </v-btn>
+              <v-btn v-else block @click="like">
+                <v-icon left disabled>mdi-thumb-up</v-icon>
+                いいね {{ likeCount }}
+              </v-btn>
+            </div>
             <div>
               <v-layout row wrap class="d-inline-flex">
-                <v-flex  xs4 v-for="like in data.likes" :key="like.id" >
+                <v-flex v-for="like in data.likes" :key="like.id" >
                   <Icon :user="like" />
                 </v-flex>
               </v-layout>
@@ -152,6 +165,17 @@ export default {
   beforeDestroy () {
     window.removeEventListener('resize', this.conputeWidth)
   },
+  computed: {
+    likeCount () {
+      return this.data.likes.length
+    },
+    isLiked () {
+      if (!this.$store.state.me) {
+        return false
+      }
+      return this.data.likes.find(user => user.name === this.$store.state.me.name)
+    }
+  },
   methods: {
     conputeWidth () {
       if (window.innerWidth > 961) {
@@ -168,7 +192,12 @@ export default {
       return false
     },
     like () {
-      // axios.post(/likes)みたいな感じ？
+      this.data.likes.push(this.$store.state.me)
+      // TODO: axios.post(/likes)みたいな感じ
+    },
+    removeLike () {
+      this.data.likes = this.data.likes.filter(user => user.name !== this.$store.state.me.name)
+      // TODO: axios.delete(/likes)みたいな感じ
     },
     clickAddOwner () {
       window.open('/register_owner_form', 'newwindow', 'width=400,height=800')
