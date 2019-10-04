@@ -20,7 +20,7 @@ type Log struct {
 }
 
 type RequestPostLogsBody struct {
-	OwnerID int       `json:"owner_id"`
+	OwnerID uint      `json:"owner_id"`
 	Type    int       `json:"type"`
 	Purpose string    `json:"purpose"`
 	DueDate time.Time `json:"due_date"`

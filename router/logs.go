@@ -28,14 +28,14 @@ func PostLogs(c echo.Context) error {
 	item, _ := model.GetItemByID(itemID)
 	var itemCount int
 	for _, owner := range item.Owners {
-		if int(owner.OwnerID) == body.OwnerID {
+		if owner.OwnerID == body.OwnerID {
 			if !owner.Rentalable {
 				return c.NoContent(http.StatusForbidden)
 			}
 			itemCount = owner.Count
 		}
 	}
-	latestLog, err := model.GetLatestLog(itemID, uint(body.OwnerID))
+	latestLog, err := model.GetLatestLog(itemID, body.OwnerID)
 	if err != nil {
 		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, err)
@@ -43,7 +43,7 @@ func PostLogs(c echo.Context) error {
 	log := model.Log{
 		ItemID:  itemID,
 		UserID:  user.ID,
-		OwnerID: uint(body.OwnerID),
+		OwnerID: body.OwnerID,
 		Type:    body.Type,
 		Purpose: body.Purpose,
 		DueDate: body.DueDate,
