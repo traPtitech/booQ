@@ -38,7 +38,7 @@ func TestRegisterOwner(t *testing.T) {
 
 	user, _ := CreateUser(User{Name: "testRegisterOwnerUser"})
 	var owner Owner
-	owner.OwnerID = int(user.ID)
+	owner.OwnerID = user.ID
 	owner.Rentalable = true
 	owner.Count = 1
 	item, _ := CreateItem(Item{Name: "testRegisterOwnerItem"})
@@ -47,7 +47,7 @@ func TestRegisterOwner(t *testing.T) {
 		t.Parallel()
 		assert := assert.New(t)
 
-		assert.Equal(int(user.ID), item2.Owners[0].OwnerID)
+		assert.Equal(user.ID, item2.Owners[0].OwnerID)
 		assert.NoError(err)
 		assert.NotEmpty(item2)
 	})
@@ -71,7 +71,7 @@ func TestGetItems(t *testing.T) {
 
 	user, _ := CreateUser(User{Name: "testAllItemUser"})
 	var owner Owner
-	owner.OwnerID = int(user.ID)
+	owner.OwnerID = user.ID
 	owner.Rentalable = true
 	owner.Count = 1
 	item, _ := CreateItem(Item{Name: "testAllItemItem"})
@@ -83,7 +83,7 @@ func TestGetItems(t *testing.T) {
 		items, err := GetItems()
 		for _, value := range items {
 			if value.Name == "testAllItemItem" {
-				assert.Equal(int(user.ID), value.Owners[0].OwnerID)
+				assert.Equal(user.ID, value.Owners[0].OwnerID)
 				break
 			}
 			continue

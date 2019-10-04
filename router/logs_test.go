@@ -23,40 +23,40 @@ package router
 // 	itemRentalDenied, _ := model.CreateItem(model.Item{Name: "testItemForPostLogRentalDenied"})
 // 	trap, _ := model.GetUserByName("traP")
 // 	owner := model.Owner{
-// 		OwnerID:    int(trap.ID),
+// 		OwnerID:    trap.ID,
 // 		Rentalable: true,
 // 		Count:      1,
 // 	}
 // 	ownerRentalDenied := model.Owner{
-// 		OwnerID:    int(trap.ID),
+// 		OwnerID:    trap.ID,
 // 		Rentalable: false,
 // 		Count:      1,
 // 	}
 // 	_, _ = model.RegisterOwner(owner, item)
 // 	_, _ = model.RegisterOwner(ownerRentalDenied, itemRentalDenied)
 // 	testBodyLogRental1 := model.Log{
-// 		OwnerID: int(trap.ID),
+// 		OwnerID: trap.ID,
 // 		Type:    0,
 // 		Purpose: "ログのポストのテストのPurposeですrental1",
 // 		DueDate: time.Date(2014, time.December, 31, 12, 13, 24, 0, time.UTC),
 // 		Count:   1,
 // 	}
 // 	testBodyLogRental2 := model.Log{
-// 		OwnerID: int(trap.ID),
+// 		OwnerID: trap.ID,
 // 		Type:    0,
 // 		Purpose: "ログのポストのテストのPurposeですrental2",
 // 		DueDate: time.Date(2014, time.December, 31, 12, 13, 24, 0, time.UTC),
 // 		Count:   2,
 // 	}
 // 	testBodyLogReturn1 := model.Log{
-// 		OwnerID: int(trap.ID),
+// 		OwnerID: trap.ID,
 // 		Type:    1,
 // 		Purpose: "ログのポストのテストのPurposeですreturn1",
 // 		DueDate: time.Date(2014, time.December, 31, 12, 13, 24, 0, time.UTC),
 // 		Count:   1,
 // 	}
 // 	testBodyLogReturn1RentalDenied := model.Log{
-// 		OwnerID: int(trap.ID),
+// 		OwnerID: rap.ID,
 // 		Type:    1,
 // 		Purpose: "ログのポストのテストのPurposeですreturn1rentalDenied",
 // 		DueDate: time.Date(2014, time.December, 31, 12, 13, 24, 0, time.UTC),

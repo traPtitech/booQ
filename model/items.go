@@ -19,7 +19,7 @@ type Item struct {
 
 type Owner struct {
 	gorm.Model
-	OwnerID    int  `gorm:"type:int;" json:"owner_id"`
+	OwnerID    uint `gorm:"type:uint;" json:"owner_id"`
 	Rentalable bool `gorm:"type:bool;" json:"rentalable"`
 	Count      int  `gorm:"type:int;default:1" json:"count"`
 }
@@ -85,16 +85,17 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 	var existed bool
 	db.Model(&item).Related(&item.Owners, "Owners")
 	for _, nowOwner := range item.Owners {
-		if nowOwner.OwnerID == owner.OwnerID {
-			if owner.Rentalable != nowOwner.Rentalable {
-				nowOwner.Count = owner.Count
-			} else {
-				nowOwner.Count = nowOwner.Count + owner.Count
-			}
-			existed = true
-			db.Save(&nowOwner)
-			db.Model(&item).Related(&item.Owners, "Owners")
+		if nowOwner.OwnerID != owner.OwnerID {
+			continue
 		}
+		if owner.Rentalable != nowOwner.Rentalable {
+			nowOwner.Count = owner.Count
+		} else {
+			nowOwner.Count += owner.Count
+		}
+		existed = true
+		db.Save(&nowOwner)
+		db.Model(&item).Related(&item.Owners, "Owners")
 	}
 	if !existed {
 		db.Create(&owner)
