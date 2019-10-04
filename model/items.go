@@ -76,6 +76,7 @@ func CreateItem(item Item) (Item, error) {
 	}
 	reddiedItem := Item{}
 	db.Where("name = ?", item.Name).Or("code = ?", item.Code).Find(&reddiedItem)
+
 	if reddiedItem.Name != "" {
 		return Item{}, errors.New("すでに同じItemが存在しています")
 	}
