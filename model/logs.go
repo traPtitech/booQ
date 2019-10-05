@@ -68,3 +68,11 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	db.Order("created_at desc").First(&log).Where("item_id = ? AND owner_id = ?", itemID, ownerID)
 	return log, nil
 }
+
+// GetLogsByItemID itemIDからLogsを取得する
+func GetLogsByItemID(itemID uint) ([]Log, error) {
+	// 指定のitemIDのitemが存在するかどうかはここで判別つけていません
+	logs := []Log{}
+	db.Where("item_id = ?", itemID).Find(&logs)
+	return logs, nil
+}
