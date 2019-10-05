@@ -35,6 +35,16 @@
  | **updated_at** | datetime |  |  |  |  |  |
  | **deleted_at** | datetime |  |  |  |  |  |
  
+ ### owners
+ | Name | Type | NULL | Key | Default | Extra | 説明 |
+ | --- | --- | --- | --- | --- | --- | --- |
+ | **id** | int | NO | PRI |  |  |  |
+ | owner_id | int | NO |  |  |  | userのidに対応している |
+ | rentable | boolean | NO |  |  |  |  |
+ | count | int | NO |  | 1 |  | ownerとitemの関連付けはownershipmapにあって、持っているそのitemの数 |
+ | **created_at** | datetime | NO |  |  |  |  |
+ | **updated_at** | datetime |  |  |  |  |  |
+ | **deleted_at** | datetime |  |  |  |  |  |
 
 ### logs
  | Name | Type | NULL | Key | Default | Extra | 説明 |
@@ -46,6 +56,7 @@
  | type | int | NO |  |  |  | 0:借りた, 1:返した  |
  | purpose | text |  |  |  |  | 借りる目的 |
  | due_date | datetime |  |  |  |  | 返却予定日 |
+ | count | int |  |  |  |  | 処理が終わった後の対象のItemの数 |
  | **created_at** | datetime | NO |  |  |  |  |
  | **update_at** | datetime | NO |  |  |  |  |
  | **deleted_at** | datetime |  |  |  |  |  |
