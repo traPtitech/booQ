@@ -10,6 +10,7 @@ func TestLogTableName(t *testing.T) {
 	t.Parallel()
 	assert.Equal(t, "logs", (&Log{}).TableName())
 }
+<<<<<<< HEAD
 
 func TestCreateLog(t *testing.T) {
 	t.Parallel()
@@ -79,3 +80,5 @@ func TestCreateLog(t *testing.T) {
 // 		assert.Equal(0, log.Type)
 // 	})
 // }
+=======
+>>>>>>> 93534dda8266f0fd8ddf2a65892b6c56fe8c31a3
