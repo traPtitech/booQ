@@ -43,8 +43,6 @@ func TestCreateItem(t *testing.T) {
 }
 
 func TestRegisterOwner(t *testing.T) {
-	t.Parallel()
-
 	user, _ := CreateUser(User{Name: "testRegisterOwnerUser"})
 	var owner Owner
 	owner.OwnerID = user.ID
@@ -76,8 +74,6 @@ func TestRegisterOwner(t *testing.T) {
 }
 
 func TestGetItems(t *testing.T) {
-	t.Parallel()
-
 	user, _ := CreateUser(User{Name: "testAllItemUser"})
 	var owner Owner
 	owner.OwnerID = user.ID
