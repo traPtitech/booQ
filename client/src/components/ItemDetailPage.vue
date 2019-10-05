@@ -37,10 +37,10 @@
                       <v-btn color="primary" dark v-on="on">所有者を選ぶ</v-btn>
                     </template>
                     <v-list>
-                      <v-list-item 
-                      v-for="(owner, i) in data.owners" 
-                      :key="i" 
-                      @click="rentOwnerID=owner.user.id" 
+                      <v-list-item
+                      v-for="(owner, i) in data.owners"
+                      :key="i"
+                      @click="rentOwnerID=owner.user.id"
                       :disabled="!owner.rentalable">
                         <v-list-item-title>{{ owner.user.name }}</v-list-item-title>
                       </v-list-item>
@@ -143,6 +143,7 @@ export default {
       rentalCount: 1,
       dueDate: '',
       rentOwnerID: 0,
+      error: '',
       // 以下はサンプルデータ
       sampleData: {
         id: 1,
@@ -321,17 +322,29 @@ export default {
     },
     async add () {
       if (this.ownerID === 0) {
-        const res = await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count }).catch(e => { alert(e) })
-        alert('”' + this.data.name + '”の所有者に' + this.$store.state.me.name + 'を追加しました。')
+        await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count })
+          .catch(e => {
+            alert(e)
+            this.error = e
+          })
+        if (!this.error) { alert('”' + this.data.name + '”の所有者に' + this.$store.state.me.name + 'を追加しました。') }
       } else {
-        const res = await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable, count: this.count }).catch(e => { alert(e) })
-        alert('”' + this.data.name + '”の所有者に' + this.ownerOptions[this.ownerID] + 'を追加しました。')
+        await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable, count: this.count })
+          .catch(e => {
+            alert(e)
+            this.error = e
+          })
+        if (!this.error) { alert('”' + this.data.name + '”の所有者に' + this.ownerOptions[this.ownerID] + 'を追加しました。') }
       }
       this.isOpenAddOwner = !this.isOpenAddOwner
     },
-    async rental () { 
-      const res = await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount }).catch(e => { alert(e) })
-      alert('あなたは”' + this.data.name + '”を' + this.rentalCount + '個借りました。' + this.dueDate)
+    async rental () {
+      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
+        .catch(e => {
+          alert(e)
+          this.error = e
+        })
+      if (!this.error) { alert('あなたは”' + this.data.name + '”を' + this.rentalCount + '個借りました。') }
       this.isOpenRentalForm = !this.isOpenRentalForm
     }
   }
