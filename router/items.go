@@ -65,7 +65,7 @@ func PostOwners(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	user, err := model.GetUserByID(uint(body.UserID))
+	user, err := model.GetUserByID(body.UserID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

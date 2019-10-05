@@ -88,10 +88,10 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 		if nowOwner.OwnerID != owner.OwnerID {
 			continue
 		}
-		if owner.Rentalable != nowOwner.Rentalable {
-			nowOwner.Count = owner.Count
-		} else {
+		if owner.Rentalable == nowOwner.Rentalable {
 			nowOwner.Count += owner.Count
+		} else {
+			nowOwner.Count = owner.Count
 		}
 		existed = true
 		db.Save(&nowOwner)

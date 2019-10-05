@@ -41,7 +41,7 @@ func CreateLog(log Log) (Log, error) {
 	if err != nil {
 		return Log{}, errors.New("Itemが存在しません")
 	}
-	_, err = GetUserByID(log.OwnerID)
+	_, err = GetUserByID(int(log.OwnerID))
 	if err != nil {
 		return Log{}, errors.New("Ownerが存在しません")
 	}
