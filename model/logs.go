@@ -73,6 +73,6 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 func GetLogsByItemID(itemID uint) ([]Log, error) {
 	// 指定のitemIDのitemが存在するかどうかはここで判別つけていません
 	logs := []Log{}
-	db.Model(&logs).Where("item_id = ?", itemID)
+	db.Where("item_id = ?", itemID).Find(&logs)
 	return logs, nil
 }
