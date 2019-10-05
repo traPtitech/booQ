@@ -100,10 +100,10 @@ func TestGetItems(t *testing.T) {
 
 func TestGetItemByID(t *testing.T) {
 
-	user1, _ := CreateUser(User{Name: "testGetItemByIDOwner"})
-	user2, _ := CreateUser(User{Name: "testGetItemByIDUser"})
+	ownerUser, _ := CreateUser(User{Name: "testGetItemByIDOwner"})
+	rentalUser, _ := CreateUser(User{Name: "testGetItemByIDUser"})
 	owner := Owner{
-		OwnerID:    user1.ID,
+		OwnerID:    ownerUser.ID,
 		Rentalable: true,
 		Count:      1,
 	}
@@ -116,7 +116,7 @@ func TestGetItemByID(t *testing.T) {
 		assert.NoError(err)
 		_, err = RegisterOwner(owner, item)
 		assert.NoError(err)
-		_, err = CreateLog(Log{ItemID: item.ID, OwnerID: owner.OwnerID, UserID: user2.ID, Type: 0, Count: 1})
+		_, err = CreateLog(Log{ItemID: item.ID, OwnerID: owner.OwnerID, UserID: rentalUser.ID, Type: 0, Count: 1})
 		assert.NoError(err)
 
 		gotItem, err := GetItemByID(item.ID)
@@ -124,8 +124,8 @@ func TestGetItemByID(t *testing.T) {
 		assert.NoError(err)
 		assert.NotEmpty(gotItem)
 		assert.Equal(gotItem.Name, "testGetItemItem")
-		assert.Equal(gotItem.Owners[0].OwnerID, user1.ID)
-		assert.Equal(gotItem.Logs[0].OwnerID, user1.ID)
+		assert.Equal(gotItem.Owners[0].OwnerID, ownerUser.ID)
+		assert.Equal(gotItem.Logs[0].OwnerID, ownerUser.ID)
 		assert.Equal(gotItem.Logs[0].Count, 1)
 		assert.Equal(gotItem.Logs[0].ItemID, item.ID)
 	})
