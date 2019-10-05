@@ -1,7 +1,7 @@
 <template>
-  <v-container>
+  <div>
     <div class="wrapper">
-      <v-container>
+      <div>
         <v-row no-gutters class="mb-6">
           <v-col md="auto">
             <div class="image">
@@ -19,23 +19,29 @@
             </div>
           </v-col>
         </v-row>
-      </v-container>
-      <v-container>
+      </div>
+      <div>
         <div class="content">
           <h4>{{data.name}}</h4>
           <div v-for="owner in data.owners" :key="owner.user.id">
             <p v-if="checkRentalable(owner.user.id)">{{owner.user.name}}  {{checkRentalable(owner.user.id)}}</p>
             <p v-else v-on:click="clickRental">{{owner.user.name}}  貸し出し可</p>
           </div>
+          <v-overlay :value="isOpenRentalForm">
+            <v-btn @click="clickRental">OK</v-btn>
+          </v-overlay>
           <v-btn outline round @click="clickAddOwner" color="indigo">所有者を追加</v-btn>
+          <v-overlay :value="isOpenAddOwner">
+            <v-btn @click="clickAddOwner">OK</v-btn>
+          </v-overlay>
           <div v-for="comment in data.comments" :key="comment.id" class="comment">
             <Icon :user="comment.user" />
             <p>{{comment.comment}}</p>
           </div>
         </div>
-      </v-container>
+      </div>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -48,6 +54,8 @@ export default {
   data () {
     return {
       data: null,
+      isOpenAddOwner: false,
+      isOpenRentalForm: false,
       sampleData: {
         id: 1,
         name: '小説　天気の子',
@@ -191,12 +199,14 @@ export default {
       // axios.post(/likes)みたいな感じ？
     },
     clickAddOwner () {
-      window.open('/register_owner_form', 'newwindow', 'width=400,height=800')
+      // window.open('/register_owner_form', 'newwindow', 'width=400,height=800')
       // window.open('/items/' + this.data.id + '/owner/new', 'newwindow', 'width=400,height=300')
+      this.isOpenAddOwner = !this.isOpenAddOwner
     },
     clickRental () {
-      window.open('/rental_form', 'newwindow', 'width=400,height=800')
+      // window.open('/rental_form', 'newwindow', 'width=400,height=800')
       // window.open('/items/' + this.data.id + '/rental', 'newwindow', 'width=400,height=300')
+      this.isOpenRentalForm = !this.isOpenRentalForm
     }
   }
 }
