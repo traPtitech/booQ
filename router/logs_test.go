@@ -1,5 +1,4 @@
 package router
-<<<<<<< HEAD
 
 // import (
 // 	"bytes"
@@ -135,5 +134,3 @@ package router
 // 	})
 
 // }
-=======
->>>>>>> 93534dda8266f0fd8ddf2a65892b6c56fe8c31a3
