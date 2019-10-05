@@ -19,8 +19,8 @@ type Item struct {
 
 type Owner struct {
 	gorm.Model
-	OwnerID    uint `gorm:"type:int;" json:"owner_id"`
-	Rentalable bool `gorm:"type:bool;" json:"rentalable"`
+	OwnerID    uint `gorm:"type:int;not null" json:"owner_id"`
+	Rentalable bool `gorm:"type:bool;not null" json:"rentalable"`
 	Count      int  `gorm:"type:int;default:1" json:"count"`
 }
 
