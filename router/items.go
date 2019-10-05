@@ -87,10 +87,11 @@ func PostOwners(c echo.Context) error {
 	if item.Type != 0 && !me.Admin {
 		return c.NoContent(http.StatusForbidden)
 	}
-	var owner model.Owner
-	owner.OwnerID = user.ID
-	owner.Rentalable = body.Rentalable
-	owner.Count = body.Count
+	owner := model.Owner{
+		OwnerID:    user.ID,
+		Rentalable: body.Rentalable,
+		Count:      body.Count,
+	}
 	if owner.Count < 1 {
 		return c.NoContent(http.StatusBadRequest)
 	}

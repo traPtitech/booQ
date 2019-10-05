@@ -21,21 +21,28 @@ func TestCreateItem(t *testing.T) {
 		item, err := CreateItem(Item{})
 		assert.Error(err)
 		assert.Empty(item)
+
+		_, _ = CreateItem(Item{Name: "testCreateItemFail", Code: "1234567891012"})
+		item, err = CreateItem(Item{Name: "testCreateItemFail"})
+		assert.Error(err)
+		assert.Empty(item)
+
+		item, err = CreateItem(Item{Name: "testCreateItemFail1", Code: "1234567891012"})
+		assert.Error(err)
+		assert.Empty(item)
 	})
 
 	t.Run("success", func(t *testing.T) {
 		t.Parallel()
 		assert := assert.New(t)
 
-		item, err := CreateItem(Item{Name: "test"})
+		item, err := CreateItem(Item{Name: "testCreateItemSuccess"})
 		assert.NoError(err)
 		assert.NotEmpty(item)
 	})
 }
 
 func TestRegisterOwner(t *testing.T) {
-	t.Parallel()
-
 	user, _ := CreateUser(User{Name: "testRegisterOwnerUser"})
 	var owner Owner
 	owner.OwnerID = user.ID
@@ -67,8 +74,6 @@ func TestRegisterOwner(t *testing.T) {
 }
 
 func TestGetItems(t *testing.T) {
-	t.Parallel()
-
 	user, _ := CreateUser(User{Name: "testAllItemUser"})
 	var owner Owner
 	owner.OwnerID = user.ID
