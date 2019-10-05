@@ -45,7 +45,7 @@ func GetItem(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	item, err := model.GetItemByID(itemID)
+	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
 	}
@@ -73,7 +73,7 @@ func PostOwners(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusForbidden, err)
 	}
-	item, err := model.GetItemByID(itemID)
+	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -88,8 +88,12 @@ func PostOwners(c echo.Context) error {
 		return c.NoContent(http.StatusForbidden)
 	}
 	var owner model.Owner
-	owner.Owner = user
+	owner.OwnerID = user.ID
 	owner.Rentalable = body.Rentalable
+	owner.Count = body.Count
+	if owner.Count < 1 {
+		return c.NoContent(http.StatusBadRequest)
+	}
 	res, err := model.RegisterOwner(owner, item)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

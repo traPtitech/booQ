@@ -33,13 +33,47 @@ func TestCreateItem(t *testing.T) {
 	})
 }
 
+func TestRegisterOwner(t *testing.T) {
+	t.Parallel()
+
+	user, _ := CreateUser(User{Name: "testRegisterOwnerUser"})
+	var owner Owner
+	owner.OwnerID = user.ID
+	owner.Rentalable = true
+	owner.Count = 1
+	item, _ := CreateItem(Item{Name: "testRegisterOwnerItem"})
+	item2, err := RegisterOwner(owner, item)
+	t.Run("make success", func(t *testing.T) {
+		t.Parallel()
+		assert := assert.New(t)
+
+		assert.Equal(user.ID, item2.Owners[0].OwnerID)
+		assert.NoError(err)
+		assert.NotEmpty(item2)
+	})
+
+	t.Run("add success", func(t *testing.T) {
+		t.Parallel()
+		assert := assert.New(t)
+
+		owner.Count = 5
+		item, err := RegisterOwner(owner, item)
+
+		assert.Equal(6, item.Owners[0].Count)
+
+		assert.NoError(err)
+		assert.NotEmpty(item)
+	})
+}
+
 func TestGetItems(t *testing.T) {
 	t.Parallel()
 
 	user, _ := CreateUser(User{Name: "testAllItemUser"})
 	var owner Owner
-	owner.Owner = user
+	owner.OwnerID = user.ID
 	owner.Rentalable = true
+	owner.Count = 1
 	item, _ := CreateItem(Item{Name: "testAllItemItem"})
 	_, _ = RegisterOwner(owner, item)
 	t.Run("success", func(t *testing.T) {
@@ -49,7 +83,7 @@ func TestGetItems(t *testing.T) {
 		items, err := GetItems()
 		for _, value := range items {
 			if value.Name == "testAllItemItem" {
-				assert.Equal("testAllItemUser", value.Owners[0].Owner.Name)
+				assert.Equal(user.ID, value.Owners[0].OwnerID)
 				break
 			}
 			continue

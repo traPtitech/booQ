@@ -9,23 +9,25 @@ import (
 // Item itemの構造体
 type Item struct {
 	gorm.Model
-	Name        string  `gorm:"type:varchar(64);not null" json:"name"`
-	Type        int     `gorm:"type:int;not null" json:"type"`
-	Code        string  `gorm:"type:varchar(13);" json:"code"`
-	Description string  `gorm:"type:text;" json:"description"`
-	ImgURL      string  `gorm:"type:text;" json:"img_url"`
-	Owners      []Owner `gorm:"many2many:ownership_maps;" json:"owners"`
+	Name        string   `gorm:"type:varchar(64);not null" json:"name"`
+	Type        int      `gorm:"type:int;not null" json:"type"`
+	Code        string   `gorm:"type:varchar(13);" json:"code"`
+	Description string   `gorm:"type:text;" json:"description"`
+	ImgURL      string   `gorm:"type:text;" json:"img_url"`
+	Owners      []*Owner `gorm:"many2many:ownership_maps;" json:"owners"`
 }
 
 type Owner struct {
 	gorm.Model
-	Owner      User `gorm:"many2many:owner_user;" json:"owner"`
+	OwnerID    uint `gorm:"type:int;" json:"owner_id"`
 	Rentalable bool `gorm:"type:bool;" json:"rentalable"`
+	Count      int  `gorm:"type:int;default:1" json:"count"`
 }
 
 type RequestPostOwnersBody struct {
 	UserID     int  `json:"user_id"`
 	Rentalable bool `json:"rentalable"`
+	Count      int  `json:"count"`
 }
 
 // TableName dbのテーブル名を指定する
@@ -38,7 +40,7 @@ func (item *Owner) TableName() string {
 }
 
 // GetItemByID IDからitemを取得する
-func GetItemByID(id int) (Item, error) {
+func GetItemByID(id uint) (Item, error) {
 	res := Item{}
 	db.First(&res, id).Related(&res.Owners, "Owners")
 	if res.Name == "" {
@@ -80,7 +82,24 @@ func CreateItem(item Item) (Item, error) {
 
 // RegisterItem 新しい所有者を登録する
 func RegisterOwner(owner Owner, item Item) (Item, error) {
-	db.Create(&owner)
-	db.Model(&item).Association("Owners").Append(&owner)
+	var existed bool
+	db.Model(&item).Related(&item.Owners, "Owners")
+	for _, nowOwner := range item.Owners {
+		if nowOwner.OwnerID != owner.OwnerID {
+			continue
+		}
+		if owner.Rentalable == nowOwner.Rentalable {
+			nowOwner.Count += owner.Count
+		} else {
+			nowOwner.Count = owner.Count
+		}
+		existed = true
+		db.Save(&nowOwner)
+		db.Model(&item).Related(&item.Owners, "Owners")
+	}
+	if !existed {
+		db.Create(&owner)
+		db.Model(&item).Association("Owners").Append(&owner)
+	}
 	return item, nil
 }

@@ -19,8 +19,6 @@ func (user *User) TableName() string {
 	return "users"
 }
 
-
-
 // GetUsers 全userを取得する
 func GetUsers() []User {
 	res := []User{}
