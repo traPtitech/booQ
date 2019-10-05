@@ -92,3 +92,31 @@ func TestGetItems(t *testing.T) {
 		assert.NotEmpty(items)
 	})
 }
+
+func TestGetItemByID(t *testing.T) {
+	t.Parallel()
+
+	user, _ := CreateUser(User{Name: "testGetItemUser"})
+	owner := Owner{
+		OwnerID:    user.ID,
+		Rentalable: true,
+		Count:      1,
+	}
+	item, _ := CreateItem(Item{Name: "testGetItemItem"})
+	_, _ = RegisterOwner(owner, item)
+	_, _ = CreateLog(Log{ItemID: item.ID, OwnerID: owner.ID, Type: 0, Count: 0})
+	t.Run("success", func(t *testing.T) {
+		t.Parallel()
+		assert := assert.New(t)
+
+		gotItem, err := GetItemByID(item.ID)
+
+		assert.NoError(err)
+		assert.NotEmpty(gotItem)
+		assert.Equal(gotItem.Name, "testGetItemItem")
+		assert.Equal(gotItem.Owners[0].OwnerID, user.ID)
+		assert.Equal(gotItem.Logs[0].OwnerID, user.ID)
+		assert.Equal(gotItem.Logs[0].Count, 1)
+		assert.Equal(gotItem.Logs[0].ItemID, item.ID)
+	})
+}

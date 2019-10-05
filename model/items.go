@@ -15,6 +15,7 @@ type Item struct {
 	Description string   `gorm:"type:text;" json:"description"`
 	ImgURL      string   `gorm:"type:text;" json:"img_url"`
 	Owners      []*Owner `gorm:"many2many:ownership_maps;" json:"owners"`
+	Logs        []Log    `json:"logs"`
 }
 
 type Owner struct {
@@ -46,6 +47,11 @@ func GetItemByID(id uint) (Item, error) {
 	if res.Name == "" {
 		return Item{}, errors.New("該当するItemがありません")
 	}
+	logs, err := GetLogsByItemID(id)
+	if err != nil {
+		return Item{}, err
+	}
+	res.Logs = logs
 	return res, nil
 }
 
