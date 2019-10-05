@@ -19,7 +19,7 @@ func TestPostItems(t *testing.T) {
 	t.Parallel()
 
 	testBodyTrap := model.Item{
-		Name:        "testTrapItem",
+		Name:        "testPostTrapItem",
 		Type:        1,
 		Code:        "1920093013000",
 		Description: "これは備品のテストです",
@@ -27,7 +27,7 @@ func TestPostItems(t *testing.T) {
 	}
 
 	testBodyKojin := model.Item{
-		Name:        "testKojinItem",
+		Name:        "testPostKojinItem",
 		Type:        0,
 		Code:        "9784049123944",
 		Description: "これは個人所有物のテストです",
@@ -88,20 +88,18 @@ func TestPostItems(t *testing.T) {
 }
 
 func TestPostOwners(t *testing.T) {
-	t.Parallel()
-
 	testBodyTrap := model.Item{
-		Name:        "testTrapItem",
+		Name:        "testPostOwnersTrapItem",
 		Type:        1,
-		Code:        "1920093013000",
+		Code:        "1920093013001",
 		Description: "これは備品のテストです",
 		ImgURL:      "http://example.com/testTrap.jpg",
 	}
 
 	testBodyKojin := model.Item{
-		Name:        "testKojinItem",
+		Name:        "testPostOwnersKojinItem",
 		Type:        0,
-		Code:        "9784049123944",
+		Code:        "9784049123945",
 		Description: "これは個人所有物のテストです",
 		ImgURL:      "http://example.com/testKojin.jpg",
 	}
@@ -147,20 +145,26 @@ func TestPostOwners(t *testing.T) {
 	})
 
 	t.Run("not admin user", func(t *testing.T) {
-		user, _ := model.GetUserByName("testUser")
-		userID := int(user.ID)
-		testOwnerKojin := model.RequestPostOwnersBody{
-			UserID:     userID,
-			Rentalable: true,
-			Count:      1,
-		}
 		assert := assert.New(t)
 		e := echoSetupWithUser()
 
-		createdBihin, _ := model.GetItemByName("testTrapItem")
-		bihinID := int(createdBihin.ID)
+		user := model.User{
+			Name:        "testUser",
+			DisplayName: "テストユーザー",
+			Admin:       false,
+		}
+		testUser, err := model.CreateUser(user)
+		assert.NoError(err)
+
+		testOwnerKojin := model.RequestPostOwnersBody{
+			UserID:     int(testUser.ID),
+			Rentalable: true,
+			Count:      1,
+		}
+
+		bihin, _ := model.GetItemByName("testPostOwnersTrapItem")
 		reqBody, _ := json.Marshal(testOwnerKojin)
-		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(bihinID)+"/owners", bytes.NewReader(reqBody))
+		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(bihin.ID))+"/owners", bytes.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 		rec := httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
@@ -178,10 +182,7 @@ func TestPostOwners(t *testing.T) {
 		item := model.Item{}
 		_ = json.NewDecoder(rec.Body).Decode(&item)
 
-		createdItem, _ := model.GetItemByName(item.Name)
-
-		itemID := int(createdItem.ID)
-		paramID := strconv.Itoa(itemID)
+		paramID := strconv.Itoa(int(item.ID))
 		targetAPI := "/api/items/" + paramID + "/owners"
 
 		reqBody, _ = json.Marshal(testOwnerKojin)
@@ -195,6 +196,6 @@ func TestPostOwners(t *testing.T) {
 		_ = json.NewDecoder(rec.Body).Decode(&item)
 
 		assert.Equal(testBodyKojin.Name, item.Name)
-		assert.Equal(user.ID, item.Owners[0].OwnerID)
+		assert.Equal(testUser.ID, item.Owners[0].OwnerID)
 	})
 }
