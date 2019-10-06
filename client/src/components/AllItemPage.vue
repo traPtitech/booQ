@@ -1,9 +1,12 @@
 <template>
   <ItemList :items="data" />
+  <!-- <div>{{data}}</div> -->
 </template>
 
 <script>
 import ItemList from './shared/ItemList'
+import axios from 'axios'
+
 export default {
   name: 'AllItemPage',
   components: {
@@ -12,12 +15,13 @@ export default {
   data () {
     return {
       data: null,
+      error: null,
       sampleData: [
         {
           'id': 1,
-          'name': '小説　天気の子',
+          'name': 'プロジェクター',
           'code': 9784041026403,
-          'type': 1,
+          'type': 0,
           'owners': [
             {
               'user': {
@@ -62,7 +66,7 @@ export default {
             }
           ],
           'like_counts': 1,
-          'img_url': 'https://cover.openbd.jp/9784041026403.jpg',
+          'img_url': 'https://i0.wp.com/sakidorico.s3.amazonaws.com/wp/wp-content/uploads/2019/02/5c7758a49537b.jpg?fit=750%2C750&ssl=1',
           'created_at': '2019/07/28 22:00:00',
           'updated_at': '2019/07/28 22:00:00'
         },
@@ -287,6 +291,10 @@ export default {
     }
   },
   mounted () {
+    // axios
+    //   .get(`/api/items`)
+    //   .then(res => (this.data = res.data))
+    //   .catch(e => { alert(e) })
     // 本番ではaxios.getでマウントしてsampleDataを消してください
     this.data = this.sampleData
   },
