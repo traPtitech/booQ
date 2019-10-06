@@ -8,6 +8,7 @@
               <div>
                 <img :src="data.img_url" />
               </div>
+              <RentalForm :owners="data.owners" :isOpenRentalForm="isOpenRentalForm" />
               <v-btn dark outlined round icon color="indigo" @click="like"> <v-icon dark>mdi-star</v-icon></v-btn>
               <div>
                 <v-layout row wrap class="d-inline-flex">
@@ -25,88 +26,9 @@
           <h4>{{data.name}}</h4>
           <div v-for="owner in data.owners" :key="owner.user.id">
             <p v-if="checkRentalable(owner.user.id)">{{owner.user.name}}  {{checkRentalable(owner.user.id)}}</p>
-            <p v-else v-on:click="clickRental">{{owner.user.name}}  貸し出し可</p>
+            <p v-else>{{owner.user.name}}  貸し出し可</p>
           </div>
-          <div class="text-center">
-            <v-dialog light v-model="isOpenRentalForm" max-width="320">
-              <v-card width="320">
-                <v-card-title class="headline">物品を借りる</v-card-title>
-                <v-card-actions>
-                  <v-menu bottom origin="center center" transition="scale-transition" open-on-hover>
-                    <template v-slot:activator="{ on }">
-                      <v-btn color="primary" dark v-on="on">所有者を選ぶ</v-btn>
-                    </template>
-                    <v-list>
-                      <v-list-item
-                      v-for="(owner, i) in data.owners"
-                      :key="i"
-                      @click="rentOwnerID=owner.user.id"
-                      :disabled="!owner.rentalable">
-                        <v-list-item-title>{{ owner.user.name }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </v-card-actions>
-                <v-card-actions>
-                  <div>
-                    <v-form ref="form">
-                      <v-textarea outlined v-model="purpose" label="目的"/>
-                    </v-form>
-                  </div>
-                </v-card-actions>
-                <v-card-actions>
-                  <div>
-                    <v-form ref="form">
-                      <v-text-field outlined v-model.number="rentalCount" type="number" label="個数"/>
-                    </v-form>
-                  </div>
-                </v-card-actions>
-                <v-card-actions max-width="320">
-                  <v-date-picker v-model="dueDate"></v-date-picker>
-                </v-card-actions>
-                <v-alert type="error" v-if="rentalCount<0">個数が負になっています</v-alert>
-                <v-divider></v-divider>
-                <v-card-actions>
-                  <div class="flex-grow-1"></div>
-                  <v-btn v-on:click="rental()">借りる</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </div>
-          <v-btn outline round @click="clickAddOwner" color="indigo">所有者を追加</v-btn>
-          <div class="text-center">
-            <v-dialog light v-model="isOpenAddOwner" max-width="290">
-              <v-card width="290">
-                <v-card-title class="headline">所有者を追加する</v-card-title>
-                <v-card-actions>
-                  <div v-if="$store.state.me.admin" >
-                    <label v-for="(label,id) in ownerOptions" v-bind:key="label">
-                      <div><input type="radio" name="owner" :value="id" v-model="ownerID">{{ label }}</div>
-                    </label>
-                  </div>
-                </v-card-actions>
-                <v-card-actions>
-                  <div>
-                    <input type="checkbox" id="checkbox" v-model="rentalable">
-                    <label for="checkbox">貸し出し可</label>
-                  </div>
-                </v-card-actions>
-                <v-card-actions>
-                  <div>
-                    <v-form ref="form">
-                      <v-text-field outlined v-model.number="count" type="number" label="個数"/>
-                    </v-form>
-                  </div>
-                </v-card-actions>
-                <v-alert type="error" v-if="count<0">個数が負になっています</v-alert>
-                <v-divider></v-divider>
-                <v-card-actions>
-                  <div class="flex-grow-1"></div>
-                  <v-btn v-on:click="add()">追加</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </div>
+          <RegisterOwnerForm :isOpenAddOwner="isOpenAddOwner" />
           <div v-for="comment in data.comments" :key="comment.id" class="comment">
             <Icon :user="comment.user" />
             <p>{{comment.comment}}</p>
@@ -119,31 +41,21 @@
 
 <script>
 import Icon from './shared/Icon'
-import axios from 'axios'
+import RegisterOwnerForm from './shared/RegisterOwnerForm'
+import RentalForm from './shared/RentalForm'
 
 export default {
   name: 'ItemDetailPage',
   components: {
-    Icon
+    Icon,
+    RegisterOwnerForm,
+    RentalForm
   },
   data () {
     return {
       data: null,
       isOpenAddOwner: false,
       isOpenRentalForm: false,
-      ownerID: 0,
-      ownerOptions: {
-        0: '自身',
-        1: 'traP',
-        2: '支援課'
-      },
-      rentalable: true,
-      count: 1,
-      purpose: '',
-      rentalCount: 1,
-      dueDate: '',
-      rentOwnerID: 0,
-      error: '',
       // 以下はサンプルデータ
       sampleData: {
         id: 1,
@@ -318,33 +230,6 @@ export default {
       this.isOpenAddOwner = !this.isOpenAddOwner
     },
     clickRental () {
-      this.isOpenRentalForm = !this.isOpenRentalForm
-    },
-    async add () {
-      if (this.ownerID === 0) {
-        await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count })
-          .catch(e => {
-            alert(e)
-            this.error = e
-          })
-        if (!this.error) { alert('”' + this.data.name + '”の所有者に' + this.$store.state.me.name + 'を追加しました。') }
-      } else {
-        await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable, count: this.count })
-          .catch(e => {
-            alert(e)
-            this.error = e
-          })
-        if (!this.error) { alert('”' + this.data.name + '”の所有者に' + this.ownerOptions[this.ownerID] + 'を追加しました。') }
-      }
-      this.isOpenAddOwner = !this.isOpenAddOwner
-    },
-    async rental () {
-      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
-        .catch(e => {
-          alert(e)
-          this.error = e
-        })
-      if (!this.error) { alert('あなたは”' + this.data.name + '”を' + this.rentalCount + '個借りました。') }
       this.isOpenRentalForm = !this.isOpenRentalForm
     }
   }
