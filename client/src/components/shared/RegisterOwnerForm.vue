@@ -52,7 +52,8 @@ export default {
       rentalable: true,
       count: 1,
       error: '',
-      isOpenAddOwner: false
+      isOpenAddOwner: false,
+      message: ''
     }
   },
   methods: {
@@ -62,20 +63,17 @@ export default {
         return false
       }
       if (this.ownerID === 0) {
-        await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count })
-          .catch(e => {
-            alert(e)
-            this.error = e
-          })
-        if (!this.error) { alert('”' + this.data.name + '”の所有者に' + this.$store.state.me.name + 'を追加しました。') }
+        this.message = '”' + this.data.name + '”の所有者に' + this.$store.state.me.name + 'を追加しました。'
+        this.ownerID = this.$store.state.me.name
       } else {
-        await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable, count: this.count })
-          .catch(e => {
-            alert(e)
-            this.error = e
-          })
-        if (!this.error) { alert('”' + this.data.name + '”の所有者に' + this.ownerOptions[this.ownerID] + 'を追加しました。') }
+        this.message = '”' + this.data.name + '”の所有者に' + this.ownerOptions[this.ownerID] + 'を追加しました。'
       }
+      await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable, count: this.count })
+        .catch(e => {
+          alert(e)
+          this.error = e
+        })
+      if (!this.error) { alert(this.message) }
       this.isOpenAddOwner = !this.isOpenAddOwner
     },
     open () {

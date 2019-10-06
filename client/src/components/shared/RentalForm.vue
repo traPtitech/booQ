@@ -14,7 +14,7 @@
                 <v-list-item
                 v-for="(owner, i) in data.owners"
                 :key="i"
-                @click="rentOwnerID=owner.user.id"
+                @click="rentOwnerID = owner.user.id"
                 :disabled="!owner.rentalable">
                   <v-list-item-title>{{ owner.user.name }}</v-list-item-title>
                 </v-list-item>
@@ -36,7 +36,6 @@
           <v-card-actions max-width="320">
             <v-date-picker v-model="dueDate"></v-date-picker>
           </v-card-actions>
-          <v-alert type="error" v-if="rentalCount<0">個数が負になっています</v-alert>
           <v-divider></v-divider>
           <v-card-actions>
             <div class="flex-grow-1"></div>
