@@ -8,7 +8,7 @@
               <div>
                 <img :src="data.img_url" />
               </div>
-              <RentalForm :owners="data.owners" :isOpenRentalForm="isOpenRentalForm" />
+              <RentalForm :data="data" />
               <v-btn dark outlined round icon color="indigo" @click="like"> <v-icon dark>mdi-star</v-icon></v-btn>
               <div>
                 <v-layout row wrap class="d-inline-flex">

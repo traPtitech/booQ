@@ -12,7 +12,7 @@
               </template>
               <v-list>
                 <v-list-item
-                v-for="(owner, i) in owners"
+                v-for="(owner, i) in data.owners"
                 :key="i"
                 @click="rentOwnerID=owner.user.id"
                 :disabled="!owner.rentalable">
@@ -22,16 +22,14 @@
             </v-menu>
           </v-card-actions>
           <v-card-actions>
-            <div>
+            <div v-if="data.type == 0">
               <v-form ref="form">
-                <v-textarea outlined v-model="purpose" label="目的"/>
+                <v-textarea outlined v-model="purpose" :rules="[() => !!purpose || 'This field is required']" label="目的"/>
               </v-form>
             </div>
-          </v-card-actions>
-          <v-card-actions>
-            <div>
+            <div v-else>
               <v-form ref="form">
-                <v-text-field outlined v-model.number="rentalCount" type="number" label="個数"/>
+                <v-textarea outlined v-model="purpose" label="目的"/>
               </v-form>
             </div>
           </v-card-actions>
@@ -56,20 +54,32 @@ import axios from 'axios'
 export default {
   name: 'RentalForm',
   props: {
-    owners: Object
+    data: Object
   },
   data () {
     return {
-      purpose: '',
+      purpose: null,
       rentalCount: 1,
-      dueDate: '',
-      rentOwnerID: 0,
+      dueDate: null,
+      rentOwnerID: null,
       error: '',
       isOpenRentalForm: false
     }
   },
   methods: {
     async rental () {
+      if (this.data.type === 0 && this.purpose === null) {
+        alert('目的を入力してください')
+        return false
+      }
+      if (this.dueDate === null) {
+        alert('返却日を入力してください')
+        return false
+      }
+      if (this.rentOwnerID === null) {
+        alert('所有者を選択してください')
+        return false
+      }
       await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
         .catch(e => {
           alert(e)

@@ -25,7 +25,6 @@
               </v-form>
             </div>
           </v-card-actions>
-          <v-alert type="error" v-if="count<0">個数が負になっています</v-alert>
           <v-divider></v-divider>
           <v-card-actions>
             <div class="flex-grow-1"></div>
@@ -58,6 +57,10 @@ export default {
   },
   methods: {
     async add () {
+      if (!Number.isInteger(this.count) || this.count < 0) {
+        alert('個数を正常にしてください')
+        return false
+      }
       if (this.ownerID === 0) {
         await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count })
           .catch(e => {
