@@ -9,18 +9,19 @@ import (
 // Item itemの構造体
 type Item struct {
 	gorm.Model
-	Name        string   `gorm:"type:varchar(64);not null" json:"name"`
-	Type        int      `gorm:"type:int;not null" json:"type"`
-	Code        string   `gorm:"type:varchar(13);" json:"code"`
-	Description string   `gorm:"type:text;" json:"description"`
-	ImgURL      string   `gorm:"type:text;" json:"img_url"`
-	Owners      []*Owner `gorm:"many2many:ownership_maps;" json:"owners"`
-	Logs        []Log    `json:"logs"`
+	Name        string  `gorm:"type:varchar(64);not null" json:"name"`
+	Type        int     `gorm:"type:int;not null" json:"type"`
+	Code        string  `gorm:"type:varchar(13);" json:"code"`
+	Description string  `gorm:"type:text;" json:"description"`
+	ImgURL      string  `gorm:"type:text;" json:"img_url"`
+	Owners      []Owner `gorm:"many2many:ownership_maps;" json:"owners"`
+	Logs        []Log   `json:"logs"`
 }
 
 type Owner struct {
 	gorm.Model
-	OwnerID    uint `gorm:"type:int;not null" json:"owner_id"`
+	UserId     uint `gorm:"type:int;not null" json:"owner_id"`
+	User       User `json:"owner"`
 	Rentalable bool `gorm:"type:bool;not null" json:"rentalable"`
 	Count      int  `gorm:"type:int;default:1" json:"count"`
 }
@@ -43,22 +44,18 @@ func (item *Owner) TableName() string {
 // GetItemByID IDからitemを取得する
 func GetItemByID(id uint) (Item, error) {
 	res := Item{}
-	db.First(&res, id).Related(&res.Owners, "Owners")
+	res.ID = id
+	db.Set("gorm:auto_preload", true).First(&res).Related(&res.Owners, "Owners").Related(&res.Logs, "Logs")
 	if res.Name == "" {
 		return Item{}, errors.New("該当するItemがありません")
 	}
-	logs, err := GetLogsByItemID(id)
-	if err != nil {
-		return Item{}, err
-	}
-	res.Logs = logs
 	return res, nil
 }
 
 // GetItemByName Nameからitemを取得する
 func GetItemByName(name string) (Item, error) {
 	res := Item{}
-	db.Where("name = ?", name).First(&res)
+	db.Set("gorm:auto_preload", true).First(&res, "name = ?", name).Related(&res.Owners, "Owners").Related(&res.Logs, "Logs")
 	if res.Name == "" {
 		return Item{}, errors.New("該当するNameがありません")
 	}
@@ -70,9 +67,8 @@ func GetItems() ([]Item, error) {
 	res := []Item{}
 	db.Find(&res)
 	for i, item := range res {
-		itemWithOwner := Item{}
-		db.First(&itemWithOwner).Related(&item.Owners, "Owners").Where("name=?", item.Name)
-		res[i] = itemWithOwner
+		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners")
+		res[i] = item
 	}
 	return res, nil
 }
@@ -95,9 +91,10 @@ func CreateItem(item Item) (Item, error) {
 // RegisterItem 新しい所有者を登録する
 func RegisterOwner(owner Owner, item Item) (Item, error) {
 	var existed bool
-	db.Model(&item).Related(&item.Owners, "Owners")
+	db.Preload("Owners").Find(&item)
+	owner.User, _ = GetUserByID(int(owner.UserId))
 	for _, nowOwner := range item.Owners {
-		if nowOwner.OwnerID != owner.OwnerID {
+		if nowOwner.UserId != owner.UserId {
 			continue
 		}
 		if owner.Rentalable == nowOwner.Rentalable {
@@ -106,8 +103,8 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 			nowOwner.Count = owner.Count
 		}
 		existed = true
-		db.Save(&nowOwner)
-		db.Model(&item).Related(&item.Owners, "Owners")
+		nowOwner.User = owner.User
+		db.Model(&item).Association("Owners").Replace(&nowOwner)
 	}
 	if !existed {
 		db.Create(&owner)

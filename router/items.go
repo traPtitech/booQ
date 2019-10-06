@@ -88,7 +88,7 @@ func PostOwners(c echo.Context) error {
 		return c.NoContent(http.StatusForbidden)
 	}
 	owner := model.Owner{
-		OwnerID:    user.ID,
+		UserId:     user.ID,
 		Rentalable: body.Rentalable,
 		Count:      body.Count,
 	}

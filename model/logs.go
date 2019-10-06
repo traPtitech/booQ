@@ -11,8 +11,10 @@ import (
 type Log struct {
 	gorm.Model
 	ItemID  uint      `gorm:"type:int;not null" json:"item_id"`
-	UserID  uint      `gorm:"type:int;not null" json:"user_id"`
-	OwnerID uint      `gorm:"type:int;not null" json:"owner_id"`
+	UserId  uint      `gorm:"type:int;not null" json:"user_id"`
+	User    User      `json:"user"`
+	OwnerId uint      `gorm:"type:int;not null" json:"owner_id"`
+	Owner   User      `json:"owner"`
 	Type    int       `gorm:"type:int;not null" json:"type"`
 	Purpose string    `json:"purpose"`
 	DueDate time.Time `gorm:"type:datetime;" json:"due_date"`
@@ -41,7 +43,7 @@ func CreateLog(log Log) (Log, error) {
 	if err != nil {
 		return Log{}, errors.New("Itemが存在しません")
 	}
-	_, err = GetUserByID(int(log.OwnerID))
+	_, err = GetUserByID(int(log.OwnerId))
 	if err != nil {
 		return Log{}, errors.New("Ownerが存在しません")
 	}
@@ -49,7 +51,7 @@ func CreateLog(log Log) (Log, error) {
 	return log, nil
 }
 
-// GetLatestLog OwnerIDからLatestLogを取得する
+// GetLatestLog UserIdからLatestLogを取得する
 func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	item, err := GetItemByID(itemID)
 	if err != nil {
@@ -57,7 +59,7 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	}
 	exist := false
 	for _, owner := range item.Owners {
-		if owner.OwnerID == ownerID {
+		if owner.UserId == ownerID {
 			exist = true
 		}
 	}
@@ -65,7 +67,7 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 		return Log{}, errors.New("指定した所有者はそのItemを所有していません")
 	}
 	log := Log{}
-	db.Order("created_at desc").First(&log).Where("item_id = ? AND owner_id = ?", itemID, ownerID)
+	db.Set("gorm:auto_preload", true).Order("created_at desc").First(&log, "item_id = ? AND owner_id = ?", itemID, ownerID)
 	return log, nil
 }
 
@@ -73,6 +75,6 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 func GetLogsByItemID(itemID uint) ([]Log, error) {
 	// 指定のitemIDのitemが存在するかどうかはここで判別つけていません
 	logs := []Log{}
-	db.Where("item_id = ?", itemID).Find(&logs)
+	db.Set("gorm:auto_preload", true).Find(&logs, "item_id = ?", itemID)
 	return logs, nil
 }

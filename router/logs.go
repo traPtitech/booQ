@@ -28,7 +28,7 @@ func PostLogs(c echo.Context) error {
 	item, _ := model.GetItemByID(itemID)
 	var itemCount int
 	for _, owner := range item.Owners {
-		if owner.OwnerID == body.OwnerID {
+		if owner.UserId == body.OwnerID {
 			if !owner.Rentalable {
 				return c.NoContent(http.StatusForbidden)
 			}
@@ -42,8 +42,8 @@ func PostLogs(c echo.Context) error {
 	}
 	log := model.Log{
 		ItemID:  itemID,
-		UserID:  user.ID,
-		OwnerID: body.OwnerID,
+		UserId:  user.ID,
+		OwnerId: body.OwnerID,
 		Type:    body.Type,
 		Purpose: body.Purpose,
 		DueDate: body.DueDate,
