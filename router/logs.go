@@ -28,7 +28,7 @@ func PostLogs(c echo.Context) error {
 	item, _ := model.GetItemByID(itemID)
 	var itemCount int
 	for _, owner := range item.Owners {
-		if owner.OwnerID == body.OwnerID {
+		if owner.UserID == body.OwnerID {
 			if !owner.Rentalable {
 				return c.NoContent(http.StatusForbidden)
 			}

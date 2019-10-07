@@ -7,8 +7,6 @@ import DashBoard from './components/DashBoard.vue'
 import UserPage from './components/UserPage.vue'
 import RegisterItemPage from './components/RegisterItemPage'
 import ItemDetailPage from './components/ItemDetailPage'
-import RegisterOwnerForm from './components/RegisterOwnerForm'
-import RentalForm from './components/RentalForm'
 import AdminPage from './components/AdminPage'
 import AllItemPage from './components/AllItemPage'
 import { fetchAuthToken, setAuthToken, getMe } from './utils/api'
@@ -20,6 +18,13 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
+  scrollBehavior (to, from, savedPosition) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve({ x: 0, y: 0 })
+      }, 250)
+    })
+  },
   routes: [
     {
       path: '/',
@@ -47,14 +52,6 @@ export default new Router({
       component: ItemDetailPage
     },
     {
-      path: '/items/:id/owner/new',
-      component: RegisterOwnerForm
-    },
-    {
-      path: '/items/:id/rental',
-      component: RentalForm
-    },
-    {
       path: '/items',
       name: 'All Items',
       component: AllItemPage
@@ -64,14 +61,6 @@ export default new Router({
       path: '/items_test',
       name: 'Item',
       component: ItemDetailPage
-    },
-    {
-      path: '/register_owner_form',
-      component: RegisterOwnerForm
-    },
-    {
-      path: '/rental_form',
-      component: RentalForm
     },
     // ここまで消す
     {

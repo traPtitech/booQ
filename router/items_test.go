@@ -141,7 +141,7 @@ func TestPostOwners(t *testing.T) {
 		_ = json.NewDecoder(rec.Body).Decode(&item)
 
 		assert.Equal(testBodyTrap.Name, item.Name)
-		assert.Equal(trap.ID, item.Owners[0].OwnerID)
+		assert.Equal(trap.ID, item.Owners[0].UserID)
 	})
 
 	t.Run("not admin user", func(t *testing.T) {
@@ -196,6 +196,6 @@ func TestPostOwners(t *testing.T) {
 		_ = json.NewDecoder(rec.Body).Decode(&item)
 
 		assert.Equal(testBodyKojin.Name, item.Name)
-		assert.Equal(testUser.ID, item.Owners[0].OwnerID)
+		assert.Equal(testUser.ID, item.Owners[0].UserID)
 	})
 }

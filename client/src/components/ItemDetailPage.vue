@@ -1,13 +1,14 @@
 <template>
-  <v-container>
+  <div>
     <div class="wrapper">
-      <v-container>
+      <div>
         <v-row no-gutters class="mb-6">
           <v-col md="auto">
             <div class="image">
               <div>
                 <img :src="data.img_url" />
               </div>
+              <RentalForm :data="data" />
               <v-btn dark outlined round icon color="indigo" @click="like"> <v-icon dark>mdi-star</v-icon></v-btn>
               <div>
                 <v-layout row wrap class="d-inline-flex">
@@ -19,35 +20,43 @@
             </div>
           </v-col>
         </v-row>
-      </v-container>
-      <v-container>
+      </div>
+      <div>
         <div class="content">
           <h4>{{data.name}}</h4>
           <div v-for="owner in data.owners" :key="owner.user.id">
             <p v-if="checkRentalable(owner.user.id)">{{owner.user.name}}  {{checkRentalable(owner.user.id)}}</p>
-            <p v-else v-on:click="clickRental">{{owner.user.name}}  貸し出し可</p>
+            <p v-else>{{owner.user.name}}  貸し出し可</p>
           </div>
-          <v-btn outline round @click="clickAddOwner" color="indigo">所有者を追加</v-btn>
+          <RegisterOwnerForm :isOpenAddOwner="isOpenAddOwner" />
           <div v-for="comment in data.comments" :key="comment.id" class="comment">
             <Icon :user="comment.user" />
             <p>{{comment.comment}}</p>
           </div>
         </div>
-      </v-container>
+      </div>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script>
 import Icon from './shared/Icon'
+import RegisterOwnerForm from './shared/RegisterOwnerForm'
+import RentalForm from './shared/RentalForm'
+
 export default {
   name: 'ItemDetailPage',
   components: {
-    Icon
+    Icon,
+    RegisterOwnerForm,
+    RentalForm
   },
   data () {
     return {
       data: null,
+      isOpenAddOwner: false,
+      isOpenRentalForm: false,
+      // 以下はサンプルデータ
       sampleData: {
         id: 1,
         name: '小説　天気の子',
@@ -62,6 +71,33 @@ export default {
               admin: true
             },
             rentalable: true
+          },
+          {
+            user: {
+              id: 1,
+              name: 'nagatech',
+              displayName: 'ながてち',
+              admin: true
+            },
+            rentalable: true
+          },
+          {
+            user: {
+              id: 1,
+              name: 'nagatech',
+              displayName: 'ながてち',
+              admin: true
+            },
+            rentalable: false
+          },
+          {
+            user: {
+              id: 1,
+              name: 'nagatech',
+              displayName: 'ながてち',
+              admin: true
+            },
+            rentalable: false
           }
         ],
         description: '高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。',
@@ -191,12 +227,10 @@ export default {
       // axios.post(/likes)みたいな感じ？
     },
     clickAddOwner () {
-      window.open('/register_owner_form', 'newwindow', 'width=400,height=800')
-      // window.open('/items/' + this.data.id + '/owner/new', 'newwindow', 'width=400,height=300')
+      this.isOpenAddOwner = !this.isOpenAddOwner
     },
     clickRental () {
-      window.open('/rental_form', 'newwindow', 'width=400,height=800')
-      // window.open('/items/' + this.data.id + '/rental', 'newwindow', 'width=400,height=300')
+      this.isOpenRentalForm = !this.isOpenRentalForm
     }
   }
 }
