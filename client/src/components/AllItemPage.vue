@@ -5,7 +5,7 @@
 
 <script>
 import ItemList from './shared/ItemList'
-import axios from 'axios'
+// import axios from 'axios'
 
 export default {
   name: 'AllItemPage',
@@ -26,8 +26,8 @@ export default {
             {
               'user': {
                 'id': 1,
-                'name': 'nagatech',
-                'displayName': 'ながてち',
+                'name': 'trap',
+                'displayName': 'traP',
                 'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
                 'admin': true
               },
@@ -47,14 +47,15 @@ export default {
               },
               'owner': {
                 'id': 1,
-                'name': 'nagatech',
-                'displayName': 'ながてち',
+                'name': 'trap',
+                'displayName': 'traP',
                 'iconFileId': 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
                 'admin': true
               },
               'type': 0,
               'purpose': '読みたかったから。',
               'due_date': '2019/07/30 23:30:00',
+              'count': 8,
               'created_at': '2019/07/28 22:00:00',
               'updated_at': '2019/07/28 22:00:00'
             }
@@ -118,6 +119,7 @@ export default {
               'type': 0,
               'purpose': '読みたかったから。',
               'due_date': '2019/07/30 23:30:00',
+              'count': 3,
               'created_at': '2019/07/28 22:00:00',
               'updated_at': '2019/07/28 22:00:00'
             }

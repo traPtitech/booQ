@@ -25,16 +25,32 @@
               <v-list-item-title class="headline mb-1">{{ item.name }}</v-list-item-title>
               <v-list-item-subtitle>{{ item.owners.map(i => i.user.name).join(', ') }}</v-list-item-subtitle>
             </v-list-item-content>
-            <!-- <v-list-item-action> -->
-              <!-- <v-btn  v-if="item.type = 0" @click="$store.commit('item2cart', item)"> -->
-              <!-- <v-btn  v-if="item.type = 0" @click="alert('a')"> -->
-                <!-- <v-icon>thumb_up_alt</v-icon> -->
-              <!-- </v-btn> -->
-              <!-- <v-btn  v-if="item.type = 0" @click="$store.commit('item2cart', item)">
-                <v-icon>mdi-cart-arrow-down</v-icon>
-              </v-btn> -->
-            <!-- </v-list-item-action> -->
-            <v-list-item-icon v-if="item.type == 0">
+            <v-list-item-action>
+                <!-- <v-btn  v-if="item.type = 0" @click="$store.commit('item2cart', item)"> -->
+                <v-btn icon v-if="item.type == 0" @click.stop="isOpen2Cart = !isOpen2Cart" absolute>
+                  <v-icon>mdi-cart-arrow-down</v-icon>
+                </v-btn>
+                <div class="text-center">
+                  <v-dialog v-model="isOpen2Cart" max-width="290">
+                    <v-card width="280">
+                      <v-card-title class="headline grey lighten-2" primary-title>
+                        個数を選択
+                      </v-card-title>
+                      <v-card-actions>
+                        <v-slider :max="getBihinLatestCount(item.id)" v-model="item.rentalCount" thumb-label="always" />
+                        <!-- <v-slider :max="item.latest_logs.filter(function (element) { return (element.item_id = item.id) && (element.owner.name = 'trap') })[0].count" v-model="item.rentalCount" thumb-label="always" /> -->
+                      </v-card-actions>
+                      <v-divider></v-divider>
+                      <v-card-actions>
+                        <v-btn @click="$store.commit('item2cart', item)" primary>
+                          Put Cart
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </div>
+              </v-list-item-action>
+            <v-list-item-icon v-if="item.like_counts">
               <v-icon>thumb_up_alt</v-icon>
               {{ item.like_counts }}
             </v-list-item-icon>
@@ -46,13 +62,27 @@
 </template>
 
 <script>
-// import { mdiCartArrowDown } from '@mdi/js';
-
 export default {
   name: 'ItemList',
   props: [
     'items'
-  ]
+  ],
+  data () {
+    return {
+      isOpen2Cart: false
+    }
+  },
+  methods: {
+    getBihinLatestCount (itemID) {
+      var item = this.items.filter(function (element, index, array) {
+        return (element.id = itemID)
+      })
+      var targetLog = item[0].latest_logs.filter(function (log, index, array) {
+        return (log.owner.name = 'trap')
+      })
+      return targetLog[0].count
+    }
+  }
 }
 </script>
 

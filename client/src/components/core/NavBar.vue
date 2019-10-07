@@ -33,6 +33,25 @@
         layout
         py-2
       >
+        <v-menu v-model="value">
+          <template v-slot:activator="{ on }">
+            <v-btn dark icon v-on="on">
+             <v-icon>mdi-cart</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item v-for="(item, i) in $store.state.cart" :key="i">
+              <v-list-item-title>
+                {{ item.name }}
+              </v-list-item-title>
+              <v-list-item-action>
+                <v-btn icon @click="items.splice( i, 1)">
+                  <v-icon>mdi-minus-circle</v-icon>
+                </v-btn>
+              </v-list-item-action>
+            </v-list-item>
+          </v-list>
+        </v-menu>
         <v-btn
           v-if="$store.state.me"
           dark
@@ -58,6 +77,7 @@
 <script>
 import { mapMutations } from 'vuex'
 import { getMe } from '@/utils/api'
+import axios from 'axios'
 
 export default {
   data () {
@@ -65,7 +85,10 @@ export default {
       logo: '/img/logo.png',
       title: null,
       responsive: false,
-      responsiveInput: false
+      responsiveInput: false,
+      cartPurpose: '',
+      cartDueDate: '' ,
+      cartError: null
     }
   },
   watch: {
@@ -108,6 +131,18 @@ export default {
         this.responsive = false
         this.responsiveInput = true
       }
+    },
+     async rentCartItem () {
+       for ( var i = 0; i < this.$store.state.cart.length;  i++ ) {
+         var names = []
+         names = names.push(this.$store.state.cart[i].name)
+         await axios.post(`/api/items/` + this.$store.state.cart[i].id + `/logs`, { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
+           .catch(e => {
+             alert(e)
+             this.cartError = e
+           })
+       }
+       if (!this.cartError) { alert(names) }
     }
   }
 }
