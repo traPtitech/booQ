@@ -21,7 +21,7 @@ type Item struct {
 
 type Owner struct {
 	gorm.Model
-	UserId     uint `gorm:"type:int;not null" json:"owner_id"`
+	UserID     uint `gorm:"type:int;not null" json:"owner_id"`
 	User       User `json:"owner"`
 	Rentalable bool `gorm:"type:bool;not null" json:"rentalable"`
 	Count      int  `gorm:"type:int;default:1" json:"count"`
@@ -108,9 +108,9 @@ func CreateItem(item Item) (Item, error) {
 func RegisterOwner(owner Owner, item Item) (Item, error) {
 	var existed bool
 	db.Preload("Owners").Find(&item)
-	owner.User, _ = GetUserByID(int(owner.UserId))
+	owner.User, _ = GetUserByID(int(owner.UserID))
 	for _, nowOwner := range item.Owners {
-		if nowOwner.UserId != owner.UserId {
+		if nowOwner.UserID != owner.UserID {
 			continue
 		}
 		if owner.Rentalable == nowOwner.Rentalable {

@@ -11,9 +11,9 @@ import (
 type Log struct {
 	gorm.Model
 	ItemID  uint      `gorm:"type:int;not null" json:"item_id"`
-	UserId  uint      `gorm:"type:int;not null" json:"user_id"`
+	UserID  uint      `gorm:"type:int;not null" json:"user_id"`
 	User    User      `json:"user"`
-	OwnerId uint      `gorm:"type:int;not null" json:"owner_id"`
+	OwnerID uint      `gorm:"type:int;not null" json:"owner_id"`
 	Owner   User      `json:"owner"`
 	Type    int       `gorm:"type:int;not null" json:"type"`
 	Purpose string    `json:"purpose"`
@@ -43,7 +43,7 @@ func CreateLog(log Log) (Log, error) {
 	if err != nil {
 		return Log{}, errors.New("Itemが存在しません")
 	}
-	_, err = GetUserByID(int(log.OwnerId))
+	_, err = GetUserByID(int(log.OwnerID))
 	if err != nil {
 		return Log{}, errors.New("Ownerが存在しません")
 	}
@@ -59,7 +59,7 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	}
 	exist := false
 	for _, owner := range item.Owners {
-		if owner.UserId == ownerID {
+		if owner.UserID == ownerID {
 			exist = true
 		}
 	}
@@ -83,7 +83,7 @@ func GetLatestLogs(itemID uint) ([]Log, error) {
 	log := Log{}
 	log.ItemID = itemID
 	for _, owner := range item.Owners {
-		log.OwnerId = owner.ID
+		log.OwnerID = owner.ID
 		db.Set("gorm:auto_preload", true).Order("created_at desc").First(&log)
 		if log.ID == 0 {
 			continue
