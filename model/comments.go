@@ -10,7 +10,7 @@ import (
 type Comment struct {
 	gorm.Model
 	ItemID uint `gorm:"type:int;not null" json:"item_id"`
-	UserID int    `gorm:"type:int;not null" json:"user_id"`
+	UserID uint    `gorm:"type:int;not null" json:"user_id"`
 	Text   string `gorm:"type:text;not null" json:"text"`
 }
 type RequestPostCommentBody struct {
@@ -21,9 +21,6 @@ type RequestPostCommentBody struct {
 func (comment *Comment) TableName() string {
 	return "comments"
 }
-
-
-
 
 // CreateComments 新しいCommentを登録する
 func CreateComment(comment Comment) (Comment, error) {

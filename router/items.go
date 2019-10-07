@@ -67,7 +67,7 @@ func PostComments(c echo.Context) error {
 	}
 	comment := model.Comment{
 		ItemID:  uint(itemID),
-		UserID:  int(user.ID),
+		UserID:  user.ID,
 		Text: body.Text,
 	}
 
