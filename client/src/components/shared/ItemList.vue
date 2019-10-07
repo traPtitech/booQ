@@ -14,21 +14,21 @@
         <v-list-item-group v-model="items" color="primary">
           <v-list-item
             v-for="item in items"
-            :key="item.id"
+            :key="item.ID"
             style="height: 100px;"
           >
-            <v-list-item :to="`/items/${item.id}`">
+            <v-list-item :to="`/items/${item.ID}`">
               <img
-                :src="item.img_url"
+                :src="item.img_url === '' ? 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail' : item.img_url"
                 class="item-list-image"
               />
-              <v-list-item-content style="padding-left: 15px;" :to="`/items/${item.id}`">
+              <v-list-item-content style="padding-left: 15px;" :to="`/items/${item.ID}`">
                 <v-list-item-title class="headline mb-1">{{ item.name }}</v-list-item-title>
-                <v-list-item-subtitle>{{ item.owners.map(i => i.user.name).join(', ') }}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{ item.owners.map(i => i.owner.name).join(', ') }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
             <v-list-item-action class="item-list-icons">
-              <v-btn icon v-if="item.type == 0" @click.stop="click2Cart()" absolute>
+              <v-btn icon v-if="item.type === 1" @click.stop="click2Cart()" absolute>
                 <v-icon>mdi-cart-arrow-down</v-icon>
               </v-btn>
               <div class="text-center">
@@ -37,8 +37,8 @@
                     <v-card-title class="headline grey lighten-2" primary-title>
                       個数を選択
                     </v-card-title>
-                    <v-card-actions>
-                      <v-slider :max="getBihinLatestCount(item.id)" v-model="item.rentalCount" thumb-label="always" />
+                    <v-card-actions v-if="item.type === 1">
+                      <v-slider :max="getBihinLatestCount(item.ID)" v-model="item.rentalCount" thumb-label="always" />
                     </v-card-actions>
                     <v-divider></v-divider>
                     <v-card-actions>
@@ -50,10 +50,10 @@
                 </v-dialog>
               </div>
             </v-list-item-action>
-            <v-list-item-action>
+            <!-- <v-list-item-action>
               <v-icon>thumb_up_alt</v-icon>
               {{ item.like_counts }}
-            </v-list-item-action>
+            </v-list-item-action> -->
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -74,12 +74,17 @@ export default {
   },
   methods: {
     getBihinLatestCount (itemID) {
-      var item = this.items.filter(function (element, index, array) {
-        return (element.id = itemID)
+      var item = this.items.filter(function (element) {
+        return (element.ID = itemID)
       })
-      var targetLog = item[0].latest_logs.filter(function (log, index, array) {
+      var targetLog = item[0].latest_logs.filter(function (log) {
         return (log.owner.name = 'trap')
       })
+      if (targetLog === []) {
+        targetLog = targetLog.push(item[0].owners.filter(function (owner) {
+          return (owner.owner.name = 'trap')
+        }))
+      }
       return targetLog[0].count
     },
     putItem2Cart (item) {
