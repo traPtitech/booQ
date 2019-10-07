@@ -51,7 +51,7 @@ func CreateLog(log Log) (Log, error) {
 	return log, nil
 }
 
-// GetLatestLog UserIdからLatestLogを取得する
+// GetLatestLog ownerIDからLatestLogを取得する
 func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	item, err := GetItemByID(itemID)
 	if err != nil {
@@ -69,6 +69,20 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	log := Log{}
 	db.Set("gorm:auto_preload", true).Order("created_at desc").First(&log, "item_id = ? AND owner_id = ?", itemID, ownerID)
 	return log, nil
+}
+
+func GetLatestLogs(itemID uint) ([]Log, error) {
+	item, err := GetItemByID(itemID)
+	if err != nil {
+		return []Log{}, err
+	}
+	logs := []Log{}
+	log := Log{}
+	for i, owner := range item.Owners {
+		db.Set("gorm:auto_preload", true).Order("created_at desc").First(&log, "item_id = ? AND owner_id = ?", itemID, owner.ID)
+		logs[i] = log
+	}
+	return logs, nil
 }
 
 // GetLogsByItemID itemIDからLogsを取得する

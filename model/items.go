@@ -16,6 +16,7 @@ type Item struct {
 	ImgURL      string  `gorm:"type:text;" json:"img_url"`
 	Owners      []Owner `gorm:"many2many:ownership_maps;" json:"owners"`
 	Logs        []Log   `json:"logs"`
+	LatestLogs  []Log   `json:"latest_logs"`
 }
 
 type Owner struct {
@@ -49,6 +50,11 @@ func GetItemByID(id uint) (Item, error) {
 	if res.Name == "" {
 		return Item{}, errors.New("該当するItemがありません")
 	}
+	var err error
+	res.LatestLogs, err = GetLatestLogs(id)
+	if err != nil {
+		return Item{}, err
+	}
 	return res, nil
 }
 
@@ -59,6 +65,11 @@ func GetItemByName(name string) (Item, error) {
 	if res.Name == "" {
 		return Item{}, errors.New("該当するNameがありません")
 	}
+	var err error
+	res.LatestLogs, err = GetLatestLogs(res.ID)
+	if err != nil {
+		return Item{}, err
+	}
 	return res, nil
 }
 
@@ -68,6 +79,11 @@ func GetItems() ([]Item, error) {
 	db.Find(&res)
 	for i, item := range res {
 		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners")
+		var err error
+		item.LatestLogs, err = GetLatestLogs(item.ID)
+		if err != nil {
+			return []Item{}, err
+		}
 		res[i] = item
 	}
 	return res, nil

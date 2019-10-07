@@ -41,7 +41,6 @@ func TestCreateLog(t *testing.T) {
 }
 
 func TestGetLogsByItemID(t *testing.T) {
-
 	t.Run("success", func(t *testing.T) {
 		assert := assert.New(t)
 
@@ -68,7 +67,6 @@ func TestGetLogsByItemID(t *testing.T) {
 
 // 今は時間がなくていい感じにテストをかけていませんが未来誰かがテストを書いてくれる日を願って確率でうまくいくテストを残しておきます。テストを書いたらこのコメントは消してください　	ryoha
 func TestGetLatestLog(t *testing.T) {
-
 	item, _ := CreateItem(Item{Name: "testGetLatestLogItem"})
 	itemID := item.ID
 	user, _ := CreateUser(User{Name: "testGetUserLatestLogUser"})

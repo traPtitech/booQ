@@ -12,7 +12,6 @@ func TestItemTableName(t *testing.T) {
 }
 
 func TestCreateItem(t *testing.T) {
-
 	t.Parallel()
 
 	t.Run("failures", func(t *testing.T) {
@@ -44,7 +43,6 @@ func TestCreateItem(t *testing.T) {
 }
 
 func TestRegisterOwner(t *testing.T) {
-
 	user, _ := CreateUser(User{Name: "testRegisterOwnerUser"})
 	var owner Owner
 	owner.UserId = user.ID
@@ -79,7 +77,6 @@ func TestRegisterOwner(t *testing.T) {
 }
 
 func TestGetItems(t *testing.T) {
-
 	user, _ := CreateUser(User{Name: "testAllItemUser"})
 	var owner Owner
 	owner.UserId = user.ID
@@ -108,7 +105,6 @@ func TestGetItems(t *testing.T) {
 }
 
 func TestGetItemByID(t *testing.T) {
-
 	ownerUser, _ := CreateUser(User{Name: "testGetItemByIDOwner"})
 	rentalUser, _ := CreateUser(User{Name: "testGetItemByIDUser"})
 	owner := Owner{
@@ -142,7 +138,6 @@ func TestGetItemByID(t *testing.T) {
 }
 
 func TestGetItemByName(t *testing.T) {
-
 	ownerUser, _ := CreateUser(User{Name: "testGetItemByNameOwner"})
 	rentalUser, _ := CreateUser(User{Name: "testGetItemByNameUser"})
 	owner := Owner{
