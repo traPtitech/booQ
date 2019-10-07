@@ -1,18 +1,18 @@
 <template>
   <v-container>
     <v-row>
-      <v-col>
-        <v-container>
+      <v-col cols="4">
+        <div>
           <h1>{{ $route.params.name }}</h1>
-        </v-container>
-        <v-container>
+        </div>
+        <div>
           <v-avatar size="200">
-            <img :src="`https://q.trap.jp/api/1.0/public/icon/${$store.state.me.name}`" />
+            <img :src="`https://q.trap.jp/api/1.0/public/icon/${$route.params.name}`" />
           </v-avatar>
-        </v-container>
+        </div>
       </v-col>
-      <v-col>
-        <v-container>
+      <v-col cols="8">
+        <div>
           <h3>所有物一覧</h3>
           <div v-for="item in data1" :key="item.id">
             <p>
@@ -29,8 +29,8 @@
               </v-container>
             </p>
           </div>
-        </v-container>
-        <v-container>
+        </div>
+        <div>
           <h3>コメント一覧</h3>
           <div v-for="comment in data2" :key="comment.id">
             <p>
@@ -48,7 +48,7 @@
               </v-container>
             </p>
           </div>
-        </v-container>
+        </div>
       </v-col>
     </v-row>
     <v-container>
@@ -59,12 +59,6 @@
 <script>
 export default {
   name: 'UserPage',
-  /* data () {
-    return {
-      data1: null,
-      data2: null
-    }
-  }, */
   data () {
     return {
       data1: null,
@@ -201,31 +195,3 @@ export default {
   }
 }
 </script>
-<style>
-.wrapper {
-  display: flex;
-  display: -ms-flexbox; /* --- IE10用 11はこの設定は不要 --- */
-  display: -webkit-box; /*--- Android用 ---*/
-  /*画面中央に表示されるように margin: auto;を設定している*/
-  margin: auto;
-  /* justify-content:stretch; */
-}
-/* .image {
-    margin: 10px;
-    -webkit-flex-basis: 30%;
-    -ms-flex-basis: 30%;
-    flex-basis: 30%;
-    width: 30%;
-    height: 50%;
-  } */
-.content {
-  margin: 10px;
-}
-.comment {
-  display: flex;
-  display: -ms-flexbox; /*--- IE10用 11はこの設定は不要 ---*/
-  display: -webkit-box; /*--- Android用 ---*/
-  /*画面中央に表示されるように margin: auto;を設定している*/
-  margin: auto;
-}
-</style>
