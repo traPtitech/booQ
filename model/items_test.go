@@ -165,3 +165,26 @@ func TestGetItemByName(t *testing.T) {
 		assert.Equal(gotItem.Logs[0].ItemID, item.ID)
 	})
 }
+
+func TestPushLike(t *testing.T) {
+	user, _ := CreateUser(User{Name: "testPushLikeUser"})
+	item, _ := CreateItem(Item{Name: "testPushLikeItem"})
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+		item, err := PushLike(item.ID, user.ID)
+
+		assert.Equal(user.ID, item.Likes[0].ID)
+		assert.Equal(user.Name, item.Likes[0].Name)
+		assert.NoError(err)
+		assert.NotEmpty(item)
+	})
+
+	t.Run("failer", func(t *testing.T) {
+		assert := assert.New(t)
+		item, err := PushLike(item.ID, user.ID)
+
+		assert.Error(err)
+		assert.Empty(item)
+	})
+}

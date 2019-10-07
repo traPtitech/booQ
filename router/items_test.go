@@ -199,3 +199,36 @@ func TestPostOwners(t *testing.T) {
 		assert.Equal(testUser.ID, item.Owners[0].UserID)
 	})
 }
+
+func TestPostLikes(t *testing.T) {
+	item, _ := model.CreateItem(model.Item{Name: "testPostLikesItem"})
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+		e := echoSetupWithUser()
+
+		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(item.ID))+"/likes", nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusCreated, rec.Code)
+	})
+
+	t.Run("failuer", func(t *testing.T) {
+		assert := assert.New(t)
+		e := echoSetupWithUser()
+
+		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(item.ID))+"/likes", nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		req = httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(item.ID))+"/likes", nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec = httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusBadRequest, rec.Code)
+	})
+}

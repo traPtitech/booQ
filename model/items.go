@@ -9,14 +9,16 @@ import (
 // Item itemの構造体
 type Item struct {
 	gorm.Model
-	Name        string  `gorm:"type:varchar(64);not null" json:"name"`
-	Type        int     `gorm:"type:int;not null" json:"type"`
-	Code        string  `gorm:"type:varchar(13);" json:"code"`
-	Description string  `gorm:"type:text;" json:"description"`
-	ImgURL      string  `gorm:"type:text;" json:"img_url"`
-	Owners      []Owner `gorm:"many2many:ownership_maps;" json:"owners"`
-	Logs        []Log   `json:"logs"`
-	LatestLogs  []Log   `json:"latest_logs"`
+	Name        string    `gorm:"type:varchar(64);not null" json:"name"`
+	Type        int       `gorm:"type:int;not null" json:"type"`
+	Code        string    `gorm:"type:varchar(13);" json:"code"`
+	Description string    `gorm:"type:text;" json:"description"`
+	ImgURL      string    `gorm:"type:text;" json:"img_url"`
+	Owners      []Owner   `gorm:"many2many:ownership_maps;" json:"owners"`
+	Logs        []Log     `json:"logs"`
+	LatestLogs  []Log     `json:"latest_logs"`
+	Comments    []Comment `json:"commments"`
+	Likes       []User    `gorm:"many2many:like_maps;" json:"likes"`
 }
 
 type Owner struct {
@@ -46,7 +48,7 @@ func (item *Owner) TableName() string {
 func GetItemByID(id uint) (Item, error) {
 	res := Item{}
 	res.ID = id
-	db.Set("gorm:auto_preload", true).First(&res).Related(&res.Owners, "Owners").Related(&res.Logs, "Logs")
+	db.Set("gorm:auto_preload", true).First(&res).Related(&res.Owners, "Owners").Related(&res.Logs, "Logs").Related(&res.Comments, "Comments").Related(&res.Likes, "Likes")
 	if res.Name == "" {
 		return Item{}, errors.New("該当するItemがありません")
 	}
@@ -61,7 +63,7 @@ func GetItemByID(id uint) (Item, error) {
 // GetItemByName Nameからitemを取得する
 func GetItemByName(name string) (Item, error) {
 	res := Item{}
-	db.Set("gorm:auto_preload", true).First(&res, "name = ?", name).Related(&res.Owners, "Owners").Related(&res.Logs, "Logs")
+	db.Set("gorm:auto_preload", true).First(&res, "name = ?", name).Related(&res.Owners, "Owners").Related(&res.Logs, "Logs").Related(&res.Comments, "Comments").Related(&res.Likes, "Likes")
 	if res.Name == "" {
 		return Item{}, errors.New("該当するNameがありません")
 	}
@@ -78,7 +80,7 @@ func GetItems() ([]Item, error) {
 	res := []Item{}
 	db.Find(&res)
 	for i, item := range res {
-		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners")
+		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.Comments, "Comments").Related(&item.Likes, "Likes")
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.ID)
 		if err != nil {
@@ -104,7 +106,7 @@ func CreateItem(item Item) (Item, error) {
 	return item, nil
 }
 
-// RegisterItem 新しい所有者を登録する
+// RegisterOwner 新しい所有者を登録する
 func RegisterOwner(owner Owner, item Item) (Item, error) {
 	var existed bool
 	db.Preload("Owners").Find(&item)
@@ -125,6 +127,26 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 	if !existed {
 		db.Create(&owner)
 		db.Model(&item).Association("Owners").Append(&owner)
+	}
+	return item, nil
+}
+
+// PushLike likeを押す
+func PushLike(itemID, userID uint) (Item, error) {
+	var existed bool
+	item := Item{}
+	db.Set("gorm:auto_preload", true).First(&item, itemID).Related(&item.Likes, "Likes")
+	user, _ := GetUserByID(int(userID))
+	for _, likeUser := range item.Likes {
+		if likeUser.ID == userID {
+			existed = true
+
+		}
+	}
+	if existed {
+		return Item{}, errors.New("すでにいいねしています")
+	} else {
+		db.Model(&item).Association("Likes").Append(&user)
 	}
 	return item, nil
 }

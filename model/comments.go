@@ -1,7 +1,7 @@
 package model
 
 import (
-	 "errors"
+	"errors"
 
 	"github.com/jinzhu/gorm"
 )
@@ -9,12 +9,13 @@ import (
 // Comment commentの構造体
 type Comment struct {
 	gorm.Model
-	ItemID uint `gorm:"type:int;not null" json:"item_id"`
-	UserID uint    `gorm:"type:int;not null" json:"user_id"`
+	ItemID uint   `gorm:"type:int;not null" json:"item_id"`
+	UserID uint   `gorm:"type:int;not null" json:"user_id"`
+	User   User   `json:"user"`
 	Text   string `gorm:"type:text;not null" json:"text"`
 }
 type RequestPostCommentBody struct {
-	Text   string `gorm:"type:text;not null" json:"text"`
+	Text string `gorm:"type:text;not null" json:"text"`
 }
 
 // TableName dbのテーブル名を指定する
@@ -35,6 +36,6 @@ func CreateComment(comment Comment) (Comment, error) {
 	if comment.Text == "" {
 		return Comment{}, errors.New("Textが存在しません")
 	}
-	db.Create(&comment)
+	db.Preload("User").Create(&comment)
 	return comment, nil
 }
