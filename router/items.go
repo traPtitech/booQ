@@ -52,6 +52,32 @@ func GetItem(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, item)
 }
+// PostComments POST /items/:id/comments
+func PostComments(c echo.Context) error {
+	ID := c.Param("id")
+	user := c.Get("user").(model.User)
+	body := model.RequestPostCommentBody{}
+	if err := c.Bind(&body); err != nil {
+		return err
+	}
+	
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	comment := model.Comment{
+		ItemID:  uint(itemID),
+		UserID:  user.ID,
+		Text: body.Text,
+	}
+
+	res, err := model.CreateComment(comment)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusCreated, res)
+}
 
 // PostOwners POST /items/:id/owners
 func PostOwners(c echo.Context) error {
