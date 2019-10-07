@@ -71,7 +71,7 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	return log, nil
 }
 
-// GetLatestLogs 各所有者ごとの最新のログを取得する
+// GetLatestLogs 各所有者ごとの最新のログを取得する。明らかにここのクエリは冗長なのでログからLatestLogを自動生成するロジックを考えたら爆破してください(N+1のクエリが０になる)
 func GetLatestLogs(itemID uint) ([]Log, error) {
 	item := Item{}
 	item.ID = itemID
