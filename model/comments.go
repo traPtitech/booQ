@@ -9,7 +9,7 @@ import (
 // Comment commentの構造体
 type Comment struct {
 	gorm.Model
-	ItemID unit `gorm:"type:int;not null" json:"item_id"`
+	ItemID uint `gorm:"type:int;not null" json:"item_id"`
 	UserID int    `gorm:"type:int;not null" json:"user_id"`
 	Text   string `gorm:"type:text;not null" json:"text"`
 }
