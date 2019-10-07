@@ -14,25 +14,13 @@
       <v-col cols="8">
         <div>
           <h3>所有物一覧</h3>
-          <div v-for="item in data1" :key="item.id">
-            <p>
-              <v-container class="pa-2" fluid>
-                <v-row>
-                  <v-col>
-                    <v-card>
-                      <v-card-text>
-                        <div class="headline mb-2">{{item.name}}</div>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </p>
+          <div>
+            <ItemList :items="items" />
           </div>
         </div>
         <div>
           <h3>コメント一覧</h3>
-          <div v-for="comment in data2" :key="comment.id">
+          <div v-for="comment in comments" :key="comment.id">
             <p>
               <v-container class="pa-2" fluid>
                 <v-row>
@@ -57,13 +45,17 @@
   </v-container>
 </template>
 <script>
+import ItemList from './shared/ItemList'
 export default {
   name: 'UserPage',
+  components: {
+    ItemList
+  },
   data () {
     return {
-      data1: null,
-      data2: null,
-      sampleData1: [{
+      items: null,
+      comments: null,
+      sampleItems: [{
         id: 1,
         name: '小説　天気の子',
         code: 9784041026403,
@@ -157,7 +149,7 @@ export default {
         created_at: '2019/07/28 22:00:00',
         updated_at: '2019/07/28 22:00:00'
       }],
-      sampleData2: [{
+      sampleComments: [{
         id: 1,
         item_id: 1,
         user: {
@@ -188,10 +180,10 @@ export default {
     }
   },
   mounted () {
-    this.data1 = this.sampleData1
-    this.data2 = this.sampleData2
-    // this.data1 = axios.get('api/items?user=$route.params.name')
-    // this.data2 = axios.get('api/comments?user=$route.params.name')
+    this.items = this.sampleItems
+    this.comments = this.sampleComments
+    // this.items = axios.get('api/items?user=$route.params.name')
+    // this.comments = axios.get('api/comments?user=$route.params.name')
   }
 }
 </script>
