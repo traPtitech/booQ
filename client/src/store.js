@@ -37,6 +37,9 @@ export default new Vuex.Store({
     },
     item2Cart (state, data) {
       state.cart.push(data)
+    },
+    removeItemFromCart (state, i) {
+      state.cart.splice(i, 1)
     }
   },
   actions: {

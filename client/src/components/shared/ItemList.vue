@@ -20,14 +20,14 @@
             <img
               :src="item.img_url"
               class="item-list-image"
+              :to="`/items/${item.id}`"
             />
-            <v-list-item-content style="padding-left: 15px;">
+            <v-list-item-content style="padding-left: 15px;" :to="`/items/${item.id}`">
               <v-list-item-title class="headline mb-1">{{ item.name }}</v-list-item-title>
               <v-list-item-subtitle>{{ item.owners.map(i => i.user.name).join(', ') }}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-                <!-- <v-btn  v-if="item.type = 0" @click="$store.commit('item2cart', item)"> -->
-                <v-btn icon v-if="item.type == 0" @click.stop="isOpen2Cart = !isOpen2Cart" absolute>
+                <v-btn icon v-if="item.type == 0" @click.stop="click2Cart()" absolute>
                   <v-icon>mdi-cart-arrow-down</v-icon>
                 </v-btn>
                 <div class="text-center">
@@ -38,11 +38,10 @@
                       </v-card-title>
                       <v-card-actions>
                         <v-slider :max="getBihinLatestCount(item.id)" v-model="item.rentalCount" thumb-label="always" />
-                        <!-- <v-slider :max="item.latest_logs.filter(function (element) { return (element.item_id = item.id) && (element.owner.name = 'trap') })[0].count" v-model="item.rentalCount" thumb-label="always" /> -->
                       </v-card-actions>
                       <v-divider></v-divider>
                       <v-card-actions>
-                        <v-btn @click="putItem2Cart" primary>
+                        <v-btn @click="putItem2Cart(item)" primary>
                           Put Cart
                         </v-btn>
                       </v-card-actions>
@@ -50,7 +49,7 @@
                   </v-dialog>
                 </div>
               </v-list-item-action>
-            <v-list-item-icon v-if="item.like_counts">
+            <v-list-item-icon disabled v-if="item.like_counts">
               <v-icon>thumb_up_alt</v-icon>
               {{ item.like_counts }}
             </v-list-item-icon>
@@ -58,7 +57,6 @@
         </v-list-item-group>
       </v-list>
     </v-card>
-    <div>{{$store.state.cart}}</div>
   </div>
 </template>
 
@@ -84,8 +82,12 @@ export default {
       return targetLog[0].count
     },
     putItem2Cart (item) {
-      this.$store.commit('item2cart', item)
+      this.$store.commit('item2Cart', item)
       this.isOpen2Cart = !this.isOpen2Cart
+    },
+    click2Cart () {
+      this.isOpen2Cart = !this.isOpen2Cart
+      return false
     }
   }
 }

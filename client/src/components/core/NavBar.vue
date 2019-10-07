@@ -33,21 +33,47 @@
         layout
         py-2
       >
-        <v-menu v-model="value" width="300">
+        <v-menu v-model="value" min-width="250" max-width="400">
           <template v-slot:activator="{ on }">
-            <v-btn dark icon v-on="on">
-             <v-icon>mdi-cart</v-icon>
+            <v-btn :disabled="$store.state.cart.length == 0" icon v-on="on">
+             <v-icon dark>mdi-cart</v-icon>
             </v-btn>
           </template>
           <v-list>
             <v-list-item v-for="(item, i) in $store.state.cart" :key="i">
               <v-list-item-title>
-                {{ item.name }}
+                {{ item.name }}×{{ item.rentalCount }}
               </v-list-item-title>
               <v-list-item-action>
-                <v-btn icon @click="items.splice( i, 1)" dark>
-                  <v-icon>mdi-minus-circle</v-icon>
+                <v-btn icon @click="$store.commit('removeItemFromCart', i)">
+                  <v-icon dark>mdi-minus-circle</v-icon>
                 </v-btn>
+              </v-list-item-action>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-action>
+                <v-btn @click.stop="cartDialog = !cartDialog" primary>借りる</v-btn>
+                <div class="text-center">
+                  <v-dialog max-width="320" v-model="cartDialog">
+                    <v-card width="320">
+                      <v-card-title class="headline">備品を借りる</v-card-title>
+                      <v-card-actions>
+                        <div>
+                          <v-form ref="form">
+                            <v-textarea outlined v-model="cartPurpose" :rules="[() => !!cartPurpose || 'This field is required']" label="目的"/>
+                          </v-form>
+                        </div>
+                      </v-card-actions>
+                      <v-card-actions max-width="320">
+                        <v-date-picker v-model="cartDueDate"></v-date-picker>
+                      </v-card-actions>
+                      <v-divider></v-divider>
+                      <v-card-actions>
+                        <v-btn v-on:click="rentCartItem()">借りる</v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </div>
               </v-list-item-action>
             </v-list-item>
           </v-list>
@@ -87,8 +113,9 @@ export default {
       responsive: false,
       responsiveInput: false,
       cartPurpose: '',
-      cartDueDate: '' ,
-      cartError: null
+      cartDueDate: '',
+      cartError: null,
+      cartDialog: false
     }
   },
   watch: {
@@ -132,17 +159,25 @@ export default {
         this.responsiveInput = true
       }
     },
-     async rentCartItem () {
-       for ( var i = 0; i < this.$store.state.cart.length;  i++ ) {
-         var names = []
-         names = names.push(this.$store.state.cart[i].name)
-         await axios.post(`/api/items/` + this.$store.state.cart[i].id + `/logs`, { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
-           .catch(e => {
-             alert(e)
-             this.cartError = e
-           })
-       }
-       if (!this.cartError) { alert(names) }
+    async rentCartItem () {
+      if (this.cartPurpose === null) {
+        alert('目的を入力してください')
+        return false
+      }
+      if (this.cartDueDate === null) {
+        alert('返却日を入力してください')
+        return false
+      }
+      for (var i = 0; i < this.$store.state.cart.length; i++) {
+        var names = []
+        names = names.push(this.$store.state.cart[i].name)
+        await axios.post(`/api/items/` + this.$store.state.cart[i].id + `/logs`, { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
+          .catch(e => {
+            alert(e)
+            this.cartError = e
+          })
+      }
+      if (!this.cartError) { alert(names) }
     }
   }
 }
