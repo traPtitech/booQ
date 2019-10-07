@@ -33,7 +33,7 @@
         layout
         py-2
       >
-        <v-menu v-model="value">
+        <v-menu v-model="value" width="300">
           <template v-slot:activator="{ on }">
             <v-btn dark icon v-on="on">
              <v-icon>mdi-cart</v-icon>
@@ -45,7 +45,7 @@
                 {{ item.name }}
               </v-list-item-title>
               <v-list-item-action>
-                <v-btn icon @click="items.splice( i, 1)">
+                <v-btn icon @click="items.splice( i, 1)" dark>
                   <v-icon>mdi-minus-circle</v-icon>
                 </v-btn>
               </v-list-item-action>

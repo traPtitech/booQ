@@ -42,7 +42,7 @@
                       </v-card-actions>
                       <v-divider></v-divider>
                       <v-card-actions>
-                        <v-btn @click="$store.commit('item2cart', item)" primary>
+                        <v-btn @click="putItem2Cart" primary>
                           Put Cart
                         </v-btn>
                       </v-card-actions>
@@ -58,6 +58,7 @@
         </v-list-item-group>
       </v-list>
     </v-card>
+    <div>{{$store.state.cart}}</div>
   </div>
 </template>
 
@@ -81,6 +82,10 @@ export default {
         return (log.owner.name = 'trap')
       })
       return targetLog[0].count
+    },
+    putItem2Cart (item) {
+      this.$store.commit('item2cart', item)
+      this.isOpen2Cart = !this.isOpen2Cart
     }
   }
 }
