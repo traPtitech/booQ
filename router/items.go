@@ -66,7 +66,7 @@ func PostComments(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	comment := model.Comment{
-		ItemID:  itemID,
+		ItemID:  uint(itemID),
 		UserID:  int(user.ID),
 		Text: body.Text,
 	}
