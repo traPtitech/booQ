@@ -27,7 +27,7 @@ func CreateComment(comment Comment) (Comment, error) {
 	if comment.ItemID == 0 {
 		return Comment{}, errors.New("ItemIDが存在しません")
 	}
-	_, err := GetItemByID(int(comment.ItemID))
+	_, err := GetItemByID(comment.ItemID)
 	if err != nil {
 		return Comment{}, errors.New("Itemが存在しません")
 	}
