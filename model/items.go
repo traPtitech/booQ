@@ -74,9 +74,9 @@ func GetItemByName(name string) (Item, error) {
 }
 
 // GetItems 全itemを取得する
-func GetItems() ([]Item, error) {
+func GetItems(searchString string) ([]Item, error) {
 	res := []Item{}
-	db.Find(&res)
+	db.Where("name LIKE ?", "%"+searchString+"%").Find(&res)
 	for i, item := range res {
 		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners")
 		var err error

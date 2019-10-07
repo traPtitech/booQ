@@ -11,7 +11,8 @@ import (
 
 // GetItems GET /items
 func GetItems(c echo.Context) error {
-	res, err := model.GetItems()
+	searchString := c.QueryParam("search")
+	res, err := model.GetItems(searchString)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -52,6 +53,7 @@ func GetItem(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, item)
 }
+
 // PostComments POST /items/:id/comments
 func PostComments(c echo.Context) error {
 	ID := c.Param("id")
@@ -60,15 +62,15 @@ func PostComments(c echo.Context) error {
 	if err := c.Bind(&body); err != nil {
 		return err
 	}
-	
+
 	itemID, err := strconv.Atoi(ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	comment := model.Comment{
-		ItemID:  uint(itemID),
-		UserID:  user.ID,
-		Text: body.Text,
+		ItemID: uint(itemID),
+		UserID: user.ID,
+		Text:   body.Text,
 	}
 
 	res, err := model.CreateComment(comment)

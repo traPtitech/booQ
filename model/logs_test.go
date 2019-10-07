@@ -88,16 +88,6 @@ func TestGetLatestLogs(t *testing.T) {
 		Count:      1,
 	}
 
-	t.Run("failures", func(t *testing.T) {
-		log, err := GetLatestLog(66, 66)
-		assert.Error(err)
-		assert.Empty(log)
-
-		log, err = GetLatestLog(itemID, 66)
-		assert.Error(err)
-		assert.Empty(log)
-	})
-
 	t.Run("success", func(t *testing.T) {
 		_, err := RegisterOwner(owner1, item)
 		assert.NoError(err)

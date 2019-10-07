@@ -27,6 +27,8 @@
           class="purple-input search-input"
           label="Search..."
           color="purple"
+          v-model="searchString"
+          v-on:keyup.enter="searchSideBar()"
         />
       </v-list-item>
       <v-list-item
@@ -84,6 +86,7 @@ export default {
   data () {
     return {
       logo: '/img/logo.png',
+      searchString: '',
       links: [
         {
           to: '/',
@@ -141,6 +144,9 @@ export default {
       } else {
         this.responsive = false
       }
+    },
+    searchSideBar () {
+      this.$router.push({ path: '/api/items', query: { search: this.searchString } })
     }
   }
 }
