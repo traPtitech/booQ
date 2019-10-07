@@ -110,3 +110,57 @@ func TestGetLatestLog(t *testing.T) {
 		assert.Equal(0, log.Type)
 	})
 }
+
+func TestGetLatestLogs(t *testing.T) {
+	item, _ := CreateItem(Item{Name: "testGetLatestLogItem"})
+	itemID := item.ID
+	user1, _ := CreateUser(User{Name: "testGetUserLatestLogUser"})
+	user2, _ := CreateUser(User{Name: "testGetUserLatestLogUser"})
+	ownerUser1, _ := GetUserByName("traP")
+	owner1 := Owner{
+		UserId:     ownerUser1.ID,
+		Rentalable: true,
+		Count:      1,
+	}
+	ownerUser2, _ := GetUserByName("sienka")
+	owner2 := Owner{
+		UserId:     ownerUser2.ID,
+		Rentalable: true,
+		Count:      1,
+	}
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+
+		_, err := RegisterOwner(owner1, item)
+		assert.NoError(err)
+		_, err = RegisterOwner(owner2, item)
+		assert.NoError(err)
+		_, err = CreateLog(Log{ItemID: itemID, UserId: user1.ID, OwnerId: ownerUser1.ID, Type: 0, Count: 0})
+		assert.NoError(err)
+		_, err = CreateLog(Log{ItemID: itemID, UserId: user2.ID, OwnerId: ownerUser1.ID, Type: 0, Count: 1})
+		assert.NoError(err)
+		_, err = CreateLog(Log{ItemID: itemID, UserId: user2.ID, OwnerId: ownerUser2.ID, Type: 0, Count: 0})
+		assert.NoError(err)
+		_, err = CreateLog(Log{ItemID: itemID, UserId: user1.ID, OwnerId: ownerUser2.ID, Type: 0, Count: 1})
+		assert.NoError(err)
+
+		logs, err := GetLatestLogs(itemID)
+		assert.NoError(err)
+		assert.NotEmpty(logs)
+		for _, log := range logs {
+			if log.OwnerId == ownerUser1.ID {
+				assert.Equal(ownerUser1.Name, log.Owner.Name)
+				assert.Equal(user2.ID, log.UserId)
+				assert.Equal(user2.Name, log.User.Name)
+				assert.Equal(1, log.Count)
+			}
+			if log.OwnerId == ownerUser2.ID {
+				assert.Equal(ownerUser2.Name, log.Owner.Name)
+				assert.Equal(user1.ID, log.UserId)
+				assert.Equal(user1.Name, log.User.Name)
+				assert.Equal(1, log.Count)
+			}
+		}
+	})
+}
