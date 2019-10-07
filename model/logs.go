@@ -12,7 +12,9 @@ type Log struct {
 	gorm.Model
 	ItemID  uint      `gorm:"type:int;not null" json:"item_id"`
 	UserID  uint      `gorm:"type:int;not null" json:"user_id"`
+	User    User      `json:"user"`
 	OwnerID uint      `gorm:"type:int;not null" json:"owner_id"`
+	Owner   User      `json:"owner"`
 	Type    int       `gorm:"type:int;not null" json:"type"`
 	Purpose string    `json:"purpose"`
 	DueDate time.Time `gorm:"type:datetime;" json:"due_date"`
@@ -49,7 +51,7 @@ func CreateLog(log Log) (Log, error) {
 	return log, nil
 }
 
-// GetLatestLog OwnerIDからLatestLogを取得する
+// GetLatestLog ownerIDからLatestLogを取得する
 func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	item, err := GetItemByID(itemID)
 	if err != nil {
@@ -57,7 +59,7 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	}
 	exist := false
 	for _, owner := range item.Owners {
-		if owner.OwnerID == ownerID {
+		if owner.UserID == ownerID {
 			exist = true
 		}
 	}
@@ -65,14 +67,36 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 		return Log{}, errors.New("指定した所有者はそのItemを所有していません")
 	}
 	log := Log{}
-	db.Order("created_at desc").First(&log).Where("item_id = ? AND owner_id = ?", itemID, ownerID)
+	db.Set("gorm:auto_preload", true).Order("created_at desc").First(&log, "item_id = ? AND owner_id = ?", itemID, ownerID)
 	return log, nil
+}
+
+// GetLatestLogs 各所有者ごとの最新のログを取得する。明らかにここのクエリは冗長なのでログからLatestLogを自動生成するロジックを考えたら爆破してください(N+1のクエリが０になる)
+func GetLatestLogs(itemID uint) ([]Log, error) {
+	item := Item{}
+	item.ID = itemID
+	db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners")
+	if item.Name == "" {
+		return []Log{}, errors.New("該当するItemがありません")
+	}
+	logs := []Log{}
+	log := Log{}
+	log.ItemID = itemID
+	for _, owner := range item.Owners {
+		log.OwnerID = owner.ID
+		db.Set("gorm:auto_preload", true).Order("created_at desc").First(&log)
+		if log.ID == 0 {
+			continue
+		}
+		logs = append(logs, log)
+	}
+	return logs, nil
 }
 
 // GetLogsByItemID itemIDからLogsを取得する
 func GetLogsByItemID(itemID uint) ([]Log, error) {
 	// 指定のitemIDのitemが存在するかどうかはここで判別つけていません
 	logs := []Log{}
-	db.Where("item_id = ?", itemID).Find(&logs)
+	db.Set("gorm:auto_preload", true).Find(&logs, "item_id = ?", itemID)
 	return logs, nil
 }
