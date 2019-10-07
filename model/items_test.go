@@ -52,7 +52,6 @@ func TestRegisterOwner(t *testing.T) {
 	item2, err := RegisterOwner(owner, item)
 
 	t.Run("make success", func(t *testing.T) {
-
 		assert := assert.New(t)
 
 		assert.Equal(user.ID, item2.Owners[0].UserId)
@@ -62,7 +61,6 @@ func TestRegisterOwner(t *testing.T) {
 	})
 
 	t.Run("add success", func(t *testing.T) {
-
 		assert := assert.New(t)
 
 		owner.Count = 5
@@ -114,7 +112,6 @@ func TestGetItemByID(t *testing.T) {
 	}
 
 	t.Run("success", func(t *testing.T) {
-
 		assert := assert.New(t)
 		item, err := CreateItem(Item{Name: "testGetItemItem"})
 		assert.NoError(err)
@@ -147,7 +144,6 @@ func TestGetItemByName(t *testing.T) {
 	}
 
 	t.Run("success", func(t *testing.T) {
-
 		assert := assert.New(t)
 
 		item, err := CreateItem(Item{Name: "testGetItemByNameItem"})

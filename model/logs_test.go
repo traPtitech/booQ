@@ -65,58 +65,17 @@ func TestGetLogsByItemID(t *testing.T) {
 	})
 }
 
-// 今は時間がなくていい感じにテストをかけていませんが未来誰かがテストを書いてくれる日を願って確率でうまくいくテストを残しておきます。テストを書いたらこのコメントは消してください　	ryoha
-func TestGetLatestLog(t *testing.T) {
-	item, _ := CreateItem(Item{Name: "testGetLatestLogItem"})
-	itemID := item.ID
-	user, _ := CreateUser(User{Name: "testGetUserLatestLogUser"})
-	ownerUser, _ := GetUserByName("traP")
-	owner := Owner{
-		UserId:     ownerUser.ID,
-		Rentalable: true,
-		Count:      1,
-	}
-	_, _ = RegisterOwner(owner, item)
-	_, _ = CreateLog(Log{ItemID: itemID, UserId: user.ID, OwnerId: ownerUser.ID, Type: 0, Count: 1})
-
-	t.Run("failures", func(t *testing.T) {
-		assert := assert.New(t)
-
-		_, err := RegisterOwner(owner, item)
-		assert.NoError(err)
-		_, err = CreateLog(Log{ItemID: itemID, UserId: user.ID, OwnerId: ownerUser.ID, Type: 0, Count: 1})
-		assert.NoError(err)
-
-		log, err := GetLatestLog(66, 66)
-		assert.Error(err)
-		assert.Empty(log)
-
-		log, err = GetLatestLog(itemID, 66)
-		assert.Error(err)
-		assert.Empty(log)
-	})
-
-	t.Run("success", func(t *testing.T) {
-		assert := assert.New(t)
-
-		log, err := GetLatestLog(itemID, ownerUser.ID)
-		assert.NoError(err)
-		assert.NotEmpty(log)
-		t.Log(log)
-		assert.Equal(ownerUser.ID, log.OwnerId)
-		assert.Equal(ownerUser.Name, log.Owner.Name)
-		assert.Equal(user.Name, log.User.Name)
-		assert.Equal(itemID, log.ItemID)
-		assert.Equal(0, log.Type)
-	})
-}
-
 func TestGetLatestLogs(t *testing.T) {
-	item, _ := CreateItem(Item{Name: "testGetLatestLogItem"})
+	assert := assert.New(t)
+	item, err := CreateItem(Item{Name: "testGetLatestLogItem"})
+	assert.NoError(err)
 	itemID := item.ID
-	user1, _ := CreateUser(User{Name: "testGetUserLatestLogUser"})
-	user2, _ := CreateUser(User{Name: "testGetUserLatestLogUser"})
-	ownerUser1, _ := GetUserByName("traP")
+	user1, err := CreateUser(User{Name: "testGetUserLatestLogUser1"})
+	assert.NoError(err)
+	user2, err := CreateUser(User{Name: "testGetUserLatestLogUser2"})
+	assert.NoError(err)
+	ownerUser1, err := GetUserByName("traP")
+	assert.NoError(err)
 	owner1 := Owner{
 		UserId:     ownerUser1.ID,
 		Rentalable: true,
@@ -129,9 +88,17 @@ func TestGetLatestLogs(t *testing.T) {
 		Count:      1,
 	}
 
-	t.Run("success", func(t *testing.T) {
-		assert := assert.New(t)
+	t.Run("failures", func(t *testing.T) {
+		log, err := GetLatestLog(66, 66)
+		assert.Error(err)
+		assert.Empty(log)
 
+		log, err = GetLatestLog(itemID, 66)
+		assert.Error(err)
+		assert.Empty(log)
+	})
+
+	t.Run("success", func(t *testing.T) {
 		_, err := RegisterOwner(owner1, item)
 		assert.NoError(err)
 		_, err = RegisterOwner(owner2, item)

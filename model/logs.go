@@ -71,16 +71,24 @@ func GetLatestLog(itemID, ownerID uint) (Log, error) {
 	return log, nil
 }
 
+// GetLatestLogs 各所有者ごとの最新のログを取得する
 func GetLatestLogs(itemID uint) ([]Log, error) {
-	item, err := GetItemByID(itemID)
-	if err != nil {
-		return []Log{}, err
+	item := Item{}
+	item.ID = itemID
+	db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners")
+	if item.Name == "" {
+		return []Log{}, errors.New("該当するItemがありません")
 	}
 	logs := []Log{}
 	log := Log{}
-	for i, owner := range item.Owners {
-		db.Set("gorm:auto_preload", true).Order("created_at desc").First(&log, "item_id = ? AND owner_id = ?", itemID, owner.ID)
-		logs[i] = log
+	log.ItemID = itemID
+	for _, owner := range item.Owners {
+		log.OwnerId = owner.ID
+		db.Set("gorm:auto_preload", true).Order("created_at desc").First(&log)
+		if log.ID == 0 {
+			continue
+		}
+		logs = append(logs, log)
 	}
 	return logs, nil
 }
