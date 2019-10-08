@@ -12,12 +12,19 @@ import (
 // GetItems GET /items
 func GetItems(c echo.Context) error {
 	searchString := c.QueryParam("search")
-	res, err := model.GetItems(searchString)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+	if searchString != "" {
+		res, err := model.SearchItems(searchString)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		return c.JSON(http.StatusOK, res)
+	} else {
+		res, err := model.GetItems()
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		return c.JSON(http.StatusOK, res)
 	}
-
-	return c.JSON(http.StatusCreated, res)
 }
 
 // PostItems POST /items

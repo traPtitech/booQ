@@ -74,9 +74,9 @@ func GetItemByName(name string) (Item, error) {
 }
 
 // GetItems 全itemを取得する
-func GetItems(searchString string) ([]Item, error) {
+func GetItems() ([]Item, error) {
 	res := []Item{}
-	db.Where("name LIKE ?", "%"+searchString+"%").Find(&res)
+	db.Find(&res)
 	for i, item := range res {
 		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners")
 		var err error
@@ -127,4 +127,20 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 		db.Model(&item).Association("Owners").Append(&owner)
 	}
 	return item, nil
+}
+
+// SearchItems itemsをNameの部分一致で取得する
+func SearchItems(searchString string) ([]Item, error) {
+	res := []Item{}
+	db.Where("name LIKE ?", "%"+searchString+"%").Find(&res)
+	for i, item := range res {
+		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners")
+		var err error
+		item.LatestLogs, err = GetLatestLogs(item.ID)
+		if err != nil {
+			return []Item{}, err
+		}
+		res[i] = item
+	}
+	return res, nil
 }
