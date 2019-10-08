@@ -131,8 +131,8 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 	return item, nil
 }
 
-// PushLike likeを押す
-func PushLike(itemID, userID uint) (Item, error) {
+// CreateLike likeを押す
+func CreateLike(itemID, userID uint) (Item, error) {
 	existed := false
 	item := Item{}
 	db.Set("gorm:auto_preload", true).First(&item, itemID).Related(&item.Likes, "Likes")
@@ -146,6 +146,25 @@ func PushLike(itemID, userID uint) (Item, error) {
 		return Item{}, errors.New("すでにいいねしています")
 	} else {
 		db.Model(&item).Association("Likes").Append(&user)
+	}
+	return item, nil
+}
+
+// EraceLike likeを消す
+func EraceLike(itemID, userID uint) (Item, error) {
+	existed := false
+	item := Item{}
+	db.Set("gorm:auto_preload", true).First(&item, itemID).Related(&item.Likes, "Likes")
+	user, _ := GetUserByID(int(userID))
+	for _, likeUser := range item.Likes {
+		if likeUser.ID == userID {
+			existed = true
+		}
+	}
+	if existed {
+		db.Model(&item).Association("Likes").Delete(&user)
+	} else {
+		return Item{}, errors.New("いいねしていません")
 	}
 	return item, nil
 }

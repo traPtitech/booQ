@@ -166,13 +166,13 @@ func TestGetItemByName(t *testing.T) {
 	})
 }
 
-func TestPushLike(t *testing.T) {
+func TestCreateLike(t *testing.T) {
 	user, _ := CreateUser(User{Name: "testPushLikeUser"})
 	item, _ := CreateItem(Item{Name: "testPushLikeItem"})
 
 	t.Run("success", func(t *testing.T) {
 		assert := assert.New(t)
-		item, err := PushLike(item.ID, user.ID)
+		item, err := CreateLike(item.ID, user.ID)
 
 		assert.Equal(user.ID, item.Likes[0].ID)
 		assert.Equal(user.Name, item.Likes[0].Name)
@@ -182,10 +182,43 @@ func TestPushLike(t *testing.T) {
 
 	t.Run("failer", func(t *testing.T) {
 		assert := assert.New(t)
-		item, err := PushLike(item.ID, user.ID)
+		item, err := CreateLike(item.ID, user.ID)
 		t.Log(item.Likes)
 
 		assert.Error(err)
 		assert.Empty(item)
+	})
+}
+
+func TestDeleteLike(t *testing.T) {
+	user, _ := CreateUser(User{Name: "testDeleteLikeUser"})
+	item, _ := CreateItem(Item{Name: "testDeleteLikeItem"})
+
+	t.Run("failer", func(t *testing.T) {
+		assert := assert.New(t)
+		item, err := EraceLike(item.ID, user.ID)
+
+		assert.Error(err)
+		assert.Empty(item)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+		item, err := CreateLike(item.ID, user.ID)
+		assert.NotEmpty(item)
+		assert.NoError(err)
+		assert.Equal(user.ID, item.Likes[0].ID)
+		assert.Equal(user.Name, item.Likes[0].Name)
+		item, err = EraceLike(item.ID, user.ID)
+		assert.NotEmpty(item)
+		assert.NoError(err)
+
+		exist := false
+		for _, likeUser := range item.Likes {
+			if likeUser.Name == user.Name {
+				exist = true
+			}
+		}
+		assert.Equal(false, exist)
 	})
 }

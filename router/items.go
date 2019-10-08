@@ -119,7 +119,31 @@ func PostLikes(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	_, err = model.PushLike(item.ID, user.ID)
+	_, err = model.CreateLike(item.ID, user.ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.NoContent(http.StatusCreated)
+}
+
+// PostLikes POST /items/:id/likes
+func DeleteLikes(c echo.Context) error {
+	ID := c.Param("id")
+	user := c.Get("user").(model.User)
+	user, err := model.GetUserByName(user.Name)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, err := model.GetItemByID(uint(itemID))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	_, err = model.EraceLike(item.ID, user.ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

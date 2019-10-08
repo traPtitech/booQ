@@ -30,6 +30,7 @@ func SetupRouting(e *echo.Echo, client Traq) {
 			apiItems.POST("/:id/logs", PostLogs)
 			apiItems.POST("/:id/comments", PostComments)
 			apiItems.POST("/:id/likes", PostLikes)
+			apiItems.DELETE("/:id/likes", DeleteLikes)
 		}
 	}
 }
