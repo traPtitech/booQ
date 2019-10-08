@@ -2,6 +2,7 @@ package model
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -95,12 +96,16 @@ func TestGetLatestLogs(t *testing.T) {
 		assert.NoError(err)
 		_, err = CreateLog(Log{ItemID: itemID, UserID: user1.ID, OwnerID: ownerUser1.ID, Type: 0, Count: 0})
 		assert.NoError(err)
+		time.Sleep(1 * time.Second)
 		_, err = CreateLog(Log{ItemID: itemID, UserID: user2.ID, OwnerID: ownerUser1.ID, Type: 0, Count: 1})
 		assert.NoError(err)
+		time.Sleep(1 * time.Second)
 		_, err = CreateLog(Log{ItemID: itemID, UserID: user2.ID, OwnerID: ownerUser2.ID, Type: 0, Count: 0})
 		assert.NoError(err)
+		time.Sleep(1 * time.Second)
 		_, err = CreateLog(Log{ItemID: itemID, UserID: user1.ID, OwnerID: ownerUser2.ID, Type: 0, Count: 1})
 		assert.NoError(err)
+		time.Sleep(1 * time.Second)
 
 		item, err = GetItemByID(item.ID)
 		assert.NoError(err)
