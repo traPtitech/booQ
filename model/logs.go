@@ -77,7 +77,7 @@ func GetLatestLogs(logs []Log) ([]Log, error) {
 	for _, log := range logs {
 		nowLatestLog, exist := logMap[log.OwnerID]
 		if exist {
-			if nowLatestLog.CreatedAt.Before(log.CreatedAt) {
+			if !nowLatestLog.CreatedAt.After(log.CreatedAt) {
 				logMap[log.OwnerID] = log
 			}
 		} else {
