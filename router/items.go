@@ -143,7 +143,7 @@ func DeleteLikes(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	_, err = model.EraceLike(item.ID, user.ID)
+	_, err = model.CancelLike(item.ID, user.ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

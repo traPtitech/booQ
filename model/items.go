@@ -144,14 +144,13 @@ func CreateLike(itemID, userID uint) (Item, error) {
 	}
 	if existed {
 		return Item{}, errors.New("すでにいいねしています")
-	} else {
-		db.Model(&item).Association("Likes").Append(&user)
 	}
+	db.Model(&item).Association("Likes").Append(&user)
 	return item, nil
 }
 
-// EraceLike likeを消す
-func EraceLike(itemID, userID uint) (Item, error) {
+// CancelLike likeを消す
+func CancelLike(itemID, userID uint) (Item, error) {
 	existed := false
 	item := Item{}
 	db.Set("gorm:auto_preload", true).First(&item, itemID).Related(&item.Likes, "Likes")
@@ -161,10 +160,9 @@ func EraceLike(itemID, userID uint) (Item, error) {
 			existed = true
 		}
 	}
-	if existed {
-		db.Model(&item).Association("Likes").Delete(&user)
-	} else {
+	if !existed {
 		return Item{}, errors.New("いいねしていません")
 	}
+	db.Model(&item).Association("Likes").Delete(&user)
 	return item, nil
 }
