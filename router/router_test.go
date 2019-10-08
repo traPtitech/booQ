@@ -38,6 +38,7 @@ func echoSetupWithUser() *echo.Echo {
 				DisplayName: "テストユーザー",
 				Admin:       false,
 			}
+			user, _ = model.GetUserByName(user.Name)
 			c.Set("user", user)
 			return c, nil
 		},
@@ -55,6 +56,7 @@ func echoSetupWithAdminUser() *echo.Echo {
 				DisplayName: "traP",
 				Admin:       true,
 			}
+			adminUser, _ = model.GetUserByName(adminUser.Name)
 			c.Set("user", adminUser)
 			return c, nil
 		},
