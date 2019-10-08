@@ -106,7 +106,11 @@ func PostOwners(c echo.Context) error {
 // PostLikes POST /items/:id/likes
 func PostLikes(c echo.Context) error {
 	ID := c.Param("id")
-	me := c.Get("user").(model.User)
+	user := c.Get("user").(model.User)
+	user, err := model.GetUserByName(user.Name)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 	itemID, err := strconv.Atoi(ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -115,7 +119,7 @@ func PostLikes(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	_, err = model.PushLike(item.ID, me.ID)
+	_, err = model.PushLike(item.ID, user.ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

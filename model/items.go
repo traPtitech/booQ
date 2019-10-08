@@ -133,14 +133,13 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 
 // PushLike likeを押す
 func PushLike(itemID, userID uint) (Item, error) {
-	var existed bool
+	existed := false
 	item := Item{}
 	db.Set("gorm:auto_preload", true).First(&item, itemID).Related(&item.Likes, "Likes")
 	user, _ := GetUserByID(int(userID))
 	for _, likeUser := range item.Likes {
 		if likeUser.ID == userID {
 			existed = true
-
 		}
 	}
 	if existed {

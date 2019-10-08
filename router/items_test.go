@@ -205,7 +205,7 @@ func TestPostLikes(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		assert := assert.New(t)
-		e := echoSetupWithUser()
+		e := echoSetupWithAdminUser()
 
 		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(item.ID))+"/likes", nil)
 		req.Header.Set("Content-Type", "application/json")
@@ -217,7 +217,7 @@ func TestPostLikes(t *testing.T) {
 
 	t.Run("failuer", func(t *testing.T) {
 		assert := assert.New(t)
-		e := echoSetupWithUser()
+		e := echoSetupWithAdminUser()
 
 		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(item.ID))+"/likes", nil)
 		req.Header.Set("Content-Type", "application/json")

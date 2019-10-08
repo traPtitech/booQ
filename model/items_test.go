@@ -183,6 +183,7 @@ func TestPushLike(t *testing.T) {
 	t.Run("failer", func(t *testing.T) {
 		assert := assert.New(t)
 		item, err := PushLike(item.ID, user.ID)
+		t.Log(item.Likes)
 
 		assert.Error(err)
 		assert.Empty(item)
