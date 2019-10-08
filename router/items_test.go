@@ -197,6 +197,6 @@ func TestPostOwners(t *testing.T) {
 		_ = json.NewDecoder(rec.Body).Decode(&item)
 
 		assert.Equal(testBodyKojin.Name, item.Name)
-		// assert.Equal(testUser.ID, item.Owners[0].UserID)
+		assert.Equal(testUser.ID, item.Owners[0].UserID)
 	})
 }
