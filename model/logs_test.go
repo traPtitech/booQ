@@ -88,16 +88,6 @@ func TestGetLatestLogs(t *testing.T) {
 		Count:      1,
 	}
 
-	t.Run("failures", func(t *testing.T) {
-		log, err := GetLatestLog(66, 66)
-		assert.Error(err)
-		assert.Empty(log)
-
-		log, err = GetLatestLog(itemID, 66)
-		assert.Error(err)
-		assert.Empty(log)
-	})
-
 	t.Run("success", func(t *testing.T) {
 		_, err := RegisterOwner(owner1, item)
 		assert.NoError(err)
@@ -112,10 +102,12 @@ func TestGetLatestLogs(t *testing.T) {
 		_, err = CreateLog(Log{ItemID: itemID, UserID: user1.ID, OwnerID: ownerUser2.ID, Type: 0, Count: 1})
 		assert.NoError(err)
 
-		logs, err := GetLatestLogs(itemID)
+		item, err = GetItemByID(item.ID)
 		assert.NoError(err)
-		assert.NotEmpty(logs)
-		for _, log := range logs {
+		latestLogs, err := GetLatestLogs(item.Logs)
+		assert.NoError(err)
+		assert.NotEmpty(latestLogs)
+		for _, log := range latestLogs {
 			if log.OwnerID == ownerUser1.ID {
 				assert.Equal(ownerUser1.Name, log.Owner.Name)
 				assert.Equal(user2.ID, log.UserID)
