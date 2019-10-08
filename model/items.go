@@ -53,7 +53,7 @@ func GetItemByID(id uint) (Item, error) {
 		return Item{}, errors.New("該当するItemがありません")
 	}
 	var err error
-	res.LatestLogs, err = GetLatestLogs(id)
+	res.LatestLogs, err = GetLatestLogs(res.Logs)
 	if err != nil {
 		return Item{}, err
 	}
@@ -68,7 +68,7 @@ func GetItemByName(name string) (Item, error) {
 		return Item{}, errors.New("該当するNameがありません")
 	}
 	var err error
-	res.LatestLogs, err = GetLatestLogs(res.ID)
+	res.LatestLogs, err = GetLatestLogs(res.Logs)
 	if err != nil {
 		return Item{}, err
 	}
@@ -82,7 +82,7 @@ func GetItems() ([]Item, error) {
 	for i, item := range res {
 		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.Comments, "Comments").Related(&item.Likes, "Likes")
 		var err error
-		item.LatestLogs, err = GetLatestLogs(item.ID)
+		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
 			return []Item{}, err
 		}
