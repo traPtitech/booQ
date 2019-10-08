@@ -61,11 +61,6 @@ export default new Router({
     },
     // ここから
     {
-      path: '/items_test',
-      name: 'Item',
-      component: ItemDetailPage
-    },
-    {
       path: '/register_owner_form',
       component: RegisterOwnerForm
     },

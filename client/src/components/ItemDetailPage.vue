@@ -6,17 +6,15 @@
           <div class="image">
             <div>
               <img
-                :src="data.img_url"
+                :src="data.img_url === '' ? 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail' : data.img_url"
                 style="width: 250px;"
               />
             </div>
-            <div>
-              <!-- TODO: ボタンの処理を考える -->
+            <!-- <div>
               <v-btn block color="primary">借りる</v-btn>
               <v-btn block color="warning">返す</v-btn>
             </div>
-            <!-- TODO: お気に入り機能まわりを実装したら復活させてね -->
-            <!-- <div>
+            <div>
               <v-btn v-if="isLiked" block @click="removeLike">
                 <v-icon left color="indigo">mdi-thumb-up</v-icon>
                 いいね {{ likeCount }}
@@ -53,13 +51,13 @@
           </v-btn>
         </h2>
         <!-- FIXME: 他のタスクに手をつけたかったので表示が適当です -->
-        <div v-for="owner in data.owners" :key="owner.id">
+        <!-- <div v-for="owner in data.owners" :key="owner.id">
           <Icon
             :user="owner.user"
             :size="25"
           />
           {{ owner.user.name }} {{ checkRentalable(owner) }}
-        </div>
+        </div> -->
       </div>
       <div class="content">
         <h2>
@@ -68,26 +66,27 @@
             <v-icon dark>mdi-plus</v-icon>
           </v-btn>
         </h2>
-        <div>
+        <!-- <div v-if="data.comments">
           <div v-for="comment in data.comments" :key="comment.id">
             <v-flex>
               <Icon :user="comment.user" />
               {{ comment.comment }}
             </v-flex>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="content">
-        <div>
+        <div v-if="data.logs">
           <h2>ログ</h2>
-          <div v-for="log in reverseLogs" :key="log.id">
+          <!-- <div v-for="log in reverseLogs" :key="log.id">
             <Icon
               :user="log.user"
               :size="25"
             />
             {{ createLogMessage(log) }} - {{ log.created_at }}
-          </div>
+          </div> -->
         </div>
+        <div>{{data}}</div>
       </div>
     </div>
   </div>
@@ -95,6 +94,8 @@
 
 <script>
 import Icon from './shared/Icon'
+import axios from 'axios'
+
 export default {
   name: 'ItemDetailPage',
   components: {
@@ -254,8 +255,11 @@ export default {
     }
   },
   created () {
-    // 本番ではaxios.getでマウントしてsampleDataを消してください
-    this.data = this.sampleData
+    axios
+      .get(`/api/items/` + this.$route.params.id)
+      .then(res => (this.data = res.data))
+      .catch(e => { alert(e) })
+    // this.data = this.sampleData
   },
   mounted () {
     this.conputeWidth()
@@ -280,10 +284,10 @@ export default {
   },
   methods: {
     conputeWidth () {
-      if (window.innerWidth > 961) {
-        this.contentWidth = window.innerWidth - 545
+      if (window.innerWidth > 991) {
+        this.contentWidth = window.innerWidth - 600 // sideBar((window.innerWidth > 991で表示される)と物品のimgがともに260px
       } else if (window.innerWidth > 601) {
-        this.contentWidth = window.innerWidth - 290
+        this.contentWidth = window.innerWidth - 300
       } else {
         this.contentWidth = window.innerWidth - 30
       }
@@ -310,13 +314,27 @@ export default {
         return '返しました'
       }
     },
-    like () {
-      this.data.likes.push(this.$store.state.me)
-      // TODO: axios.post(/likes)みたいな感じ
+    async like () {
+      var postLikeError = null
+      await axios.post(`/api/items/` + this.$route.params.id + `/likes`, null)
+        .catch(e => {
+          alert(e)
+          postLikeError = e
+        })
+      if (!postLikeError) {
+        this.data.likes.push(this.$store.state.me)
+      }
     },
-    removeLike () {
-      this.data.likes = this.data.likes.filter(user => user.name !== this.$store.state.me.name)
-      // TODO: axios.delete(/likes)みたいな感じ
+    async removelike () {
+      var removeLikeError = null
+      await axios.delete(`/api/items/` + this.$route.params.id + `/likes`, null)
+        .catch(e => {
+          alert(e)
+          removeLikeError = e
+        })
+      if (!removeLikeError) {
+        this.data.likes = this.data.likes.filter(user => user.name !== this.$store.state.me.name)
+      }
     },
     addOwner () {
       window.open('/register_owner_form', 'newwindow', 'width=400,height=800')
