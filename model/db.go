@@ -76,18 +76,5 @@ func Migrate() error {
 		}
 	}
 
-	testUser, _ := GetUserByName("testUser")
-	if testUser.Name == "" {
-		user := User{
-			Name:        "testUser",
-			DisplayName: "テストユーザー",
-			Admin:       false,
-		}
-		_, err := CreateUser(user)
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
