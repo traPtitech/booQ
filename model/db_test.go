@@ -23,4 +23,13 @@ func setup() {
 	if err != nil {
 		panic(err)
 	}
+	user := User{
+		Name:        "testUser",
+		DisplayName: "テストユーザー",
+		Admin:       false,
+	}
+	_, err = CreateUser(user)
+	if err != nil {
+		panic(err)
+	}
 }
