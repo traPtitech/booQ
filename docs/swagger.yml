@@ -177,6 +177,7 @@ paths:
             type: 0
             purpose: "読みたかったから。"
             due_date: "2019/07/30 23:30:00"
+            count: 1
       responses:
         201:
           description: "Created"
@@ -228,6 +229,7 @@ paths:
           example:
             user_id: 1
             rentalable: true
+            count: 1
       responses:
         201:
           description: "Created"
@@ -251,6 +253,7 @@ paths:
           example:
             user_id: 1
             rentalable: true
+            count: 1
       responses:
         200:
           description: "OK"
@@ -512,7 +515,6 @@ paths:
           example:
             name: "nagatech"
             displayName: "ながてち"
-            iconFileId: "e0628393-8045-4c6c-b23c-6f5e6a2c252b"
             admin: true
       responses:
         200:
@@ -588,10 +590,6 @@ definitions:
       displayName:
         type: "string"
         example: "ながてち"
-      iconFileId:
-        type: "string"
-        format: "uuid"
-        example: "e0628393-8045-4c6c-b23c-6f5e6a2c252b"
       admin:
         type: "boolean"
         example: true
@@ -620,6 +618,9 @@ definitions:
         type: "string"
         format: "date-time"
         example: "2019/07/30 23:30:00"
+      count:
+        type: "integer"
+        example: "1"
       created_at:
         type: "string"
         format: "date-time"
@@ -643,6 +644,9 @@ definitions:
       rentalable:
         type: "boolean"
         example: true
+      count:
+        type: "integer"
+        example: 1
   tag:
     type: "object"
     properties:
@@ -675,6 +679,9 @@ definitions:
         type: "string"
         format: "date-time"
         example: "2019/07/30 23:30:00"
+      count: 
+        type: "integer"
+        example: 1
       created_at:
         type: "string"
         format: "date-time"
@@ -691,6 +698,9 @@ definitions:
       rentalable:
         type: "boolean"
         example: true
+      count:
+        type: "integer"
+        example: 1
   get_comments:
     type: "object"
     properties:

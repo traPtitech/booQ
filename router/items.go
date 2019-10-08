@@ -45,7 +45,7 @@ func GetItem(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	item, err := model.GetItemByID(itemID)
+	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
 	}
@@ -73,7 +73,7 @@ func PostOwners(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusForbidden, err)
 	}
-	item, err := model.GetItemByID(itemID)
+	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -87,13 +87,66 @@ func PostOwners(c echo.Context) error {
 	if item.Type != 0 && !me.Admin {
 		return c.NoContent(http.StatusForbidden)
 	}
-	var owner model.Owner
-	owner.Owner = user
-	owner.Rentalable = body.Rentalable
+	owner := model.Owner{
+		UserID:     user.ID,
+		Rentalable: body.Rentalable,
+		Count:      body.Count,
+	}
+	if owner.Count < 1 {
+		return c.NoContent(http.StatusBadRequest)
+	}
 	res, err := model.RegisterOwner(owner, item)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	return c.JSON(http.StatusOK, res)
+}
+
+// PostLikes POST /items/:id/likes
+func PostLikes(c echo.Context) error {
+	ID := c.Param("id")
+	user := c.Get("user").(model.User)
+	user, err := model.GetUserByName(user.Name)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, err := model.GetItemByID(uint(itemID))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	_, err = model.CreateLike(item.ID, user.ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.NoContent(http.StatusCreated)
+}
+
+// PostLikes POST /items/:id/likes
+func DeleteLikes(c echo.Context) error {
+	ID := c.Param("id")
+	user := c.Get("user").(model.User)
+	user, err := model.GetUserByName(user.Name)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, err := model.GetItemByID(uint(itemID))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	_, err = model.CancelLike(item.ID, user.ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.NoContent(http.StatusCreated)
 }

@@ -1,39 +1,31 @@
 <template>
-  <v-container>
+  <div>
     <h1>物品登録ページ</h1>
-    <!-- <h4>物品の種類を選択してください</h4>
-    <v-container>
-      <label v-for="(label,id) in typeOptions" v-bind:key="label">
-        <input type="radio" name="type" :value="id" v-model="typeID">{{ label }}
-      </label>
-      <br>
-      <span>登録する物品の種類: {{ typeOptions[typeID] }}</span>
-    </v-container> -->
-    <v-container v-if="$store.state.me.admin">
+    <div v-if="$store.state.me.admin">
       <span>登録する物品の所有者: {{ ownerOptions[ownerID] }}</span>
       <br>
       <label v-for="(label,id) in ownerOptions" v-bind:key="label">
         <input type="radio" name="owner" :value="id" v-model="ownerID">{{ label }}
       </label>
-    </v-container>
-    <v-container>
+    </div>
+    <div>
       <v-text-field solo v-model="code" placeholder="ISBN-10 or ASIN"/>
       <v-btn class="green green-text darken-2" v-on:click="img = 'http://images-jp.amazon.com/images/P/' + code + '.09.LZZZZZZZ.jpg';img_name = 'by amazon'">MakeImage</v-btn>
-    </v-container>
-    <v-container>
-      <v-container>物品名</v-container>
+    </div>
+    <div>
+      <div>物品名</div>
       <v-text-field class="mt-0" solo required v-model="name" placeholder="Name"/>
-    </v-container>
-    <v-container>
-      <v-container>物品詳細</v-container>
+    </div>
+    <div>
+      <div>物品詳細</div>
       <v-textarea class="mt-0" solo label="Solo textarea" rows="1" auto-grow v-model="description" placeholder="Description"></v-textarea>
-    </v-container>
-    <v-container>
-      <v-container>物品イメージ</v-container>
+    </div>
+    <div>
+      <div>物品イメージ</div>
       <label class="input-item__label">
         <input type="file" @change="onFileChange" />
       </label>
-      <v-container class="preview-item">
+      <div class="preview-item">
         <v-img
           :src="img"
           aspect-ratio="1"
@@ -41,22 +33,22 @@
           :contain="true"
           max-height="500px"
         />
-        <v-container>
+        <div>
           <p>{{ img_name }}</p>
-        </v-container>
+        </div>
         <v-btn class="red" @click="remove">削除</v-btn>
-      </v-container>
-    </v-container>
-    <v-container>
+      </div>
+    </div>
+    <div>
       <p>個数</p>
-      <v-text-field class="mt-0" solo required v-model.number="count" type="number"/>
-    </v-container>
-    <v-container>
+      <v-text-field class="mt-0" required v-model.number="count" type="number"/>
+    </div>
+    <div>
       <input type="checkbox" id="checkbox" v-model="rentalable">
       <label for="checkbox">貸し出し可</label>
-    </v-container>
+    </div>
     <v-btn class="blue" @click="register">登録</v-btn>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -66,11 +58,6 @@ export default {
   name: 'RegisterItemPage',
   data () {
     return {
-      // typeID: 1,
-      // typeOptions: {
-      //   1: '本',
-      //   0: '備品'
-      // },
       ownerID: 0,
       ownerOptions: {
         0: '個人',
@@ -84,8 +71,7 @@ export default {
       description: '',
       img_name: '',
       img_url: '',
-      count: 1,
-      res: ''
+      count: 1
     }
   },
   methods: {
@@ -95,10 +81,10 @@ export default {
       }
       const res = await axios.post(`/api/items`, { name: this.name, code: this.code, type: this.ownerID, description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
       if (this.ownerID === 0) {
-        const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable }).catch(e => { alert(e) })
+        const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count }).catch(e => { alert(e) })
         alert('Registered ”' + res2.data.name + '”!所有者は' + this.$store.state.me.name + 'です。"')
       } else {
-        const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable }).catch(e => { alert(e) })
+        const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable, count: this.count }).catch(e => { alert(e) })
         alert('Registered ”' + res2.data.name + '”!所有者は' + this.ownerOptions[this.ownerID] + 'です。')
       }
     },
