@@ -153,7 +153,8 @@ func TestPostOwners(t *testing.T) {
 			DisplayName: "テストユーザー",
 			Admin:       false,
 		}
-		testUser, err := model.CreateUser(user)
+		testUser, err := model.GetUserByName(user.Name)
+		assert.NotEmpty(testUser)
 		assert.NoError(err)
 
 		testOwnerKojin := model.RequestPostOwnersBody{
