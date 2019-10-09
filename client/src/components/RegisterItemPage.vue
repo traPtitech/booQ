@@ -79,13 +79,18 @@ export default {
       if (this.img_name) {
         // img_urlに画像のURLをセットしてください
       }
-      const res = await axios.post(`/api/items`, { name: this.name, code: this.code, type: this.ownerID, description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
-      if (this.ownerID === 0) {
-        const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count }).catch(e => { alert(e) })
-        alert('Registered ”' + res2.data.name + '”!所有者は' + this.$store.state.me.name + 'です。"')
+      const res = await axios.post(`/api/items`, { name: this.name, code: this.code, type: Number(this.ownerID), description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
+      console.log(res)
+      if (!!res) {
+        if (this.ownerID === 0) {
+          const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: Number(this.$store.state.me.ID), rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
+          alert('Registered ”' + res2.data.name + '”!所有者は' + this.$store.state.me.name + 'です。"')
+        } else {
+          const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: Number(this.ownerID), rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
+          alert('Registered ”' + res2.data.name + '”!所有者は' + this.ownerOptions[this.ownerID] + 'です。')
+        }
       } else {
-        const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable, count: this.count }).catch(e => { alert(e) })
-        alert('Registered ”' + res2.data.name + '”!所有者は' + this.ownerOptions[this.ownerID] + 'です。')
+        alert('エラーが発生したため所有者の登録が行われませんでした。')
       }
     },
     onFileChange (e) {
