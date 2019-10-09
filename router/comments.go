@@ -38,3 +38,21 @@ func PostComments(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, res)
 }
+
+// GetComments GET /comments
+func GetComments(c echo.Context) error {
+	userName := c.QueryParam("user")
+	if userName != "" {
+		user, err := model.GetUserByName(userName)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		res, err := model.GetCommentsByUserID(user.ID)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		return c.JSON(http.StatusOK, res)
+	}
+	res := []model.Comment{}
+	return c.JSON(http.StatusCreated, res)
+}

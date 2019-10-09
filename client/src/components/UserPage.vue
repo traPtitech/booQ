@@ -1,51 +1,63 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="4">
-        <div>
-          <h1>{{ $route.params.name }}</h1>
-        </div>
-        <div>
-          <v-avatar size="200">
-            <img :src="`https://q.trap.jp/api/1.0/public/icon/${$route.params.name}`" />
-          </v-avatar>
+  <div class="d-flex flex-wrap">
+    <v-row no-gutters>
+      <v-col md="auto">
+        <div class="icon">
+          <div>
+            <h1>{{ $route.params.name }}</h1>
+          </div>
+          <div>
+            <v-avatar size="200">
+              <img :src="`https://q.trap.jp/api/1.0/public/icon/${$route.params.name}`" />
+            </v-avatar>
+          </div>
         </div>
       </v-col>
       <v-col cols="8">
-        <div>
-          <h3>所有物一覧</h3>
-          <div>
-            <ItemList :items="items" />
+        <div :style="`width: ${contentWidth}px;`">
+          <div class="content" v-if="item.length != 0">
+            <h3>所有物一覧</h3>
+            <div>
+              <ItemList :items="items" />
+            </div>
           </div>
-        </div>
-        <div>
-          <h3>コメント一覧</h3>
-          <div v-for="comment in comments" :key="comment.id">
-            <p>
-              <v-container class="pa-2" fluid>
-                <v-row>
-                  <v-col>
-                    <v-card>
-                      <v-card-text>
-                        <div class="headline mb-2">{{}}</div>
-                        {{comment.comment}}
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </p>
+          <div class="content" v-else>
+            <h3>あなたは物品を所有していません</h3>
+          </div>
+          <div v-if="comments.length == 0">
+            <h3>あなたはまだコメントを投稿していません</h3>
+          </div>
+          <div class="content" v-else>
+            <h3>コメント一覧</h3>
+            <div v-for="comment in comments" :key="comment.id">
+              <p>
+                <v-container class="pa-2" fluid>
+                  <v-row>
+                    <v-col>
+                      <v-card>
+                        <v-card-text>
+                          <div class="headline mb-2">{{comment.comment}}</div>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </p>
+            </div>
           </div>
         </div>
       </v-col>
     </v-row>
-    <v-container>
+    <!-- <v-container>
       <ItemList :items="data" />
-    </v-container>
-  </v-container>
+    </v-container> -->
+  </div>
 </template>
+
 <script>
 import ItemList from './shared/ItemList'
+import axios from 'axios'
+
 export default {
   name: 'UserPage',
   components: {
@@ -55,6 +67,7 @@ export default {
     return {
       items: null,
       comments: null,
+      contentWidth: 600,
       sampleItems: [{
         id: 1,
         name: '小説　天気の子',
@@ -180,10 +193,35 @@ export default {
     }
   },
   mounted () {
-    this.items = this.sampleItems
-    this.comments = this.sampleComments
-    // this.items = axios.get('api/items?user=$route.params.name')
-    // this.comments = axios.get('api/comments?user=$route.params.name')
+    // this.items = this.sampleItems
+    // this.comments = this.sampleComments
+    this.conputeWidth()
+    window.addEventListener('resize', this.conputeWidth)
+    axios.get('api/items?user=' + this.$route.params.name).catch(e => { alert(e) }).then(res => { this.items = res.data })
+    axios.get('api/comments?user=' + this.$route.params.name).catch(e => { alert(e) }).then(res => { this.comments = res.data })
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.conputeWidth)
+  },
+  methods: {
+    conputeWidth () {
+      if (window.innerWidth > 991) {
+        this.contentWidth = window.innerWidth - 600 // sideBar((window.innerWidth > 991で表示される)と物品のimgがともに260px
+      } else if (window.innerWidth > 601) {
+        this.contentWidth = window.innerWidth - 300
+      } else {
+        this.contentWidth = window.innerWidth - 30
+      }
+    }
   }
 }
 </script>
+
+<style scoped>
+  .icon {
+    padding-right: 10px;
+  }
+  .content {
+    margin-bottom: 30px;
+  }
+</style>

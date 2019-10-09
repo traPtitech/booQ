@@ -11,6 +11,18 @@ import (
 
 // GetItems GET /items
 func GetItems(c echo.Context) error {
+	ownerName := c.QueryParam("user")
+	if ownerName != "" {
+		_, err := model.GetUserByName(ownerName)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		res, err := model.SearchItemByOwner(ownerName)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		return c.JSON(http.StatusOK, res)
+	}
 	res, err := model.GetItems()
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
