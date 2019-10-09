@@ -8,6 +8,7 @@
         <input type="radio" name="owner" :value="id" v-model="ownerID">{{ label }}
       </label>
     </div>
+    <div>{{ownerID}} {{typeof ownerID}}</div>
     <div>
       <v-text-field solo v-model="code" placeholder="ISBN-10 or ASIN"/>
       <v-btn class="green green-text darken-2" v-on:click="img = 'http://images-jp.amazon.com/images/P/' + code + '.09.LZZZZZZZ.jpg';img_name = 'by amazon'">MakeImage</v-btn>
@@ -80,12 +81,12 @@ export default {
         // img_urlに画像のURLをセットしてください
       }
       const res = await axios.post(`/api/items`, { name: this.name, code: this.code, type: this.ownerID, description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
-      if (this.ownerID === 0) {
+      if (Number(this.ownerID) === 0) {
         const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count }).catch(e => { alert(e) })
         alert('Registered ”' + res2.data.name + '”!所有者は' + this.$store.state.me.name + 'です。"')
       } else {
-        const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable, count: this.count }).catch(e => { alert(e) })
-        alert('Registered ”' + res2.data.name + '”!所有者は' + this.ownerOptions[this.ownerID] + 'です。')
+        const res2 = await axios.post(`/api/items/` + res.data.ID + `/owners`, { user_id: Number(this.ownerID), rentalable: this.rentalable, count: this.count }).catch(e => { alert(e) })
+        alert('Registered ”' + res2.data.name + '”!所有者は' + this.ownerOptions[Number(this.ownerID)] + 'です。')
       }
     },
     onFileChange (e) {

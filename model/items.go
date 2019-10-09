@@ -121,7 +121,18 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 		}
 		existed = true
 		nowOwner.User = owner.User
-		db.Model(&item).Association("Owners").Replace(&nowOwner)
+		db.Save(&nowOwner)
+		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs")
+		latestLog, err := GetLatestLog(item.Logs, owner.UserID)
+		if err != nil {
+			return Item{}, err
+		}
+		if latestLog.ItemID != 0 {
+			_, err = CreateLog(Log{ItemID: latestLog.ItemID, UserID: owner.UserID, OwnerID: owner.UserID, Type: 2, Count: latestLog.Count + owner.Count})
+			if err != nil {
+				return Item{}, err
+			}
+		}
 	}
 	if !existed {
 		db.Create(&owner)

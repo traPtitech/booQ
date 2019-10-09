@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-btn block color="primary" @click.stop="open">借りる</v-btn>
+    <v-btn block color="primary" @click.stop="open">返却する</v-btn>
     <div class="text-center">
-      <v-dialog light v-model="isOpenRentalForm" max-width="320">
+      <v-dialog light v-model="isOpenReturnForm" max-width="320">
         <v-card width="320">
-          <v-card-title class="headline">物品を借りる</v-card-title>
+          <v-card-title class="headline">物品を返却する</v-card-title>
           <v-card-actions>
             <v-menu bottom origin="center center" transition="scale-transition" open-on-hover>
               <template v-slot:activator="{ on }">
@@ -45,7 +45,7 @@
           <v-divider></v-divider>
           <v-card-actions>
             <div class="flex-grow-1"></div>
-            <v-btn v-on:click="rental()">借りる</v-btn>
+            <v-btn v-on:click="returnItem()">返却する</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -57,7 +57,7 @@
 import axios from 'axios'
 
 export default {
-  name: 'RentalForm',
+  name: 'ReturnForm',
   props: {
     data: Object
   },
@@ -68,7 +68,7 @@ export default {
       dueDate: null,
       rentOwnerID: 0,
       error: '',
-      isOpenRentalForm: false
+      isOpenReturnForm: false
     }
   },
   methods: {
@@ -86,7 +86,7 @@ export default {
       }
       return targetLog[0].count
     },
-    async rental () {
+    async returnItem () {
       if (this.data.type === 0 && this.purpose === null) {
         alert('目的を入力してください')
         return false
@@ -105,10 +105,10 @@ export default {
           this.error = e
         })
       if (!this.error) { alert('あなたは”' + this.data.name + '”を' + this.rentalCount + '個借りました。') }
-      this.isOpenRentalForm = !this.isOpenRentalForm
+      this.isOpenReturnForm = !this.isOpenReturnForm
     },
     open () {
-      this.isOpenRentalForm = !this.isOpenRentalForm
+      this.isOpenReturnForm = !this.isOpenReturnForm
     }
   }
 }

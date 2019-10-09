@@ -11,7 +11,7 @@
               />
             </div>
             <div>
-              <RentalForm :data="data"/>
+              <RentalForm @add="clickAdd" :data="data"/>
               <v-btn block color="warning">返す</v-btn>
             </div>
             <div>
@@ -114,7 +114,6 @@ export default {
       .get(`/api/items/` + this.$route.params.id)
       .then(res => (this.data = res.data))
       .catch(e => { alert(e) })
-    // this.data = this.sampleData
   },
   mounted () {
     this.conputeWidth()
@@ -149,11 +148,24 @@ export default {
     },
     checkRentalable (owner) {
       // FIXME: ロジックがやばい
-      if (owner.rentalable) {
-        return '貸し出し可能'
-      } else {
+      if (!owner.rentalable) {
         return '貸し出しできません'
       }
+      var latestLog = this.data.latest_logs.filter(function (log) {
+        return (log.owner.ID = owner.owner_id)
+      })
+      var rentalableCount = 0
+      if (latestLog === []) {
+        rentalableCount = owner.count
+      } else {
+        rentalableCount = latestLog[0].count
+      }
+      if (rentalableCount === 0) {
+        return '貸し出しできません'
+      } else if (rentalableCount === 1) {
+        return '貸し出し可能'
+      }
+      return '貸し出し可能' + '×' + rentalableCount
     },
     createLogMessage (log) {
       const userName = log.user.name
@@ -190,6 +202,10 @@ export default {
       if (!removeLikeError) {
         this.data.likes = this.data.likes.filter(user => user.name !== this.$store.state.me.name)
       }
+    },
+    async clickAdd () {
+      const res = await axios.get(`/api/items/` + this.$route.params.id).catch(e => { alert(e) })
+      this.data = res.data
     }
   }
 }
