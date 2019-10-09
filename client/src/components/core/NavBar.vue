@@ -114,7 +114,6 @@ export default {
       responsiveInput: false,
       cartPurpose: '',
       cartDueDate: '',
-      cartError: null,
       cartDialog: false
     }
   },
@@ -174,10 +173,8 @@ export default {
         await axios.post(`/api/items/` + this.$store.state.cart[i].ID + `/logs`, { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
           .catch(e => {
             alert(e)
-            this.cartError = e
           })
       }
-      if (!this.cartError) { alert(names) }
     }
   }
 }
