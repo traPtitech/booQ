@@ -11,7 +11,8 @@
               />
             </div>
             <div>
-              <RentalForm @add="clickAdd" :data="data"/>
+              <RentalForm @add="reload" :data="data"/>
+              <ReturnForm @returnItem="reload" :data="data"/>
               <v-btn block color="warning">返す</v-btn>
             </div>
             <div>
@@ -94,6 +95,7 @@ import axios from 'axios'
 import RegisterOwnerForm from './shared/RegisterOwnerForm'
 import RentalForm from './shared/RentalForm'
 import CommentDialog from './shared/CommentDialog'
+import ReturnForm from './shared/ReturnForm'
 
 export default {
   name: 'ItemDetailPage',
@@ -101,7 +103,8 @@ export default {
     Icon,
     RegisterOwnerForm,
     RentalForm,
-    CommentDialog
+    CommentDialog,
+    ReturnForm
   },
   data () {
     return {
@@ -166,6 +169,7 @@ export default {
         return '貸し出し可能'
       }
       return '貸し出し可能' + '×' + rentalableCount
+      // return '貸し出し可能' + '×' + 1
     },
     createLogMessage (log) {
       const userName = log.user.name
@@ -203,7 +207,7 @@ export default {
         this.data.likes = this.data.likes.filter(user => user.name !== this.$store.state.me.name)
       }
     },
-    async clickAdd () {
+    async reload () {
       const res = await axios.get(`/api/items/` + this.$route.params.id).catch(e => { alert(e) })
       this.data = res.data
     }

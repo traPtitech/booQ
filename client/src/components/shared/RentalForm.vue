@@ -35,7 +35,7 @@
             </div>
           </v-card-actions>
           <v-card-actions v-if="data.type === 1">
-            <v-slider :max="getBihinLatestCount(data.ID)" v-model="data.rentalCount" thumb-label="always" />
+            <v-slider :max="getBihinLatestCount()" v-model="data.rentalCount" thumb-label="always" />
           </v-card-actions>
           <div>返却日</div>
           <v-card-actions max-width="320">
@@ -72,15 +72,12 @@ export default {
     }
   },
   methods: {
-    getBihinLatestCount (itemID) {
-      var item = this.items.filter(function (element) {
-        return (element.ID = itemID)
-      })
-      var targetLog = item[0].latest_logs.filter(function (log) {
+    getBihinLatestCount () {
+      var targetLog = this.data.latest_logs.filter(function (log) {
         return (log.owner.name = 'trap')
       })
       if (targetLog === []) {
-        targetLog = targetLog.push(item[0].owners.filter(function (owner) {
+        targetLog = targetLog.push(this.data.owners.filter(function (owner) {
           return (owner.owner.name = 'trap')
         }))
       }

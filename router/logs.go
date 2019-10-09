@@ -78,6 +78,16 @@ func PostLogs(c echo.Context) error {
 		} else {
 			log.Count = latestLog.Count - body.Count
 		}
+		rentalUser := model.RentalUser{
+			UserID:  user.ID,
+			OwnerID: body.OwnerID,
+			Count:   body.Count * -1,
+		}
+		_, err = model.RentalItem(rentalUser, body.OwnerID, item, 0)
+		if err != nil {
+			fmt.Print("rentalItemErr")
+			return c.JSON(http.StatusBadRequest, err)
+		}
 	}
 	if body.Type == 1 {
 		if latestLog.ItemID == 0 {
@@ -90,6 +100,16 @@ func PostLogs(c echo.Context) error {
 			}
 		}
 		log.Count = latestLog.Count + body.Count
+		rentalUser := model.RentalUser{
+			UserID:  user.ID,
+			OwnerID: body.OwnerID,
+			Count:   body.Count,
+		}
+		_, err = model.RentalItem(rentalUser, body.OwnerID, item, 0)
+		if err != nil {
+			fmt.Print("rentalItemErr")
+			return c.JSON(http.StatusBadRequest, err)
+		}
 	}
 	res, err = model.CreateLog(log)
 	if err != nil {

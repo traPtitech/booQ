@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn block color="primary" @click.stop="open">返却する</v-btn>
+    <v-btn block color="warning" @click.stop="open">返却する</v-btn>
     <div class="text-center">
       <v-dialog light v-model="isOpenReturnForm" max-width="320">
         <v-card width="320">
@@ -8,40 +8,22 @@
           <v-card-actions>
             <v-menu bottom origin="center center" transition="scale-transition" open-on-hover>
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark v-on="on">所有者を選ぶ</v-btn>
+                <v-btn color="primary" dark v-on="on">返却する所有者を選ぶ</v-btn>
               </template>
               <v-list>
                 <v-list-item
-                v-for="(owner, i) in data.owners"
+                v-for="(rentalUser, i) in data.rental_users.filter(function (element) {return element.user_id = $store.state.me.ID})"
                 :key="i"
-                @click="rentOwnerID = owner.user.ID"
-                :disabled="!owner.rentalable">
-                  <v-list-item-title>{{ owner.user.name }}</v-list-item-title>
+                @click="returnOwnerID = rentalUser.owner_id">
+                  <v-list-item-title>{{ rentalUser.owner.name }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
           </v-card-actions>
-          <div>{{rentOwnerID}}</div>
-          <v-card-actions>
-            <div v-if="data.type == 1">
-              <v-form ref="form">
-                <v-textarea outlined v-model="purpose" :rules="[() => !!purpose || 'This field is required']" label="目的"/>
-              </v-form>
-            </div>
-            <div v-else>
-              <v-form ref="form">
-                <v-textarea outlined v-model="purpose" label="目的"/>
-              </v-form>
-            </div>
+          <div>{{returnOwnerID}}</div>
+          <v-card-actions v-if="getRentalCount(returnOwnerID) > 1">
+            <v-slider :max="getRentalCount(returnOwnerID)" v-model="data.returnCount" thumb-label="always" />
           </v-card-actions>
-          <v-card-actions v-if="data.type === 1">
-            <v-slider :max="getBihinLatestCount(data.ID)" v-model="data.rentalCount" thumb-label="always" />
-          </v-card-actions>
-          <div>返却日</div>
-          <v-card-actions max-width="320">
-            <v-date-picker v-model="dueDate"></v-date-picker>
-          </v-card-actions>
-          <div>{{dueDate}}</div>
           <v-divider></v-divider>
           <v-card-actions>
             <div class="flex-grow-1"></div>
@@ -63,48 +45,36 @@ export default {
   },
   data () {
     return {
-      purpose: null,
-      rentalCount: 1,
-      dueDate: null,
-      rentOwnerID: 0,
+      returnOwnerID: 0,
+      returnCount: 0,
       error: '',
       isOpenReturnForm: false
     }
   },
   methods: {
-    getBihinLatestCount (itemID) {
-      var item = this.items.filter(function (element) {
-        return (element.ID = itemID)
+    getRentalCount (ownerID) {
+      var rentalUsers = this.data.rental_users.filter(function (element) {
+        return (element.user.name = this.$store.state.me.name)
       })
-      var targetLog = item[0].latest_logs.filter(function (log) {
-        return (log.owner.name = 'trap')
+      rentalUsers = rentalUsers.filter(function (element) {
+        return (element.owner_id = ownerID)
       })
-      if (targetLog === []) {
-        targetLog = targetLog.push(item[0].owners.filter(function (owner) {
-          return (owner.owner.name = 'trap')
-        }))
+      if (rentalUsers === []) {
+        return '借りていません'
       }
-      return targetLog[0].count
+      return rentalUsers[0].count * -1
     },
     async returnItem () {
-      if (this.data.type === 0 && this.purpose === null) {
-        alert('目的を入力してください')
-        return false
-      }
-      if (this.dueDate === null) {
-        alert('返却日を入力してください')
-        return false
-      }
-      if (this.rentOwnerID === 0) {
+      if (this.returnOwnerID === 0) {
         alert('所有者を選択してください')
         return false
       }
-      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
+      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.returnOwnerID, type: 1, count: this.returnCount })
         .catch(e => {
           alert(e)
           this.error = e
         })
-      if (!this.error) { alert('あなたは”' + this.data.name + '”を' + this.rentalCount + '個借りました。') }
+      if (!this.error) { alert('あなたは”' + this.data.name + '”を返しました。') }
       this.isOpenReturnForm = !this.isOpenReturnForm
     },
     open () {
