@@ -172,8 +172,12 @@ export default {
     createLogMessage (log) {
       const userName = log.user.name
       const ownerName = log.owner.name
-      const ownerWord = ownerName === 'traP' ? '' : `${ownerName}さんの`
+      let ownerWord = ownerName === 'traP' ? '' : `${ownerName}さんの`
       let logComment = log.type === 0 ? '借りました' : '返しました'
+      if (log.type === 2) {
+        ownerWord = ''
+        logComment = '追加しました'
+      }
       logComment = log.type === 2 ? '追加しました' : logComment
       return `${userName}さんが${ownerWord}物品を${logComment}`
     },

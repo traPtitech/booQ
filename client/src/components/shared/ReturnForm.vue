@@ -20,7 +20,6 @@
               </v-list>
             </v-menu>
           </v-card-actions>
-          <div>{{returnOwnerID}}{{getRentalCount(returnOwnerID)}}</div>
           <v-card-actions v-if="getRentalCount(returnOwnerID) > 1">
             <v-slider :max="getRentalCount(returnOwnerID)" v-model="data.returnCount" thumb-label="always" />
           </v-card-actions>
@@ -46,7 +45,7 @@ export default {
   data () {
     return {
       returnOwnerID: 0,
-      returnCount: 0,
+      returnCount: 1,
       error: '',
       isOpenReturnForm: false
     }
