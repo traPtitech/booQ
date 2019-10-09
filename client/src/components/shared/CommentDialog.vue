@@ -50,7 +50,7 @@ export default {
           this.error = e
         })
       if (!this.error) {
-        this.$parent.data.comments.push( { user: this.$store.state.me, text: this.text })
+        this.$parent.data.comments.push({ user: this.$store.state.me, text: this.text })
       }
       this.isOpenCommentDialog = !this.isOpenCommentDialog
     },
