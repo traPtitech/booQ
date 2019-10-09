@@ -166,6 +166,58 @@ func TestGetItemByName(t *testing.T) {
 	})
 }
 
+func TestSearchItems(t *testing.T) {
+	user, _ := CreateUser(User{Name: "testSearchItemUser"})
+	var owner Owner
+	owner.UserID = user.ID
+	owner.Rentalable = true
+	owner.Count = 1
+	item, _ := CreateItem(Item{Name: "testSearchItemItem"})
+	_, _ = CreateItem(Item{Name: "testSearchItemItem1"})
+	_, _ = CreateItem(Item{Name: "testSearchItemsItem"})
+	_, _ = RegisterOwner(owner, item)
+
+	t.Run("success", func(t *testing.T) {
+		t.Parallel()
+		assert := assert.New(t)
+
+		items, err := GetItems()
+		assert.NoError(err)
+
+		for _, value := range items {
+			if value.Name == "testSearchItemItem" {
+				assert.Equal(user.ID, value.Owners[0].UserID)
+				assert.Equal(user.Name, value.Owners[0].User.Name)
+				break
+			}
+			continue
+		}
+		assert.NotEmpty(items)
+
+		items, err = SearchItems("SearchItemItem")
+		assert.NoError(err)
+		var existSearchItem = false
+		var existSearchItem1 = false
+		var existTestSearchItems = false
+
+		for _, value := range items {
+			if value.Name == "testSearchItemItem" {
+				existSearchItem = true
+			}
+			if value.Name == "testSearchItemItem1" {
+				existSearchItem1 = true
+			}
+			if value.Name == "testSearchItemsItem" {
+				existTestSearchItems = true
+			}
+		}
+		assert.Equal(true, existSearchItem)
+		assert.Equal(true, existSearchItem1)
+		assert.Equal(false, existTestSearchItems)
+		assert.NotEmpty(items)
+	})
+}
+
 func TestCreateLike(t *testing.T) {
 	user, _ := CreateUser(User{Name: "testPushLikeUser"})
 	item, _ := CreateItem(Item{Name: "testPushLikeItem"})

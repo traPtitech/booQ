@@ -11,11 +11,18 @@ import (
 
 // GetItems GET /items
 func GetItems(c echo.Context) error {
+	searchString := c.QueryParam("search")
+	if searchString != "" {
+		res, err := model.SearchItems(searchString)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		return c.JSON(http.StatusOK, res)
+	}
 	res, err := model.GetItems()
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-
 	return c.JSON(http.StatusOK, res)
 }
 

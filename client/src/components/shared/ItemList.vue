@@ -32,10 +32,10 @@
               </v-btn>
             </v-list-item-action>
             <!-- TODO: まだ/itemsのレスポンスにlike_countがないので保留 -->
-            <!-- <v-list-item-action>
+            <v-list-item-action v-if="item.like_counts > 0">
               <v-icon>thumb_up_alt</v-icon>
               {{ item.like_counts }}
-            </v-list-item-action> -->
+            </v-list-item-action>
           </v-list-item>
         </v-list-item-group>
       </v-list>

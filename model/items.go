@@ -20,6 +20,7 @@ type Item struct {
 	LatestLogs  []Log        `json:"latest_logs"`
 	Comments    []Comment    `json:"comments"`
 	Likes       []User       `gorm:"many2many:like_maps;" json:"likes"`
+	LikeCounts  int          `gorm:"-" json:"like_counts"`
 }
 
 type Owner struct {
@@ -99,6 +100,8 @@ func GetItems() ([]Item, error) {
 		if err != nil {
 			return []Item{}, err
 		}
+		item.LikeCounts = len(item.Likes)
+		item.Likes = []User{}
 		res[i] = item
 	}
 	return res, nil
@@ -222,4 +225,22 @@ func CancelLike(itemID, userID uint) (Item, error) {
 	}
 	db.Model(&item).Association("Likes").Delete(&user)
 	return item, nil
+}
+
+// SearchItems itemsをNameの部分一致で取得する
+func SearchItems(searchString string) ([]Item, error) {
+	res := []Item{}
+	db.Where("name LIKE ?", "%"+searchString+"%").Find(&res)
+	for i, item := range res {
+		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.Likes, "Likes")
+		var err error
+		item.LatestLogs, err = GetLatestLogs(item.Logs)
+		if err != nil {
+			return []Item{}, err
+		}
+		item.LikeCounts = len(item.Likes)
+		item.Likes = []User{}
+		res[i] = item
+	}
+	return res, nil
 }
