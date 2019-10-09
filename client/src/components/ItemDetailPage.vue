@@ -83,7 +83,6 @@
             {{ createLogMessage(log) }} - {{ log.created_at }}
           </div>
         </div>
-        <div>{{data}}</div>
       </div>
     </div>
   </div>
@@ -158,7 +157,7 @@ export default {
         return (log.owner.ID = owner.owner_id)
       })
       var rentalableCount = 0
-      if (latestLog === []) {
+      if (latestLog === [] || !latestLog[0].count) {
         rentalableCount = owner.count
       } else {
         rentalableCount = latestLog[0].count
@@ -175,7 +174,8 @@ export default {
       const userName = log.user.name
       const ownerName = log.owner.name
       const ownerWord = ownerName === 'traP' ? '' : `${ownerName}さんの`
-      const logComment = log.type === 0 ? '借りました' : '返しました'
+      let logComment = log.type === 0 ? '借りました' : '返しました'
+      logComment = log.type === 2 ? '追加しました' : logComment
       return `${userName}さんが${ownerWord}物品を${logComment}`
     },
     checkLogType (log) {

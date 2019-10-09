@@ -7,7 +7,6 @@
       <v-dialog light v-model="isOpenAddOwner" max-width="290">
         <v-card width="290">
           <v-card-title class="headline">所有者を追加する</v-card-title>
-          <div>{{ownerID}}{{typeof ownerID}}</div>
           <v-card-actions>
             <div v-if="$store.state.me.admin" >
               <label v-for="(label,id) in ownerOptions" v-bind:key="label">

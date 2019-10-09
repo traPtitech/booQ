@@ -21,7 +21,6 @@
               </v-list>
             </v-menu>
           </v-card-actions>
-          <div>{{rentOwnerID}}</div>
           <v-card-actions>
             <div v-if="data.type == 1">
               <v-form ref="form">
@@ -41,7 +40,6 @@
           <v-card-actions max-width="320">
             <v-date-picker v-model="dueDate"></v-date-picker>
           </v-card-actions>
-          <div>{{dueDate}}</div>
           <v-divider></v-divider>
           <v-card-actions>
             <div class="flex-grow-1"></div>
@@ -84,7 +82,7 @@ export default {
       return targetLog[0].count
     },
     async rental () {
-      if (this.data.type === 0 && this.purpose === null) {
+      if (this.data.type === 1 && this.purpose === null) {
         alert('目的を入力してください')
         return false
       }

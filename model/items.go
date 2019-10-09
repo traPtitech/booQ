@@ -151,6 +151,10 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 	if !existed {
 		db.Create(&owner)
 		db.Model(&item).Association("Owners").Append(&owner)
+		_, err := CreateLog(Log{ItemID: item.ID, UserID: owner.UserID, OwnerID: owner.UserID, Type: 2, Count: owner.Count})
+		if err != nil {
+			return Item{}, err
+		}
 	}
 	return item, nil
 }
