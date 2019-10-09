@@ -33,7 +33,7 @@
         layout
         py-2
       >
-        <v-menu v-model="value" min-width="250" max-width="400">
+        <v-menu min-width="250" max-width="400">
           <template v-slot:activator="{ on }">
             <v-btn :disabled="$store.state.cart.length == 0" icon v-on="on">
              <v-icon dark>mdi-cart</v-icon>
@@ -42,7 +42,7 @@
           <v-list>
             <v-list-item v-for="(item, i) in $store.state.cart" :key="i">
               <v-list-item-title>
-                {{ item.name }}×{{ item.rentalCount }}
+                {{ item.name }} × {{ item.rentalCount }}
               </v-list-item-title>
               <v-list-item-action>
                 <v-btn icon @click="$store.commit('removeItemFromCart', i)">
@@ -52,11 +52,11 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-action>
-                <v-btn @click.stop="cartDialog = !cartDialog" primary>借りる</v-btn>
+                <v-btn @click.stop="cartDialog = !cartDialog" primary>まとめて借りる</v-btn>
                 <div class="text-center">
                   <v-dialog max-width="320" v-model="cartDialog">
                     <v-card width="320">
-                      <v-card-title class="headline">備品を借りる</v-card-title>
+                      <v-card-title class="headline">備品をまとめて借りる</v-card-title>
                       <v-card-actions>
                         <div>
                           <v-form ref="form">
@@ -160,18 +160,18 @@ export default {
       }
     },
     async rentCartItem () {
-      if (this.cartPurpose === null) {
+      if (!this.cartPurpose) {
         alert('目的を入力してください')
-        return false
+        return
       }
-      if (this.cartDueDate === null) {
+      if (!this.cartDueDate) {
         alert('返却日を入力してください')
-        return false
+        return
       }
-      for (var i = 0; i < this.$store.state.cart.length; i++) {
-        var names = []
+      for (let i = 0; i < this.$store.state.cart.length; i++) {
+        let names = []
         names = names.push(this.$store.state.cart[i].name)
-        await axios.post(`/api/items/` + this.$store.state.cart[i].id + `/logs`, { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
+        await axios.post(`/api/items/` + this.$store.state.cart[i].ID + `/logs`, { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
           .catch(e => {
             alert(e)
             this.cartError = e
