@@ -1,5 +1,7 @@
 <template>
-  <ItemList :items="data" />
+  <div v-if="data">
+    <ItemList :items="data" />
+  </div>
 </template>
 
 <script>

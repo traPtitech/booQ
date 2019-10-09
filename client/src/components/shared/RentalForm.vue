@@ -12,7 +12,7 @@
               </template>
               <v-list>
                 <v-list-item
-                v-for="(owner, i) in data.owners"
+                v-for="(owner, i) in propItem.owners"
                 :key="i"
                 @click="rentOwnerID = owner.user.ID"
                 :disabled="!owner.rentalable">
@@ -22,7 +22,7 @@
             </v-menu>
           </v-card-actions>
           <v-card-actions>
-            <div v-if="data.type == 1">
+            <div v-if="propItem.type == 1">
               <v-form ref="form">
                 <v-textarea outlined v-model="purpose" :rules="[() => !!purpose || 'This field is required']" label="目的"/>
               </v-form>
@@ -33,9 +33,14 @@
               </v-form>
             </div>
           </v-card-actions>
-          <v-card-actions v-if="data.type === 1">
-            <v-slider :max="getBihinLatestCount()" v-model="data.rentalCount" thumb-label="always" />
-          </v-card-actions>
+          <div v-if="propItem.type === 1">
+            <div style="padding-bottom: 30px;">
+              個数
+            </div>
+            <v-card-actions >
+              <v-slider :max="getBihinLatestCount()" v-model="rentalCount" thumb-label="always" />
+            </v-card-actions>
+          </div>
           <div>返却日</div>
           <v-card-actions max-width="320">
             <v-date-picker v-model="dueDate"></v-date-picker>
@@ -57,7 +62,7 @@ import axios from 'axios'
 export default {
   name: 'RentalForm',
   props: {
-    data: Object
+    propItem: Object
   },
   data () {
     return {
@@ -71,13 +76,7 @@ export default {
   },
   methods: {
     getBihinLatestCount (itemID) {
-      const item = this.data.find(element => {
-        return element.ID === itemID
-      })
-      if (!item) {
-        alert('対象itemがありません')
-        return 0
-      }
+      const item = this.propItem
       let targetLog = item.latest_logs.find(log => {
         return log.owner.name === 'traP' || log.owner.name === 'sienka'
       })
@@ -95,7 +94,11 @@ export default {
       return targetLog.count
     },
     async rental () {
-      if (this.data.type === 1 && this.purpose === null) {
+      if (this.rentOwnerID === 0) {
+        alert('所有者を選択してください')
+        return false
+      }
+      if (this.propItem.type === 1 && this.purpose === null) {
         alert('目的を入力してください')
         return false
       }
@@ -103,17 +106,14 @@ export default {
         alert('返却日を入力してください')
         return false
       }
-      if (this.rentOwnerID === 0) {
-        alert('所有者を選択してください')
-        return false
-      }
       await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
         .catch(e => {
           alert(e)
           this.error = e
         })
-      if (!this.error) { alert('あなたは”' + this.data.name + '”を' + this.rentalCount + '個借りました。') }
+      if (!this.error) { alert('あなたは”' + this.propItem.name + '”を' + this.rentalCount + '個借りました。') }
       this.isOpenRentalForm = !this.isOpenRentalForm
+      this.$emit('reload')
     },
     open () {
       this.isOpenRentalForm = !this.isOpenRentalForm

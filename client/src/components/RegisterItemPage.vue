@@ -2,7 +2,7 @@
   <div>
     <h1>物品登録ページ</h1>
     <div
-      v-if="$store.state.me.admin"
+      v-if="$store.state.me && $store.state.me.admin"
       class="contents"
     >
       <span>登録する物品の所有者: {{ ownerOptions[ownerID] }}</span>

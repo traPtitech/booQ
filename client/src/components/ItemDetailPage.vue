@@ -1,18 +1,21 @@
 <template>
-  <div  class="d-flex flex-wrap">
+  <div
+    v-if="data"
+    class="d-flex flex-wrap"
+  >
     <div>
       <v-row no-gutters>
         <v-col md="auto">
           <div class="image">
             <div>
               <img
-                :src="data.img_url === '' ? 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail' : data.img_url"
+                :src="data.img_url.length ? data.img_url : 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail'"
                 style="width: 250px;"
               />
             </div>
             <div>
-              <RentalForm @add="reload" :data="data"/>
-              <ReturnForm @returnItem="reload" :data="data"/>
+              <RentalForm @reload="reload" :propItem="data"/>
+              <ReturnForm @reload="reload" :propItem="data"/>
             </div>
             <div>
               <v-btn v-if="isLiked" block @click="removeLike">
@@ -60,9 +63,9 @@
       <div class="content">
         <h2>
           コメント
-          <CommentDialog/>
+          <CommentDialog />
         </h2>
-        <div>
+        <div v-if="data.comments.length">
           <div v-for="comment in data.comments" :key="comment.id">
             <v-flex>
               <Icon :user="comment.user" />
@@ -70,16 +73,24 @@
             </v-flex>
           </div>
         </div>
+        <div v-else>
+          コメントがありません
+        </div>
       </div>
       <div class="content">
         <div>
           <h2>ログ</h2>
-          <div v-for="log in reverseLogs" :key="log.id">
-            <Icon
-              :user="log.user"
-              :size="25"
-            />
-            {{ createLogMessage(log) }} - {{ log.created_at }}
+          <div v-if="data.logs.length">
+            <div v-for="log in reverseLogs" :key="log.id">
+              <Icon
+                :user="log.user"
+                :size="25"
+              />
+              {{ createLogMessage(log) }}
+            </div>
+          </div>
+          <div v-else>
+            ログがありません
           </div>
         </div>
       </div>
@@ -179,14 +190,8 @@ export default {
         logComment = '追加しました'
       }
       logComment = log.type === 2 ? '追加しました' : logComment
-      return `${userName}さんが${ownerWord}物品を${logComment}`
-    },
-    checkLogType (log) {
-      if (log.type === 0) {
-        return '借りました'
-      } else {
-        return '返しました'
-      }
+      const logTime = log.CreatedAt.replace('T', ' ').replace('+09:00', '')
+      return `${userName}さんが${ownerWord}物品を${logComment} - ${logTime}`
     },
     async like () {
       var postLikeError = null

@@ -11,7 +11,7 @@
         avatar
         nav
       >
-        <v-list-item-group v-model="items" color="primary">
+        <v-list-item-group color="primary">
           <v-list-item
             v-for="item in items"
             :key="item.id"
@@ -19,12 +19,12 @@
             style="height: 100px;"
           >
             <img
-              :src="item.img_url === '' ? 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail' : item.img_url"
+              :src="item.img_url.length ? item.img_url : 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail'"
               class="item-list-image"
             />
             <v-list-item-content style="padding-left: 15px;" :to="`/items/${item.ID}`">
               <v-list-item-title class="headline mb-1">{{ item.name }}</v-list-item-title>
-              <v-list-item-subtitle>{{ item.owners.map(i => i.owner.name).join(', ') }}</v-list-item-subtitle>
+              <v-list-item-subtitle>{{ item.owners.map(i => i.user.name).join(', ') }}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action class="item-list-icons">
               <v-btn icon v-if="item.type !== 0" @click.stop="click2Cart(item)">

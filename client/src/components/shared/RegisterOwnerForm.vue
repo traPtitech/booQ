@@ -8,7 +8,7 @@
         <v-card width="290">
           <v-card-title class="headline">所有者を追加する</v-card-title>
           <v-card-actions>
-            <div v-if="$store.state.me.admin" >
+            <div v-if="$store.state.me && $store.state.me.admin" >
               <label v-for="(label,id) in ownerOptions" v-bind:key="label">
                 <div><input type="radio" name="owner" :value="id" v-model="ownerID">{{ label }}</div>
               </label>
