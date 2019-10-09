@@ -33,6 +33,51 @@
         layout
         py-2
       >
+        <v-menu min-width="250" max-width="400">
+          <template v-slot:activator="{ on }">
+            <v-btn :disabled="$store.state.cart.length == 0" icon v-on="on">
+             <v-icon dark>mdi-cart</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item v-for="(item, i) in $store.state.cart" :key="i">
+              <v-list-item-title>
+                {{ item.name }} × {{ item.rentalCount }}
+              </v-list-item-title>
+              <v-list-item-action>
+                <v-btn icon @click="$store.commit('removeItemFromCart', i)">
+                  <v-icon dark>mdi-minus-circle</v-icon>
+                </v-btn>
+              </v-list-item-action>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-action>
+                <v-btn @click.stop="cartDialog = !cartDialog" primary>まとめて借りる</v-btn>
+                <div class="text-center">
+                  <v-dialog max-width="320" v-model="cartDialog">
+                    <v-card width="320">
+                      <v-card-title class="headline">備品をまとめて借りる</v-card-title>
+                      <v-card-actions>
+                        <div>
+                          <v-form ref="form">
+                            <v-textarea outlined v-model="cartPurpose" :rules="[() => !!cartPurpose || 'This field is required']" label="目的"/>
+                          </v-form>
+                        </div>
+                      </v-card-actions>
+                      <v-card-actions max-width="320">
+                        <v-date-picker v-model="cartDueDate"></v-date-picker>
+                      </v-card-actions>
+                      <v-divider></v-divider>
+                      <v-card-actions>
+                        <v-btn v-on:click="rentCartItem()">借りる</v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </div>
+              </v-list-item-action>
+            </v-list-item>
+          </v-list>
+        </v-menu>
         <v-btn
           v-if="$store.state.me"
           dark
@@ -58,6 +103,7 @@
 <script>
 import { mapMutations } from 'vuex'
 import { getMe } from '@/utils/api'
+import axios from 'axios'
 
 export default {
   data () {
@@ -65,7 +111,11 @@ export default {
       logo: '/img/logo.png',
       title: null,
       responsive: false,
-      responsiveInput: false
+      responsiveInput: false,
+      cartPurpose: '',
+      cartDueDate: '',
+      cartDialog: false,
+      error: null
     }
   },
   watch: {
@@ -107,6 +157,30 @@ export default {
       } else {
         this.responsive = false
         this.responsiveInput = true
+      }
+    },
+    async rentCartItem () {
+      if (!this.cartPurpose) {
+        alert('目的を入力してください')
+        return
+      }
+      if (!this.cartDueDate) {
+        alert('返却日を入力してください')
+        return
+      }
+      for (let i = 0; i < this.$store.state.cart.length; i++) {
+        let names = []
+        names = names.push(this.$store.state.cart[i].name)
+        await axios.post(`/api/items/` + this.$store.state.cart[i].ID + `/logs`, { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
+          .catch(e => {
+            this.error = e
+            alert(e)
+          })
+      }
+      if (!this.error) {
+        this.$store.commit('resetCart')
+        this.cartDialog = !this.cartDialog
+        alert('まとめて借りることに成功しました。')
       }
     }
   }

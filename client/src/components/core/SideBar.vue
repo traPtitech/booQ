@@ -146,7 +146,7 @@ export default {
       }
     },
     searchSideBar () {
-      this.$router.push({ path: '/api/items', query: { search: this.searchString } })
+      this.$router.push({ path: '/items', query: { search: this.searchString } })
     }
   }
 }

@@ -1,12 +1,14 @@
 <template>
-  <div>
-    <v-btn color="primary" @click.stop="open">所有者を追加</v-btn>
+  <nobr>
+    <v-btn x-small outlined fab dark color="primary" @click.stop="open">
+      <v-icon dark>mdi-plus</v-icon>
+    </v-btn>
     <div class="text-center">
       <v-dialog light v-model="isOpenAddOwner" max-width="290">
         <v-card width="290">
           <v-card-title class="headline">所有者を追加する</v-card-title>
           <v-card-actions>
-            <div v-if="$store.state.me.admin" >
+            <div v-if="$store.state.me && $store.state.me.admin" >
               <label v-for="(label,id) in ownerOptions" v-bind:key="label">
                 <div><input type="radio" name="owner" :value="id" v-model="ownerID">{{ label }}</div>
               </label>
@@ -28,12 +30,12 @@
           <v-divider></v-divider>
           <v-card-actions>
             <div class="flex-grow-1"></div>
-            <v-btn v-on:click="add()">追加</v-btn>
+            <v-btn @click="add()">追加</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </div>
-  </div>
+  </nobr>
 </template>
 
 <script>
@@ -62,19 +64,20 @@ export default {
         alert('個数を正常にしてください')
         return false
       }
-      if (this.ownerID === 0) {
-        this.message = '”' + this.data.name + '”の所有者に' + this.$store.state.me.name + 'を追加しました。'
-        this.ownerID = this.$store.state.me.name
+      if (Number(this.ownerID) === 0) {
+        this.message = '所有者に' + this.$store.state.me.name + 'を追加しました。'
+        this.ownerID = this.$store.state.me.ID
       } else {
-        this.message = '”' + this.data.name + '”の所有者に' + this.ownerOptions[this.ownerID] + 'を追加しました。'
+        this.message = '所有者に' + this.ownerOptions[this.ownerID] + 'を追加しました。'
       }
-      await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.ownerID, rentalable: this.rentalable, count: this.count })
+      await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: Number(this.ownerID), rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e
         })
       if (!this.error) { alert(this.message) }
       this.isOpenAddOwner = !this.isOpenAddOwner
+      this.$emit('add')
     },
     open () {
       this.isOpenAddOwner = !this.isOpenAddOwner

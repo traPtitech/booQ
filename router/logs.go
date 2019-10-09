@@ -1,9 +1,11 @@
 package router
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo"
 
@@ -27,15 +29,26 @@ func PostLogs(c echo.Context) error {
 	itemID := uint(itemIDb)
 	item, _ := model.GetItemByID(itemID)
 	var itemCount int
+	var exist bool
 	for _, owner := range item.Owners {
-		if owner.UserID == body.OwnerID {
+		if owner.User.ID == body.OwnerID {
 			if !owner.Rentalable {
 				return c.NoContent(http.StatusForbidden)
 			}
 			itemCount = owner.Count
+			exist = true
 		}
 	}
-	latestLog, err := model.GetLatestLog(itemID, body.OwnerID)
+	if !exist {
+		fmt.Print("指定のUserはそのItemを持っていません")
+		return c.JSON(http.StatusBadRequest, errors.New("指定のUserはそのItemを持っていません"))
+	}
+	latestLog, err := model.GetLatestLog(item.Logs, body.OwnerID)
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	dueDate, err := time.Parse("2006-01-02", body.DueDate)
 	if err != nil {
 		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, err)
@@ -46,11 +59,12 @@ func PostLogs(c echo.Context) error {
 		OwnerID: body.OwnerID,
 		Type:    body.Type,
 		Purpose: body.Purpose,
-		DueDate: body.DueDate,
+		DueDate: dueDate,
 	}
 	var res model.Log
 	if body.Type == 0 {
 		if (latestLog.ItemID == 0) && (itemCount-body.Count < 0) {
+			fmt.Print(itemCount - body.Count)
 			fmt.Println("Rental超過1")
 			return c.NoContent(http.StatusBadRequest)
 		} else {
@@ -64,6 +78,16 @@ func PostLogs(c echo.Context) error {
 		} else {
 			log.Count = latestLog.Count - body.Count
 		}
+		rentalUser := model.RentalUser{
+			UserID:  user.ID,
+			OwnerID: body.OwnerID,
+			Count:   body.Count * -1,
+		}
+		_, err = model.RentalItem(rentalUser, body.OwnerID, item, 0)
+		if err != nil {
+			fmt.Print("rentalItemErr")
+			return c.JSON(http.StatusBadRequest, err)
+		}
 	}
 	if body.Type == 1 {
 		if latestLog.ItemID == 0 {
@@ -76,6 +100,16 @@ func PostLogs(c echo.Context) error {
 			}
 		}
 		log.Count = latestLog.Count + body.Count
+		rentalUser := model.RentalUser{
+			UserID:  user.ID,
+			OwnerID: body.OwnerID,
+			Count:   body.Count,
+		}
+		_, err = model.RentalItem(rentalUser, body.OwnerID, item, 0)
+		if err != nil {
+			fmt.Print("rentalItemErr")
+			return c.JSON(http.StatusBadRequest, err)
+		}
 	}
 	res, err = model.CreateLog(log)
 	if err != nil {
