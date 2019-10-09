@@ -27,6 +27,18 @@ func dbSetup() {
 	if err != nil {
 		panic(err)
 	}
+	testUser, _ := model.GetUserByName("testUser")
+	if testUser.Name == "" {
+		user := model.User{
+			Name:        "testUser",
+			DisplayName: "テストユーザー",
+			Admin:       false,
+		}
+		_, err = model.CreateUser(user)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
 
 func echoSetupWithUser() *echo.Echo {
@@ -38,6 +50,7 @@ func echoSetupWithUser() *echo.Echo {
 				DisplayName: "テストユーザー",
 				Admin:       false,
 			}
+			user, _ = model.GetUserByName(user.Name)
 			c.Set("user", user)
 			return c, nil
 		},
@@ -55,6 +68,7 @@ func echoSetupWithAdminUser() *echo.Echo {
 				DisplayName: "traP",
 				Admin:       true,
 			}
+			adminUser, _ = model.GetUserByName(adminUser.Name)
 			c.Set("user", adminUser)
 			return c, nil
 		},
