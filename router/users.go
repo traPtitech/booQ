@@ -11,15 +11,9 @@ import (
 // GetUsersMe GET /users/me
 func GetUsersMe(c echo.Context) error {
 	user := c.Get("user").(model.User)
-	res, _ := model.GetUserByName(user.Name)
-	/*
+	res, err := model.GetUserByName(user.Name)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-	*/
-
-	if res.Name == "" {
-		res, _ = model.CreateUser(user)
+		return c.JSON(http.StatusNotFound, err)
 	}
 
 	return c.JSON(http.StatusOK, res)

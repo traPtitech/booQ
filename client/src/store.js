@@ -12,7 +12,8 @@ export default new Vuex.Store({
     color: 'success',
     sidebarBackgroundColor: 'rgba(27, 27, 27, 0.74)',
     loginDialog: false,
-    authToken: null
+    authToken: null,
+    cart: []
   },
   mutations: {
     setMe (state, data) {
@@ -33,6 +34,12 @@ export default new Vuex.Store({
     },
     toggleLoginDialog (state) {
       state.loginDialog = !state.loginDialog
+    },
+    item2Cart (state, data) {
+      state.cart.push(data)
+    },
+    removeItemFromCart (state, i) {
+      state.cart.splice(i, 1)
     }
   },
   actions: {
