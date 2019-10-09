@@ -17,6 +17,10 @@ func PostComments(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	user := c.Get("user").(model.User)
+	user, err = model.GetUserByName(user.Name)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 	commentRequest := model.RequestPostCommentBody{}
 	if err := c.Bind(&commentRequest); err != nil {
 		return err

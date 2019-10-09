@@ -114,7 +114,8 @@ export default {
       responsiveInput: false,
       cartPurpose: '',
       cartDueDate: '',
-      cartDialog: false
+      cartDialog: false,
+      error: null
     }
   },
   watch: {
@@ -172,8 +173,14 @@ export default {
         names = names.push(this.$store.state.cart[i].name)
         await axios.post(`/api/items/` + this.$store.state.cart[i].ID + `/logs`, { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
           .catch(e => {
+            this.error = e
             alert(e)
           })
+      }
+      if (!this.error) {
+        this.$store.commit('resetCart')
+        this.cartDialog = !this.cartDialog
+        alert('まとめて借りることに成功しました。')
       }
     }
   }

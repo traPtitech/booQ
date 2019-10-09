@@ -15,6 +15,7 @@ var allTables = []interface{}{
 	Log{},
 	Owner{},
 	Comment{},
+	RentalUser{},
 }
 
 // EstablishConnection DBに接続する

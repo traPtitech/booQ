@@ -40,6 +40,9 @@ export default new Vuex.Store({
     },
     removeItemFromCart (state, i) {
       state.cart.splice(i, 1)
+    },
+    resetCart (state) {
+      state.cart = []
     }
   },
   actions: {

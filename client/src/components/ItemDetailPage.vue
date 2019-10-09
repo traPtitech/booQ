@@ -1,37 +1,96 @@
 <template>
-  <div>
-    <div class="wrapper">
-      <div>
-        <v-row no-gutters class="mb-6">
-          <v-col md="auto">
-            <div class="image">
-              <div>
-                <img :src="data.img_url" />
-              </div>
-              <RentalForm :data="data" />
-              <v-btn dark outlined round icon color="indigo" @click="like"> <v-icon dark>mdi-star</v-icon></v-btn>
-              <div>
-                <v-layout row wrap class="d-inline-flex">
-                  <v-flex  xs4 v-for="like in data.likes" :key="like.id" >
-                    <Icon :user="like" />
-                  </v-flex>
-                </v-layout>
-              </div>
+  <div
+    v-if="data"
+    class="d-flex flex-wrap"
+  >
+    <div>
+      <v-row no-gutters>
+        <v-col md="auto">
+          <div class="image">
+            <div>
+              <img
+                :src="data.img_url.length ? data.img_url : 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail'"
+                style="width: 250px;"
+              />
             </div>
-          </v-col>
-        </v-row>
-      </div>
-      <div>
-        <div class="content">
-          <h4>{{data.name}}</h4>
-          <div v-for="owner in data.owners" :key="owner.user.id">
-            <p v-if="checkRentalable(owner.user.id)">{{owner.user.name}}  {{checkRentalable(owner.user.id)}}</p>
-            <p v-else>{{owner.user.name}}  貸し出し可</p>
+            <div>
+              <RentalForm @reload="reload" :propItem="data"/>
+              <ReturnForm @reload="reload" :propItem="data"/>
+            </div>
+            <div>
+              <v-btn v-if="isLiked" block @click="removeLike">
+                <v-icon left color="indigo">mdi-thumb-up</v-icon>
+                いいね {{ likeCount }}
+              </v-btn>
+              <v-btn v-else block @click="like">
+                <v-icon left disabled>mdi-thumb-up</v-icon>
+                いいね {{ likeCount }}
+              </v-btn>
+            </div>
+            <div>
+              <v-layout row wrap class="d-inline-flex">
+                <v-flex v-for="like in data.likes" :key="like.id" >
+                  <Icon
+                    :user="like"
+                    :size="25"
+                  />
+                </v-flex>
+              </v-layout>
+            </div>
           </div>
-          <RegisterOwnerForm :isOpenAddOwner="isOpenAddOwner" />
-          <div v-for="comment in data.comments" :key="comment.id" class="comment">
-            <Icon :user="comment.user" />
-            <p>{{comment.comment}}</p>
+        </v-col>
+      </v-row>
+    </div>
+    <div :style="`width: ${contentWidth}px;`">
+      <h1>{{data.name}}</h1>
+      <div class="content">
+        {{ data.description }}
+      </div>
+      <div class="content">
+        <h2>
+          所有者
+          <RegisterOwnerForm/>
+        </h2>
+        <!-- FIXME: 他のタスクに手をつけたかったので表示が適当です -->
+        <div v-for="owner in data.owners" :key="owner.id">
+          <Icon
+            :user="owner.user"
+            :size="25"
+          />
+          {{ owner.user.name }} {{ checkRentalable(owner) }}
+        </div>
+      </div>
+      <div class="content">
+        <h2>
+          コメント
+          <CommentDialog />
+        </h2>
+        <div v-if="data.comments.length">
+          <div v-for="comment in data.comments" :key="comment.id">
+            <v-flex>
+              <Icon :user="comment.user" />
+              {{ comment.text }}
+            </v-flex>
+          </div>
+        </div>
+        <div v-else>
+          コメントがありません
+        </div>
+      </div>
+      <div class="content">
+        <div>
+          <h2>ログ</h2>
+          <div v-if="data.logs.length">
+            <div v-for="log in reverseLogs" :key="log.id">
+              <Icon
+                :user="log.user"
+                :size="25"
+              />
+              {{ createLogMessage(log) }}
+            </div>
+          </div>
+          <div v-else>
+            ログがありません
           </div>
         </div>
       </div>
@@ -41,226 +100,134 @@
 
 <script>
 import Icon from './shared/Icon'
+import axios from 'axios'
 import RegisterOwnerForm from './shared/RegisterOwnerForm'
 import RentalForm from './shared/RentalForm'
+import CommentDialog from './shared/CommentDialog'
+import ReturnForm from './shared/ReturnForm'
 
 export default {
   name: 'ItemDetailPage',
   components: {
     Icon,
     RegisterOwnerForm,
-    RentalForm
+    RentalForm,
+    CommentDialog,
+    ReturnForm
   },
   data () {
     return {
       data: null,
-      isOpenAddOwner: false,
-      isOpenRentalForm: false,
-      // 以下はサンプルデータ
-      sampleData: {
-        id: 1,
-        name: '小説　天気の子',
-        code: '9784041026403',
-        type: 1,
-        owners: [
-          {
-            user: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              admin: true
-            },
-            rentalable: true
-          },
-          {
-            user: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              admin: true
-            },
-            rentalable: true
-          },
-          {
-            user: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              admin: true
-            },
-            rentalable: false
-          },
-          {
-            user: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              admin: true
-            },
-            rentalable: false
-          }
-        ],
-        description: '高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。',
-        comments: [
-          {
-            id: 1,
-            item_id: 1,
-            user: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              admin: true
-            },
-            comment: '小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。',
-            created_at: '2019/07/28 22:00:00',
-            updated_at: '2019/07/28 22:00:00'
-          }
-        ],
-        logs: [
-          {
-            id: 1,
-            item_id: 1,
-            user: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              admin: true
-            },
-            owner: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              admin: true
-            },
-            type: 0,
-            purpose: '読みたかったから。',
-            due_date: '2019/07/30 23:30:00',
-            created_at: '2019/07/28 22:00:00',
-            updated_at: '2019/07/28 22:00:00'
-          }
-        ],
-        tags: [
-          {
-            id: 1,
-            name: '小説'
-          }
-        ],
-        likes: [
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          },
-          {
-            id: 1,
-            name: 'nagatech',
-            displayName: 'ながてち',
-            admin: true
-          }
-        ],
-        img_url: 'https://cover.openbd.jp/9784041026403.jpg',
-        created_at: '2019/07/28 22:00:00',
-        updated_at: '2019/07/28 22:00:00'
-      }
+      contentWidth: 600
     }
   },
+  created () {
+    axios
+      .get(`/api/items/` + this.$route.params.id)
+      .then(res => (this.data = res.data))
+      .catch(e => { alert(e) })
+  },
   mounted () {
-    // 本番ではaxios.getでマウントしてsampleDataを消してください
-    this.data = this.sampleData
+    this.conputeWidth()
+    window.addEventListener('resize', this.conputeWidth)
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.conputeWidth)
+  },
+  computed: {
+    reverseLogs () {
+      return this.data.logs.slice().reverse()
+    },
+    likeCount () {
+      return this.data.likes.length
+    },
+    isLiked () {
+      if (!this.$store.state.me) {
+        return false
+      }
+      return this.data.likes.find(user => user.name === this.$store.state.me.name)
+    }
   },
   methods: {
-    checkRentalable (ownerID) {
-      // いい感じにしてください。同じownerが複数いるときのロジックがわかりませんでした
-      // 貸し出し可ならfalseを返し不可なら'ryohaが借りてます'みたいなのを返すと思ってます
-      return false
+    conputeWidth () {
+      if (window.innerWidth > 991) {
+        this.contentWidth = window.innerWidth - 600 // sideBar((window.innerWidth > 991で表示される)と物品のimgがともに260px
+      } else if (window.innerWidth > 601) {
+        this.contentWidth = window.innerWidth - 300
+      } else {
+        this.contentWidth = window.innerWidth - 30
+      }
     },
-    like () {
-      // axios.post(/likes)みたいな感じ？
+    checkRentalable (owner) {
+      // FIXME: ロジックがやばい
+      if (!owner.rentalable) {
+        return '貸し出しできません'
+      }
+      var latestLog = this.data.latest_logs.filter(function (log) {
+        return (log.owner.ID = owner.owner_id)
+      })
+      var rentalableCount = 0
+      if (latestLog === [] || !latestLog[0].count) {
+        rentalableCount = owner.count
+      } else {
+        rentalableCount = latestLog[0].count
+      }
+      if (rentalableCount === 0) {
+        return '貸し出しできません'
+      } else if (rentalableCount === 1) {
+        return '貸し出し可能'
+      }
+      return '貸し出し可能' + '×' + rentalableCount
+      // return '貸し出し可能' + '×' + 1
     },
-    clickAddOwner () {
-      this.isOpenAddOwner = !this.isOpenAddOwner
+    createLogMessage (log) {
+      const userName = log.user.name
+      const ownerName = log.owner.name
+      let ownerWord = ownerName === 'traP' ? '' : `${ownerName}さんの`
+      let logComment = log.type === 0 ? '借りました' : '返しました'
+      if (log.type === 2) {
+        ownerWord = ''
+        logComment = '追加しました'
+      }
+      logComment = log.type === 2 ? '追加しました' : logComment
+      const logTime = log.CreatedAt.replace('T', ' ').replace('+09:00', '')
+      return `${userName}さんが${ownerWord}物品を${logComment} - ${logTime}`
     },
-    clickRental () {
-      this.isOpenRentalForm = !this.isOpenRentalForm
+    async like () {
+      var postLikeError = null
+      await axios.post(`/api/items/` + this.$route.params.id + `/likes`, null)
+        .catch(e => {
+          alert(e)
+          postLikeError = e
+        })
+      if (!postLikeError) {
+        this.data.likes.push(this.$store.state.me)
+      }
+    },
+    async removeLike () {
+      var removeLikeError = null
+      await axios.delete(`/api/items/` + this.$route.params.id + `/likes`, null)
+        .catch(e => {
+          alert(e)
+          removeLikeError = e
+        })
+      if (!removeLikeError) {
+        this.data.likes = this.data.likes.filter(user => user.name !== this.$store.state.me.name)
+      }
+    },
+    async reload () {
+      const res = await axios.get(`/api/items/` + this.$route.params.id).catch(e => { alert(e) })
+      this.data = res.data
     }
   }
 }
 </script>
 
-<style>
-  .wrapper {
-    display:flex;
-    display:-ms-flexbox;/* --- IE10用 11はこの設定は不要 --- */
-    display:-webkit-box;/*--- Android用 ---*/
-    /*画面中央に表示されるように margin: auto;を設定している*/
-    margin: auto;
-    /* justify-content:stretch; */
+<style scoped>
+  .image {
+    padding-right: 10px;
   }
-  /* .image {
-    margin: 10px;
-    -webkit-flex-basis: 30%;
-    -ms-flex-basis: 30%;
-    flex-basis: 30%;
-    width: 30%;
-    height: 50%;
-  } */
   .content {
-    margin: 10px;
-  }
-  .comment {
-    display:flex;
-    display:-ms-flexbox;/*--- IE10用 11はこの設定は不要 ---*/
-    display:-webkit-box;/*--- Android用 ---*/
-    /*画面中央に表示されるように margin: auto;を設定している*/
-    margin: auto;
+    margin-bottom: 30px;
   }
 </style>

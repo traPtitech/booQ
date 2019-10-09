@@ -22,11 +22,11 @@ type Log struct {
 }
 
 type RequestPostLogsBody struct {
-	OwnerID uint      `json:"owner_id"`
-	Type    int       `json:"type"`
-	Purpose string    `json:"purpose"`
-	DueDate time.Time `json:"due_date"`
-	Count   int       `json:"count"`
+	OwnerID uint   `json:"owner_id"`
+	Type    int    `json:"type"`
+	Purpose string `json:"purpose"`
+	DueDate string `json:"due_date"`
+	Count   int    `json:"count"`
 }
 
 // TableName dbのテーブル名を指定する
@@ -52,23 +52,20 @@ func CreateLog(log Log) (Log, error) {
 }
 
 // GetLatestLog ownerIDからLatestLogを取得する
-func GetLatestLog(itemID, ownerID uint) (Log, error) {
-	item, err := GetItemByID(itemID)
-	if err != nil {
-		return Log{}, err
-	}
-	exist := false
-	for _, owner := range item.Owners {
-		if owner.UserID == ownerID {
-			exist = true
+func GetLatestLog(logs []Log, ownerID uint) (Log, error) {
+	logMap := map[uint]Log{}
+	for _, log := range logs {
+		nowLatestLog, exist := logMap[log.OwnerID]
+		if exist {
+			if !nowLatestLog.CreatedAt.After(log.CreatedAt) {
+				logMap[log.OwnerID] = log
+			}
+		} else {
+			logMap[log.OwnerID] = log
 		}
 	}
-	if !exist {
-		return Log{}, errors.New("指定した所有者はそのItemを所有していません")
-	}
-	log := Log{}
-	db.Set("gorm:auto_preload", true).Order("created_at desc").First(&log, "item_id = ? AND owner_id = ?", itemID, ownerID)
-	return log, nil
+	latestLog := logMap[ownerID]
+	return latestLog, nil
 }
 
 // GetLatestLogs 各所有者ごとの最新のログを取得する。
@@ -89,12 +86,4 @@ func GetLatestLogs(logs []Log) ([]Log, error) {
 		latestLogs = append(latestLogs, latestLog)
 	}
 	return latestLogs, nil
-}
-
-// GetLogsByItemID itemIDからLogsを取得する
-func GetLogsByItemID(itemID uint) ([]Log, error) {
-	// 指定のitemIDのitemが存在するかどうかはここで判別つけていません
-	logs := []Log{}
-	db.Set("gorm:auto_preload", true).Find(&logs, "item_id = ?", itemID)
-	return logs, nil
 }
