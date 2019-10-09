@@ -14,7 +14,7 @@
               />
             </div>
             <div>
-              <RentalForm @reload="reload" :propItem="data"/>
+              <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
               <ReturnForm @reload="reload" :propItem="data"/>
             </div>
             <div>
@@ -167,13 +167,13 @@ export default {
         return (log.owner.ID = owner.owner_id)
       })
       var rentalableCount = 0
-      if (latestLog === [] || !latestLog[0].count) {
+      if (latestLog.length === 0) {
         rentalableCount = owner.count
       } else {
         rentalableCount = latestLog[0].count
       }
       if (rentalableCount === 0) {
-        return '貸し出しできません'
+        return '現在すべて貸しだし中'
       } else if (rentalableCount === 1) {
         return '貸し出し可能'
       }

@@ -4,7 +4,7 @@
     <div v-if="data.length != 0">
       <ItemList :items="data" />
     </div>
-    <div class="text center" v-else>
+    <div class="text-center" v-else>
       該当の物品はありません
     </div>
   </div>
