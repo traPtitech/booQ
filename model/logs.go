@@ -87,11 +87,3 @@ func GetLatestLogs(logs []Log) ([]Log, error) {
 	}
 	return latestLogs, nil
 }
-
-// GetLogsByItemID itemIDからLogsを取得する
-func GetLogsByItemID(itemID uint) ([]Log, error) {
-	// 指定のitemIDのitemが存在するかどうかはここで判別つけていません
-	logs := []Log{}
-	db.Set("gorm:auto_preload", true).Find(&logs, "item_id = ?", itemID)
-	return logs, nil
-}

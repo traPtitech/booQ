@@ -56,7 +56,7 @@ export default {
       if (this.data.rental_users.length === 0) {
         return '借りていません'
       }
-      var rentalUsers = this.data.rental_users.filter(element => {
+      let rentalUsers = this.data.rental_users.filter(element => {
         return (element.user.ID = this.$store.state.me.ID)
       })
       const rentalUser = rentalUsers.find(function (element) {
@@ -73,7 +73,7 @@ export default {
         return false
       }
       const today = new Date()
-      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', due_date: today.getFullYear() + '-' + ("00" + (today.getMonth()+1)).slice(-2) + '-' + ("00" + today.getDate()).slice(-2) })
+      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', due_date: today.getFullYear() + '-' + ('00' + (today.getMonth() + 1)).slice(-2) + '-' + ('00' + today.getDate()).slice(-2) })
         .catch(e => {
           alert(e)
           this.error = e

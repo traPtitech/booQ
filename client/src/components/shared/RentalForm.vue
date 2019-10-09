@@ -70,16 +70,29 @@ export default {
     }
   },
   methods: {
-    getBihinLatestCount () {
-      var targetLog = this.data.latest_logs.filter(function (log) {
-        return (log.owner.name = 'trap')
+    getBihinLatestCount (itemID) {
+      const item = this.data.find(element => {
+        return element.ID === itemID
       })
-      if (targetLog === []) {
-        targetLog = targetLog.push(this.data.owners.filter(function (owner) {
-          return (owner.owner.name = 'trap')
-        }))
+      if (!item) {
+        alert('対象itemがありません')
+        return 0
       }
-      return targetLog[0].count
+      let targetLog = item.latest_logs.find(log => {
+        return log.owner.name === 'traP' || log.owner.name === 'sienka'
+      })
+      if (!targetLog) {
+        // logが存在しない場合
+        const targetOwner = item.owners.find(owner => {
+          return owner.owner.name === 'traP' || owner.owner.name === 'sienka'
+        })
+        if (!targetOwner) {
+          // OwnerにtraPがいない状態
+          return 0
+        }
+        return targetOwner.count
+      }
+      return targetLog.count
     },
     async rental () {
       if (this.data.type === 1 && this.purpose === null) {

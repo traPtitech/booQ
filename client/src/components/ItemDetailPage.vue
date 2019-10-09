@@ -13,7 +13,6 @@
             <div>
               <RentalForm @add="reload" :data="data"/>
               <ReturnForm @returnItem="reload" :data="data"/>
-              <v-btn block color="warning">返す</v-btn>
             </div>
             <div>
               <v-btn v-if="isLiked" block @click="removeLike">
