@@ -15,17 +15,17 @@
       </v-col>
       <v-col cols="8">
         <div :style="`width: ${contentWidth}px;`">
-          <div class="content" v-if="item.length != 0">
+          <div class="content" v-if="items.length != 0">
             <h3>所有物一覧</h3>
             <div>
               <ItemList :items="items" />
             </div>
           </div>
           <div class="content" v-else>
-            <h3>あなたは物品を所有していません</h3>
+            <h3>このユーザーは物品を所有していません</h3>
           </div>
           <div v-if="comments.length == 0">
-            <h3>あなたはまだコメントを投稿していません</h3>
+            <h3>このユーザーはまだコメントを投稿していません</h3>
           </div>
           <div class="content" v-else>
             <h3>コメント一覧</h3>
@@ -67,138 +67,18 @@ export default {
     return {
       items: null,
       comments: null,
-      contentWidth: 600,
-      sampleItems: [{
-        id: 1,
-        name: '小説　天気の子',
-        code: 9784041026403,
-        type: 1,
-        owners: [
-          {
-            user: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              iconFileId: 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
-              admin: true
-            },
-            rentalable: true
-          }
-        ],
-        latest_logs: [
-          {
-            id: 1,
-            item_id: 1,
-            user: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              iconFileId: 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
-              admin: true
-            },
-            owner: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              iconFileId: 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
-              admin: true
-            },
-            type: 0,
-            purpose: '読みたかったから。',
-            due_date: '2019/07/30 23:30:00',
-            created_at: '2019/07/28 22:00:00',
-            updated_at: '2019/07/28 22:00:00'
-          }
-        ],
-        like_counts: 1,
-        img_url: 'https://cover.openbd.jp/9784041026403.jpg',
-        created_at: '2019/07/28 22:00:00',
-        updated_at: '2019/07/28 22:00:00'
-      },
-      {
-        id: 2,
-        name: '小説　天気の子',
-        code: 9784041026403,
-        type: 1,
-        owners: [
-          {
-            user: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              iconFileId: 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
-              admin: true
-            },
-            rentalable: true
-          }
-        ],
-        latest_logs: [
-          {
-            id: 1,
-            item_id: 1,
-            user: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              iconFileId: 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
-              admin: true
-            },
-            owner: {
-              id: 1,
-              name: 'nagatech',
-              displayName: 'ながてち',
-              iconFileId: 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
-              admin: true
-            },
-            type: 0,
-            purpose: '読みたかったから。',
-            due_date: '2019/07/30 23:30:00',
-            created_at: '2019/07/28 22:00:00',
-            updated_at: '2019/07/28 22:00:00'
-          }
-        ],
-        like_counts: 1,
-        img_url: 'https://cover.openbd.jp/9784041026403.jpg',
-        created_at: '2019/07/28 22:00:00',
-        updated_at: '2019/07/28 22:00:00'
-      }],
-      sampleComments: [{
-        id: 1,
-        item_id: 1,
-        user: {
-          id: 1,
-          name: 'nagatech',
-          displayName: 'ながてち',
-          iconFileId: 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
-          admin: true
-        },
-        comment: '小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。',
-        created_at: '2019/07/28 22:00:00',
-        updated_at: '2019/07/28 22:00:00'
-      },
-      {
-        id: 2,
-        item_id: 2,
-        user: {
-          id: 1,
-          name: 'nagatech',
-          displayName: 'ながてち',
-          iconFileId: 'e0628393-8045-4c6c-b23c-6f5e6a2c252b',
-          admin: true
-        },
-        comment: '小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。',
-        created_at: '2019/07/28 22:00:00',
-        updated_at: '2019/07/28 22:00:00'
-      }]
+      contentWidth: 600
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      this.mount()
     }
   },
   mounted () {
-    // this.items = this.sampleItems
-    // this.comments = this.sampleComments
     this.conputeWidth()
     window.addEventListener('resize', this.conputeWidth)
-    axios.get('api/items?user=' + this.$route.params.name).catch(e => { alert(e) }).then(res => { this.items = res.data })
-    axios.get('api/comments?user=' + this.$route.params.name).catch(e => { alert(e) }).then(res => { this.comments = res.data })
+    this.mount()
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.conputeWidth)
@@ -212,6 +92,20 @@ export default {
       } else {
         this.contentWidth = window.innerWidth - 30
       }
+    },
+    async mount () {
+      const resItems = await axios.get('api/items?user=' + this.$route.params.name)
+        .catch(e => {
+          alert(e)
+          return false
+        })
+      const resComments = await axios.get('api/comments?user=' + this.$route.params.name)
+        .catch(e => {
+          alert(e)
+          return false
+        })
+      this.items = resItems.data
+      this.comments = resComments.data
     }
   }
 }

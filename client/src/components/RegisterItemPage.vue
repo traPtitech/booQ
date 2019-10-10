@@ -95,7 +95,7 @@ export default {
         return
       }
       const itemID = res.data.ID
-      const userID = this.ownerID === 0 ? Number(this.$store.state.me.ID) : Number(this.ownerID)
+      const userID = Number(this.ownerID) === 0 ? Number(this.$store.state.me.ID) : Number(this.ownerID)
       const res2 = await axios.post(`/api/items/` + itemID + `/owners`, { user_id: userID, rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
       if (!res2) {
         alert('エラーが発生したため所有者の登録が行われませんでした。')

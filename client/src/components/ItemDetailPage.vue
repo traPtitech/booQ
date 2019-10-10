@@ -14,7 +14,7 @@
               />
             </div>
             <div>
-              <RentalForm @reload="reload" :propItem="data"/>
+              <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
               <ReturnForm @reload="reload" :propItem="data"/>
             </div>
             <div>
@@ -49,7 +49,7 @@
       <div class="content">
         <h2>
           所有者
-          <RegisterOwnerForm/>
+          <RegisterOwnerForm @reload="reload"/>
         </h2>
         <!-- FIXME: 他のタスクに手をつけたかったので表示が適当です -->
         <div v-for="owner in data.owners" :key="owner.id">
@@ -167,18 +167,17 @@ export default {
         return (log.owner.ID = owner.owner_id)
       })
       var rentalableCount = 0
-      if (latestLog === [] || !latestLog[0].count) {
+      if (latestLog.length === 0) {
         rentalableCount = owner.count
       } else {
         rentalableCount = latestLog[0].count
       }
       if (rentalableCount === 0) {
-        return '貸し出しできません'
+        return '現在すべて貸しだし中'
       } else if (rentalableCount === 1) {
         return '貸し出し可能'
       }
       return '貸し出し可能' + '×' + rentalableCount
-      // return '貸し出し可能' + '×' + 1
     },
     createLogMessage (log) {
       const userName = log.user.name
@@ -189,7 +188,6 @@ export default {
         ownerWord = ''
         logComment = '追加しました'
       }
-      logComment = log.type === 2 ? '追加しました' : logComment
       const logTime = log.CreatedAt.replace('T', ' ').replace('+09:00', '')
       return `${userName}さんが${ownerWord}物品を${logComment} - ${logTime}`
     },

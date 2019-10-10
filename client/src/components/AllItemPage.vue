@@ -1,6 +1,12 @@
 <template>
-  <div v-if="data">
-    <ItemList :items="data" />
+  <div>
+    <!-- これでは判別出来ていません -->
+    <div v-if="data.length != 0">
+      <ItemList :items="data" />
+    </div>
+    <div class="text-center" v-else>
+      該当の物品はありません
+    </div>
   </div>
 </template>
 
@@ -19,11 +25,27 @@ export default {
       error: null
     }
   },
+  watch: {
+    '$route' (to, from) {
+      this.mount()
+    }
+  },
   mounted () {
-    axios
-      .get(`/api/items`)
-      .then(res => (this.data = res.data))
-      .catch(e => { alert(e) })
+    this.mount()
+  },
+  methods: {
+    async mount () {
+      let searchParam = this.$route.query.search
+      if (this.$route.query.search === undefined) {
+        searchParam = ''
+      }
+      const res = await axios.get(`/api/items?search=` + searchParam)
+        .catch(e => {
+          alert(e)
+          return false
+        })
+      this.data = res.data
+    }
   }
 }
 </script>
