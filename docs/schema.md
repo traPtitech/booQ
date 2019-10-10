@@ -53,7 +53,7 @@
  | item_id | int | NO |  |  |  |  |
  | user_id | int | NO |  |  |  | アクションを起こす人 |
  | owner_id | int | NO |  |  |  | 物品の所有者 |
- | type | int | NO |  |  |  | 0:借りた, 1:返した  |
+ | type | int | NO |  |  |  | 0:借りた, 1:返した, 2:アイテムの追加  |
  | purpose | text |  |  |  |  | 借りる目的 |
  | due_date | datetime |  |  |  |  | 返却予定日 |
  | count | int |  |  |  |  | 処理が終わった後の対象のItemの数 |

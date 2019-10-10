@@ -6,53 +6,53 @@ info:
 host: "booq-dev.tokyotech.org"
 basePath: /api/
 schemes:
- - https
- 
+  - https
+
 tags:
-- name: "items"
-  description: "物品に関するAPI"
-- name: "comments"
-  description: "コメントに関するAPI"
-- name: "logs"
-  description: "履歴に関するAPI"
-- name: "likes"
-  description: "物品のいいねに関するAPI"
-- name: "owners"
-  description: "物品の所有者に関するAPI"
-- name: "tags"
-  description: "タグに関するAPI"
-- name: "users"
-  description: "ユーザーに関するAPI"
+  - name: "items"
+    description: "物品に関するAPI"
+  - name: "comments"
+    description: "コメントに関するAPI"
+  - name: "logs"
+    description: "履歴に関するAPI"
+  - name: "likes"
+    description: "物品のいいねに関するAPI"
+  - name: "owners"
+    description: "物品の所有者に関するAPI"
+  - name: "tags"
+    description: "タグに関するAPI"
+  - name: "users"
+    description: "ユーザーに関するAPI"
 
 paths:
   /items:
     get:
       tags:
-      - "items"
+        - "items"
       summary: "物品の一覧を取得します。"
       parameters:
-      - name: "limit"
-        in: "query"
-        description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
-        type: "integer"
-      - name: "offset"
-        in: "query"
-        description: "取得したいデータの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
-        type: "integer"
-      - name: "type"
-        in: "query"
-        description: "リクエストした物品タイプに合う物品一覧を取得します。"
-        type: "integer"
-      - name: "user"
-        in: "query"
-        description: "特定のユーザーの所有する物品一覧を取得します。"
-        type: "string"
-      - name: "tag"
-        in: "query"
-        description: "リクエストしたタグのついている物品一覧を取得します。"
-        type: "string"
+        - name: "limit"
+          in: "query"
+          description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
+          type: "integer"
+        - name: "offset"
+          in: "query"
+          description: "取得したいデータの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
+          type: "integer"
+        - name: "type"
+          in: "query"
+          description: "リクエストした物品タイプに合う物品一覧を取得します。"
+          type: "integer"
+        - name: "user"
+          in: "query"
+          description: "特定のユーザーの所有する物品一覧を取得します。"
+          type: "string"
+        - name: "tag"
+          in: "query"
+          description: "リクエストしたタグのついている物品一覧を取得します。"
+          type: "string"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -60,22 +60,22 @@ paths:
             $ref: "#/definitions/get_items"
     post:
       tags:
-      - "items"
+        - "items"
       summary: "物品を新しく登録します。"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "RequestBody"
-        required: true
-        schema:
-          type: "object"
-          example:
-            name: "小説　天気の子"
-            code: 9784041026403
-            type: 1
-            description:  "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。"
-            img_url: "https://cover.openbd.jp/9784041026403.jpg"
+        - in: "body"
+          name: "RequestBody"
+          required: true
+          schema:
+            type: "object"
+            example:
+              name: "小説　天気の子"
+              code: 9784041026403
+              type: 1
+              description: "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。"
+              img_url: "https://cover.openbd.jp/9784041026403.jpg"
       responses:
         201:
           description: "Created"
@@ -87,10 +87,10 @@ paths:
   /items/:id:
     get:
       tags:
-      - "items"
+        - "items"
       summary: "物品の詳細情報を取得します。"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -98,22 +98,22 @@ paths:
             $ref: "#/definitions/get_items_id"
     put:
       tags:
-      - "items"
+        - "items"
       summary: "物品の情報を変更します。(所有者と管理者のみ)"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "RequestBody"
-        required: true
-        schema:
-          type: "object"
-          example:
-            name: "小説　天気の子"
-            code: 9784041026403
-            type: 1
-            description:  "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。 （C）2019「天気の子」製作委員会"
-            img_url: "https://cover.openbd.jp/9784041026403.jpg"
+        - in: "body"
+          name: "RequestBody"
+          required: true
+          schema:
+            type: "object"
+            example:
+              name: "小説　天気の子"
+              code: 9784041026403
+              type: 1
+              description: "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。 （C）2019「天気の子」製作委員会"
+              img_url: "https://cover.openbd.jp/9784041026403.jpg"
       responses:
         200:
           description: "OK"
@@ -125,10 +125,10 @@ paths:
           description: "権限がありません。"
     delete:
       tags:
-      - "items"
+        - "items"
       summary: "物品を削除します。(管理者のみ)"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -138,18 +138,18 @@ paths:
   /items/:id/comments:
     post:
       tags:
-      - "comments"
+        - "comments"
       summary: "コメントを新規作成します。"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "RequestBody"
-        required: true
-        schema:
-          type: "object"
-          example:
-            text: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
+        - in: "body"
+          name: "RequestBody"
+          required: true
+          schema:
+            type: "object"
+            example:
+              text: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
       responses:
         201:
           description: "Created"
@@ -161,23 +161,23 @@ paths:
   /items/:id/logs:
     post:
       tags:
-      - "logs"
+        - "logs"
       summary: "履歴を新しく登録します。"
       description: "itemとownerが紐づいていない場合はエラー(400)を返す必要があります。"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "RequestBody"
-        required: true
-        schema:
-          type: "object"
-          example:
-            owner_id: 1
-            type: 0
-            purpose: "読みたかったから。"
-            due_date: "2019/07/30 23:30:00"
-            count: 1
+        - in: "body"
+          name: "RequestBody"
+          required: true
+          schema:
+            type: "object"
+            example:
+              owner_id: 1
+              type: 0
+              purpose: "読みたかったから。"
+              due_date: "2019/07/30 23:30:00"
+              count: 1
       responses:
         201:
           description: "Created"
@@ -189,11 +189,11 @@ paths:
   /items/:id/likes:
     post:
       tags:
-      - "likes"
+        - "likes"
       summary: "物品にいいねをつけます。"
       description: "すでにいいねしている状態の場合、エラー(400)を返します。"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -201,11 +201,11 @@ paths:
           description: "エラーが発生しました。"
     delete:
       tags:
-      - "likes"
+        - "likes"
       summary: "物品のいいねを取り消します。"
       description: "すでに所有済み状態の場合、エラー(400)を返します。"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -215,21 +215,21 @@ paths:
   /items/:id/owners:
     post:
       tags:
-      - "owners"
+        - "owners"
       summary: "物品の所有者を追加します。"
       description: "他者の所有権を操作する場合は権限が必要です。"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "RequestBody"
-        required: true
-        schema:
-          type: "object"
-          example:
-            user_id: 1
-            rentalable: true
-            count: 1
+        - in: "body"
+          name: "RequestBody"
+          required: true
+          schema:
+            type: "object"
+            example:
+              user_id: 1
+              rentalable: true
+              count: 1
       responses:
         201:
           description: "Created"
@@ -239,21 +239,21 @@ paths:
           description: "権限がありません。"
     put:
       tags:
-      - "owners"
+        - "owners"
       summary: "物品の所有者を編集します。(所有者と管理者のみ)"
       description: "他者の所有権を操作する場合は権限が必要です。"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "RequestBody"
-        required: true
-        schema:
-          type: "object"
-          example:
-            user_id: 1
-            rentalable: true
-            count: 1
+        - in: "body"
+          name: "RequestBody"
+          required: true
+          schema:
+            type: "object"
+            example:
+              user_id: 1
+              rentalable: true
+              count: 1
       responses:
         200:
           description: "OK"
@@ -263,11 +263,11 @@ paths:
           description: "権限がありません。"
     delete:
       tags:
-      - "owners"
+        - "owners"
       summary: "物品の所有権を削除します。(所有者と管理者のみ)"
       description: "他者の所有権を操作する場合は権限が必要です。"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -277,19 +277,19 @@ paths:
   /items/:id/tags:
     post:
       tags:
-      - "tags"
+        - "tags"
       summary: "item_idと紐づけてタグを登録します。"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "RequestBody"
-        description: "複数一気に登録するので配列である必要があります。"
-        required: true
-        schema:
-          type: "object"
-          example:
-            id: [1, 2]
+        - in: "body"
+          name: "RequestBody"
+          description: "複数一気に登録するので配列である必要があります。"
+          required: true
+          schema:
+            type: "object"
+            example:
+              id: [1, 2]
       responses:
         200:
           description: "OK"
@@ -306,10 +306,10 @@ paths:
   /tags:
     get:
       tags:
-      - "tags"
+        - "tags"
       summary: "タグ一覧を取得します。"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -322,18 +322,18 @@ paths:
                 name: "天気の子"
     post:
       tags:
-      - "tags"
+        - "tags"
       summary: "タグを追加します。"
       parameters:
-      - in: "body"
-        name: "RequestBody"
-        required: true
-        schema:
-          type: "object"
-          example:
-            name: "小説"
+        - in: "body"
+          name: "RequestBody"
+          required: true
+          schema:
+            type: "object"
+            example:
+              name: "小説"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -348,11 +348,11 @@ paths:
   /items/:itemId/tags/:tagId:
     delete:
       tags:
-      - "tags"
+        - "tags"
       summary: "物品に登録されているタグを削除します。"
       description: "itemとtagが紐づいていない場合はエラー(400)を返す必要があります。"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -362,23 +362,23 @@ paths:
   /comments:
     get:
       tags:
-      - "comments"
+        - "comments"
       summary: "コメント一覧を取得します。"
       parameters:
-      - name: "user"
-        in: "query"
-        description: "特定のユーザーの投稿したコメント一覧を取得します。"
-        type: "string"
-      - name: "limit"
-        in: "query"
-        description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
-        type: "integer"
-      - name: "offset"
-        in: "query"
-        description: "取得したいコメントの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
-        type: "integer"
+        - name: "user"
+          in: "query"
+          description: "特定のユーザーの投稿したコメント一覧を取得します。"
+          type: "string"
+        - name: "limit"
+          in: "query"
+          description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
+          type: "integer"
+        - name: "offset"
+          in: "query"
+          description: "取得したいコメントの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
+          type: "integer"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -390,20 +390,20 @@ paths:
   /comments/:id:
     put:
       tags:
-      - "comments"
+        - "comments"
       summary: "コメントを編集します。"
       description: "実行できるのは投稿したユーザーと管理者だけです。"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "RequestBody"
-        description: "実行できるのは投稿したユーザーと管理者だけです。変更できるのはtextのみです。"
-        required: true
-        schema:
-          type: "object"
-          example:
-            text: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
+        - in: "body"
+          name: "RequestBody"
+          description: "実行できるのは投稿したユーザーと管理者だけです。変更できるのはtextのみです。"
+          required: true
+          schema:
+            type: "object"
+            example:
+              text: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
       responses:
         200:
           description: "OK"
@@ -413,11 +413,11 @@ paths:
           description: "権限がありません。"
     delete:
       tags:
-      - "comments"
+        - "comments"
       summary: "コメントを削除します。"
       description: "実行できるのは投稿したユーザーと管理者だけです。"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -427,23 +427,23 @@ paths:
   /logs:
     get:
       tags:
-      - "logs"
+        - "logs"
       summary: "履歴の一覧を取得します。"
       parameters:
-      - name: "user"
-        in: "query"
-        description: "特定のユーザーの履歴一覧を取得します。"
-        type: "string"
-      - name: "limit"
-        in: "query"
-        description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
-        type: "integer"
-      - name: "offset"
-        in: "query"
-        description: "取得したいデータの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
-        type: "integer"
+        - name: "user"
+          in: "query"
+          description: "特定のユーザーの履歴一覧を取得します。"
+          type: "string"
+        - name: "limit"
+          in: "query"
+          description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
+          type: "integer"
+        - name: "offset"
+          in: "query"
+          description: "取得したいデータの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
+          type: "integer"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -455,10 +455,10 @@ paths:
   /logs/:id:
     delete:
       tags:
-      - "logs"
+        - "logs"
       summary: "履歴を取り消します。(管理者のみ)"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -468,10 +468,10 @@ paths:
   /users/me:
     get:
       tags:
-      - "users"
+        - "users"
       summary: "自分の情報を取得します。存在しない場合はユーザーを作成します。"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -481,15 +481,15 @@ paths:
   /users:
     get:
       tags:
-      - "users"
+        - "users"
       summary: "ユーザー一覧を取得します。"
-      parameters: 
-      - name: "name"
-        in: "query"
-        description: "取得したいユーザーのIDを指定します。"
-        type: "string"
+      parameters:
+        - name: "name"
+          in: "query"
+          description: "取得したいユーザーのIDを指定します。"
+          type: "string"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "OK"
@@ -501,21 +501,21 @@ paths:
           description: "見つかりませんでした。"
     put:
       tags:
-      - "users"
+        - "users"
       summary: "ユーザーの情報を変更します。主に権限の変更用です。"
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - in: "body"
-        name: "RequestBody"
-        description: "権限の変更は権限を持っているユーザーからしかできないようにします。"
-        required: true
-        schema:
-          type: "object"
-          example:
-            name: "nagatech"
-            displayName: "ながてち"
-            admin: true
+        - in: "body"
+          name: "RequestBody"
+          description: "権限の変更は権限を持っているユーザーからしかできないようにします。"
+          required: true
+          schema:
+            type: "object"
+            example:
+              name: "nagatech"
+              displayName: "ながてち"
+              admin: true
       responses:
         200:
           description: "OK"
@@ -533,7 +533,7 @@ definitions:
         example: 1
       name:
         type: "string"
-        example:  "小説　天気の子"
+        example: "小説　天気の子"
       code:
         type: "integer"
         example: 9784041026403
@@ -679,7 +679,7 @@ definitions:
         type: "string"
         format: "date-time"
         example: "2019/07/30 23:30:00"
-      count: 
+      count:
         type: "integer"
         example: 1
       created_at:
@@ -731,7 +731,7 @@ definitions:
         example: 1
       name:
         type: "string"
-        example:  "小説　天気の子"
+        example: "小説　天気の子"
       code:
         type: "integer"
         example: 9784041026403
@@ -742,6 +742,9 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/get_ownerships"
+      rental_users:
+        type: "string"
+        example: "nagatech"
       latest_logs:
         type: "array"
         items:
@@ -772,7 +775,7 @@ definitions:
         example: 1
       name:
         type: "string"
-        example:  "小説　天気の子"
+        example: "小説　天気の子"
       code:
         type: "integer"
         example: 9784041026403
@@ -783,6 +786,9 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/get_ownerships"
+      rental_users:
+        type: "string"
+        example: "nagatech"
       description:
         type: "string"
         example: "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。"
