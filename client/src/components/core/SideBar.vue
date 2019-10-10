@@ -96,6 +96,8 @@
 <script>
 // Utilities
 import { mapMutations, mapState } from 'vuex'
+import version from '@/version'
+
 export default {
   name: 'SideBar',
   data () {
@@ -152,7 +154,7 @@ export default {
       return `${this.$store.state.sidebarBackgroundColor}, ${this.$store.state.sidebarBackgroundColor}`
     },
     version () {
-      return process.env.VUE_APP_VERSION
+      return version
     }
   },
   mounted () {
