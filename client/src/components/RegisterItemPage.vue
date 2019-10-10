@@ -5,7 +5,7 @@
       v-if="$store.state.me && $store.state.me.admin"
       class="contents"
     >
-      <span>登録する物品の所有者: {{ ownerOptions[ownerID] }}</span>
+      <span>登録する物品の所有者: {{ ownerOptions[ownerID].name }}</span>
       <br>
       <label v-for="owner in ownerOptions" :key="owner.id">
         <div><input type="radio" name="owner" :value="owner.id" v-model="ownerID">{{ owner.name }}</div>
