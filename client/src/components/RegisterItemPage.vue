@@ -102,8 +102,8 @@ export default {
         return
       }
       await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=1`, {
-          text: '@' + this.$store.state.me.name + ' が「' + this.name + '」を登録しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + itemID
-        }).catch(e => { alert(e) })
+        text: '@' + this.$store.state.me.name + ' が「' + this.name + '」を登録しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + itemID
+      }).catch(e => { alert(e) })
       this.$router.push({ path: `/items/${itemID}` })
     },
     onFileChange (e) {
