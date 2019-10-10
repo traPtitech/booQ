@@ -220,7 +220,7 @@ export default {
     },
     async destroyItem () {
       const result = window.confirm('本当に削除しますか？')
-      if ( result === true ) {
+      if (result === true) {
         await axios.delete(`/api/items/` + this.$route.params.id).catch(e => { alert(e) })
         this.$router.push({ path: `/items` })
       }
