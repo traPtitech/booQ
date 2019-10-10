@@ -15,7 +15,7 @@
                 v-for="(owner, i) in propItem.owners"
                 :key="i"
                 @click="rentOwnerID = owner.user.ID"
-                :disabled="$emit('checkRentalable', owner) === '貸し出しできません'  || '現在すべて貸しだし中'">
+                :disabled="$emit('checkRentalable', owner) === '貸し出しできません' || $emit('checkRentalable', owner) === '現在すべて貸しだし中'">
                   <v-list-item-title>{{ owner.user.name }}</v-list-item-title>
                 </v-list-item>
               </v-list>
