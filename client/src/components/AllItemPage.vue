@@ -1,11 +1,15 @@
 <template>
   <div>
-    <!-- これでは判別出来ていません -->
-    <div v-if="data.length != 0">
-      <ItemList :items="data" />
+    <div v-if="data !== null">
+      <div v-if="data.length !== 0">
+        <ItemList :items="data" />
+      </div>
+      <div class="text-center" v-else>
+        該当の物品はありません
+      </div>
     </div>
-    <div class="text-center" v-else>
-      該当の物品はありません
+    <div v-else>
+      読み込み中...
     </div>
   </div>
 </template>

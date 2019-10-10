@@ -1,4 +1,4 @@
-/client/
+/client/node_modules
 /docs/
 README.md
 Dockerfile
