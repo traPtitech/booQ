@@ -113,14 +113,14 @@ export default {
           alert(e)
           this.error = e
         })
-      if (!this.error) { alert('あなたは”' + this.propItem.name + '”を' + this.rentalCount + '個借りました。') }
+      if (!this.error) { alert('あなたは「' + this.propItem.name + '」を' + this.rentalCount + '個借りました。') }
       this.isOpenRentalForm = !this.isOpenRentalForm
       this.$emit('reload')
       if (this.propItem.type === 0) {
         const traQmessage = '@' + this.rentOwnerName + ' の' + this.propItem.name + 'を借りました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
         await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=1`, { text: traQmessage }).catch(e => { alert(e) })
       } else {
-        const traQmessage = '出' + this.propItem.name + '\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
+        const traQmessage = '出\n[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')×' + this.rentalCount
         await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + `/messages?embed=1`, { text: traQmessage }).catch(e => { alert(e) })
       }
     },

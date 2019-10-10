@@ -31,6 +31,18 @@ func GetItems(c echo.Context) error {
 		}
 		return c.JSON(http.StatusOK, res)
 	}
+	rentalName := c.QueryParam("rental")
+	if rentalName != "" {
+		user, err := model.GetUserByName(rentalName)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		res, err := model.SearchItemByRental(user.ID)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		return c.JSON(http.StatusOK, res)
+	}
 	res, err := model.GetItems()
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

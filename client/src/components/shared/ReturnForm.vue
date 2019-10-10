@@ -83,10 +83,10 @@ export default {
       this.isOpenReturnForm = !this.isOpenReturnForm
       this.$emit('reload')
       if (this.propItem.type === 0) {
-        const traQmessage = '@' + this.rentalOwnerName + ' の' + this.propItem.name + 'を返しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
+        const traQmessage = '@' + this.returnOwnerName + ' の' + this.propItem.name + 'を返しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
         await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=` + 1, { text: traQmessage }).catch(e => { alert(e) })
       } else {
-        const traQmessage = this.propItem.name + '\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
+        const traQmessage = '入\n[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')×' + this.returnCount
         await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + `/messages?embed=` + 1, { text: traQmessage }).catch(e => { alert(e) })
       }
     },

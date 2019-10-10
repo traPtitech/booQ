@@ -102,7 +102,7 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import { getMe } from '@/utils/api'
+import { getMe, traQBaseURL } from '@/utils/api'
 import axios from 'axios'
 
 export default {
@@ -178,9 +178,16 @@ export default {
           })
       }
       if (!this.error) {
-        this.$store.commit('resetCart')
         this.cartDialog = !this.cartDialog
         alert('まとめて借りることに成功しました。')
+        let message = '出'
+        console.log(this.$store.state.cart)
+        console.log(this.$store.state.cart.length)
+        for (let i = 0; i < this.$store.state.cart.length; i++) {
+          message = message + '\n[' + this.$store.state.cart[i].name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.$store.state.cart[i].ID + ') × ' + this.$store.state.cart[i].rentalCount
+        }
+        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + `/messages?embed=1`, { text: message }).catch(e => { alert(e) })
+        this.$store.commit('resetCart')
       }
     }
   }

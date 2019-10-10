@@ -164,14 +164,14 @@ export default {
       if (!owner.rentalable) {
         return '貸し出しできません'
       }
-      var latestLog = this.data.latest_logs.filter(function (log) {
-        return (log.owner.ID = owner.owner_id)
+      var latestLog = this.data.latest_logs.find(log => {
+        return log.owner.ID === owner.owner_id
       })
       var rentalableCount = 0
-      if (latestLog.length === 0) {
-        rentalableCount = owner.count
+      if (latestLog) {
+        rentalableCount = latestLog.count
       } else {
-        rentalableCount = latestLog[0].count
+        rentalableCount = owner.count
       }
       if (rentalableCount === 0) {
         return '現在すべて貸しだし中'
