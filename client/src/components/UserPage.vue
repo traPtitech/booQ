@@ -111,7 +111,6 @@ export default {
           alert(e)
           return false
         })
-      console.log(resComments)
       this.items = resItems.data
       this.comments = resComments.data
     }
