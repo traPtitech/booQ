@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer
     id="app-drawer"
-    v-model="inputValue"
+    v-model="drawer"
     app
     dark
     floating
@@ -49,11 +49,9 @@
     <template v-slot:append>
       <v-flex layout>
         <v-list nav>
-          <v-list-item
-            href="https://github.com/traPtitech/booQ"
-          >
+          <v-list-item @click="$store.commit('toggleAboutDialog')">
             <v-list-item-title class="font-weight-light">
-              booQ Project v0.0.0
+              booQ Project {{ version }}
             </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -75,6 +73,23 @@
         </v-list>
       </v-flex>
     </template>
+    <v-dialog
+      v-model="aboutDialogDrawer"
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title
+          class="headline"
+        >
+          booQ Project
+        </v-card-title>
+        <v-card-text>
+          バージョン: {{ version }}<br>
+          バグ報告・フィードバックは<a href="https://q.trap.jp/channels/team/SysAd/booq/feedback">#team/SysAd/booq/feedback</a>までお願いします。<br>
+          GitHubリポジトリ: <a href="https://github.com/traPtitech/booQ">traPtitech/booQ</a><br>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-navigation-drawer>
 </template>
 
@@ -98,11 +113,11 @@ export default {
           icon: 'mdi-view-list',
           text: 'Item List'
         },
-        {
-          to: `/users`,
-          icon: 'mdi-account',
-          text: 'User List'
-        },
+        // {
+        //   to: `/users`,
+        //   icon: 'mdi-account',
+        //   text: 'User List'
+        // },
         {
           to: `/items/new`,
           icon: 'add_box',
@@ -114,7 +129,7 @@ export default {
   },
   computed: {
     ...mapState(['color']),
-    inputValue: {
+    drawer: {
       get () {
         return this.$store.state.drawer
       },
@@ -122,11 +137,22 @@ export default {
         this.setDrawer(val)
       }
     },
+    aboutDialogDrawer: {
+      get () {
+        return this.$store.state.aboutDialog
+      },
+      set (val) {
+        this.$store.commit('toggleAboutDialog')
+      }
+    },
     items () {
       return this.$t('Layout.View.items')
     },
     sidebarOverlayGradiant () {
       return `${this.$store.state.sidebarBackgroundColor}, ${this.$store.state.sidebarBackgroundColor}`
+    },
+    version () {
+      return process.env.VUE_APP_VERSION
     }
   },
   mounted () {
