@@ -1,41 +1,50 @@
 <template>
   <div>
-    <h2>あなたが借りている物品</h2>
-    <v-card
-      class="mx-auto"
-      width="1500"
-      elevation="5"
-      tile
-    >
-      <v-list
-        two-line
-        avatar
-        nav
+    <div v-if="!items">
+      <h2>あなたが現在借りている物品はありません</h2>
+    </div>
+    <div v-else-if="items.length === 0">
+      <h2>あなたが現在借りている物品はありません</h2>
+    </div>
+    <div v-else>
+      <h2>あなたが借りている物品</h2>
+      <v-card
+        class="mx-auto"
+        width="1500"
+        elevation="5"
+        tile
       >
-        <v-list-item-group color="primary">
-          <v-list-item
-            v-for="item in items"
-            :key="item.id"
-            @click.stop="$router.push({path: `/items/${item.ID}`})"
-            style="height: 100px;"
-          >
-            <img
-              :src="item.img_url.length ? item.img_url : 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail'"
-              class="item-list-image"
-            />
-            <v-list-item-content style="padding-left: 15px;" :to="`/items/${item.ID}`">
-              <v-list-item-title class="headline mb-1">{{ item.name }}</v-list-item-title>
-              <v-list-item-subtitle>{{ item.owners.map(i => i.user.name).join(', ') }}</v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-action class="item-list-icons">
-              <v-btn :disabled="getBihinMyRentalCount(item.ID) === 1" icon v-if="item.type !== 0" @click.stop="click2Cart(item)">
-                <v-icon>mdi-cart-arrow-down</v-icon>
-              </v-btn>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-card>
+        <v-list
+          two-line
+          avatar
+          nav
+        >
+          <v-list-item-group color="primary">
+            <v-list-item
+              v-for="item in items"
+              :key="item.id"
+              @click.stop="$router.push({path: `/items/${item.ID}`})"
+              style="height: 100px;"
+            >
+              <img
+                :src="item.img_url.length ? item.img_url : 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail'"
+                class="item-list-image"
+              />
+              <v-list-item-content style="padding-left: 15px;" :to="`/items/${item.ID}`">
+                <v-list-item-title class="headline mb-1">{{ item.name }}</v-list-item-title>
+                <v-list-item-subtitle>{{ item.owners.map(i => i.user.name).join(', ') }}</v-list-item-subtitle>
+              </v-list-item-content>
+              <v-list-item-action class="item-list-icons">
+                <v-btn :disabled="getBihinMyRentalCount(item.ID) === 1" icon v-if="item.type !== 0" @click.stop="click2Cart(item)">
+                  <v-icon>mdi-cart-arrow-down</v-icon>
+                </v-btn>
+              </v-list-item-action>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-card>
+    </div>
+    <div>{{items}}</div>
     <div v-if="returnCart.length === 0">
       まとめて返却する物品
     </div>
@@ -71,6 +80,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'DashBoard',
   data () {
@@ -84,10 +95,7 @@ export default {
     }
   },
   mounted () {
-    axios
-      .get(`/api/items/` + this.$store.state.me.name)
-      .then(res => (this.items = res.data))
-      .catch(e => { alert(e) })
+    this.mount()
   },
   methods: {
     getBihinMyRentalCount (itemID) {
@@ -112,7 +120,7 @@ export default {
         return
       }
       this.item.returnCount = this.itemCount
-      this.returnCart.push()
+      this.returnCart.push(this.item)
       this.itemCount = 0
       this.maxCount = 0
       this.item = {}
@@ -123,7 +131,7 @@ export default {
       this.maxCount = this.getBihinMyRentalCount(item.ID)
       this.isOpen2Cart = !this.isOpen2Cart
     },
-    async rentCartItem () {
+    async returnItems () {
       for (let i = 0; i < this.returnCart.length; i++) {
         let names = []
         names = names.push(this.returnCart[i].name)
@@ -145,6 +153,14 @@ export default {
         await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + `/messages?embed=1`, { text: message }).catch(e => { alert(e) })
         this.returnCart = []
       }
+    },
+    async mount () {
+      const res = await axios.get(`/api/items?rental=` + this.$store.state.me.name)
+        .catch(e => {
+          alert(e)
+          return false
+        })
+      this.items = res.data
     }
   }
 }
