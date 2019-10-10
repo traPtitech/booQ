@@ -31,6 +31,18 @@ func GetItems(c echo.Context) error {
 		}
 		return c.JSON(http.StatusOK, res)
 	}
+	rentalName := c.QueryParam("rental")
+	if rentalName != "" {
+		user, err := model.GetUserByName(rentalName)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		res, err := model.SearchItemByRental(user.ID)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		return c.JSON(http.StatusOK, res)
+	}
 	res, err := model.GetItems()
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -65,6 +77,25 @@ func GetItem(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	item, err := model.GetItemByID(uint(itemID))
+	if err != nil {
+		return c.JSON(http.StatusNotFound, err)
+	}
+
+	return c.JSON(http.StatusOK, item)
+}
+
+// DeleteItem DELETE /items/:id
+func DeleteItem(c echo.Context) error {
+	ID := c.Param("id")
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, err := model.GetItemByID(uint(itemID))
+	if err != nil {
+		return c.JSON(http.StatusNotFound, err)
+	}
+	item, err = model.DestroyItem(item)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
 	}

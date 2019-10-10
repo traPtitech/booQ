@@ -9,18 +9,18 @@ import (
 // Item itemの構造体
 type Item struct {
 	gorm.Model
-	Name        string       `gorm:"type:varchar(64);not null" json:"name"`
-	Type        int          `gorm:"type:int;not null" json:"type"`
-	Code        string       `gorm:"type:varchar(13);" json:"code"`
-	Description string       `gorm:"type:text;" json:"description"`
-	ImgURL      string       `gorm:"type:text;" json:"img_url"`
-	Owners      []*Owner     `gorm:"many2many:ownership_maps;" json:"owners"`
-	RentalUsers []RentalUser `gorm:"many2many:rental_user_maps;" json:"rental_users"`
-	Logs        []Log        `json:"logs"`
-	LatestLogs  []Log        `json:"latest_logs"`
-	Comments    []Comment    `json:"comments"`
-	Likes       []User       `gorm:"many2many:like_maps;" json:"likes"`
-	LikeCounts  int          `gorm:"-" json:"like_counts"`
+	Name        string        `gorm:"type:varchar(64);not null" json:"name"`
+	Type        int           `gorm:"type:int;not null" json:"type"`
+	Code        string        `gorm:"type:varchar(13);" json:"code"`
+	Description string        `gorm:"type:text;" json:"description"`
+	ImgURL      string        `gorm:"type:text;" json:"img_url"`
+	Owners      []*Owner      `gorm:"many2many:ownership_maps;" json:"owners"`
+	RentalUsers []*RentalUser `gorm:"many2many:rental_user_maps;" json:"rental_users"`
+	Logs        []Log         `json:"logs"`
+	LatestLogs  []Log         `json:"latest_logs"`
+	Comments    []Comment     `json:"comments"`
+	Likes       []User        `gorm:"many2many:like_maps;" json:"likes"`
+	LikeCounts  int           `gorm:"-" json:"like_counts"`
 }
 
 type Owner struct {
@@ -227,7 +227,7 @@ func CancelLike(itemID, userID uint) (Item, error) {
 	return item, nil
 }
 
-// SearchItemsByOwnerName itemsをOwnerNameから取得する
+// SearchItemsByOwner itemsをOwnerNameから取得する
 func SearchItemByOwner(ownerName string) ([]Item, error) {
 	res := []Item{}
 	items := []Item{}
@@ -248,6 +248,27 @@ func SearchItemByOwner(ownerName string) ([]Item, error) {
 	return items, nil
 }
 
+// SearchItemsByRental itemsをRentalUserNameから取得する
+func SearchItemByRental(rentalUserID uint) ([]Item, error) {
+	items := []Item{}
+	res := []Item{}
+	db.Find(&items)
+	for _, item := range items {
+		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.RentalUsers, "RentalUsers").Related(&item.Likes, "Likes")
+		var err error
+		item.LatestLogs, err = GetLatestLogs(item.Logs)
+		if err != nil {
+			return []Item{}, err
+		}
+		for _, rentalUser := range item.RentalUsers {
+			if rentalUser.UserID == rentalUserID || rentalUser.Count < 0 {
+				res = append(res, item)
+			}
+		}
+	}
+	return res, nil
+}
+
 // SearchItems itemsをNameの部分一致で取得する
 func SearchItems(searchString string) ([]Item, error) {
 	res := []Item{}
@@ -264,4 +285,10 @@ func SearchItems(searchString string) ([]Item, error) {
 		res[i] = item
 	}
 	return res, nil
+}
+
+// DestroyItem itemを削除する
+func DestroyItem(item Item) (Item, error) {
+	db.Delete(&item)
+	return item, nil
 }

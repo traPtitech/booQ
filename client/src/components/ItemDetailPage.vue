@@ -16,6 +16,7 @@
             <div>
               <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
               <ReturnForm @reload="reload" :propItem="data"/>
+              <v-btn color="error" block v-if="$store.state.me.admin" @click="destroyItem" error>削除</v-btn>
             </div>
             <div>
               <v-btn v-if="isLiked" block @click="removeLike">
@@ -163,14 +164,14 @@ export default {
       if (!owner.rentalable) {
         return '貸し出しできません'
       }
-      var latestLog = this.data.latest_logs.filter(function (log) {
-        return (log.owner.ID = owner.owner_id)
+      var latestLog = this.data.latest_logs.find(log => {
+        return log.owner.ID === owner.owner_id
       })
       var rentalableCount = 0
-      if (latestLog.length === 0) {
-        rentalableCount = owner.count
+      if (latestLog) {
+        rentalableCount = latestLog.count
       } else {
-        rentalableCount = latestLog[0].count
+        rentalableCount = owner.count
       }
       if (rentalableCount === 0) {
         return '現在すべて貸しだし中'
@@ -216,6 +217,13 @@ export default {
     async reload () {
       const res = await axios.get(`/api/items/` + this.$route.params.id).catch(e => { alert(e) })
       this.data = res.data
+    },
+    async destroyItem () {
+      const result = window.confirm('本当に削除しますか？')
+      if (result === true) {
+        await axios.delete(`/api/items/` + this.$route.params.id).catch(e => { alert(e) })
+        this.$router.push({ path: `/items` })
+      }
     }
   }
 }

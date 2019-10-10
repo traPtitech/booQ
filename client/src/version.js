@@ -5,7 +5,7 @@ switch (process.env.VUE_APP_API_ENDPOINT) {
   case 'http://localhost:3000':
     version = 'dev'
     break
-  case 'https://booq-dev.tokyotech.org/':
+  case 'https://booq-dev.tokyotech.org':
     version = 'staging'
     break
   default:

@@ -5,10 +5,10 @@
       v-if="$store.state.me && $store.state.me.admin"
       class="contents"
     >
-      <span>登録する物品の所有者: {{ ownerOptions[ownerID] }}</span>
+      <span>登録する物品の所有者: {{ ownerOptions[ownerID].name }}</span>
       <br>
-      <label v-for="(label,id) in ownerOptions" v-bind:key="label">
-        <input type="radio" name="owner" :value="id" v-model="ownerID">{{ label }}
+      <label v-for="owner in ownerOptions" :key="owner.id">
+        <div><input type="radio" name="owner" :value="owner.id" v-model="ownerID">{{ owner.name }}</div>
       </label>
     </div>
     <div class="contents">
@@ -68,11 +68,11 @@ export default {
   data () {
     return {
       ownerID: 0,
-      ownerOptions: {
-        0: '個人',
-        1: 'traP',
-        2: '支援課'
-      },
+      ownerOptions: [
+        { id: 0, name: '自身' },
+        { id: 1, name: 'traP' },
+        { id: 2, name: '支援課' }
+      ],
       rentalable: true,
       code: '',
       name: '',
@@ -99,9 +99,12 @@ export default {
       const res2 = await axios.post(`/api/items/` + itemID + `/owners`, { user_id: userID, rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
       if (!res2) {
         alert('エラーが発生したため所有者の登録が行われませんでした。')
-      } else {
-        this.$router.push({ path: `/items/${itemID}` })
+        return
       }
+      await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=1`, {
+        text: '@' + this.$store.state.me.name + ' が「' + this.name + '」を登録しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + itemID
+      }).catch(e => { alert(e) })
+      this.$router.push({ path: `/items/${itemID}` })
     },
     onFileChange (e) {
       const files = e.target.files || e.dataTransfer.files

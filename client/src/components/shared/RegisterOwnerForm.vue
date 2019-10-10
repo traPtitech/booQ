@@ -9,8 +9,8 @@
           <v-card-title class="headline">所有者を追加する</v-card-title>
           <v-card-actions>
             <div v-if="$store.state.me && $store.state.me.admin" >
-              <label v-for="(label,id) in ownerOptions" v-bind:key="label">
-                <div><input type="radio" name="owner" :value="id" v-model="ownerID">{{ label }}</div>
+              <label v-for="owner in ownerOptions" :key="owner.id">
+                <div><input type="radio" name="owner" :value="owner.id" v-model="ownerID">{{ owner.name }}</div>
               </label>
             </div>
           </v-card-actions>
@@ -46,11 +46,11 @@ export default {
   data () {
     return {
       ownerID: 0,
-      ownerOptions: {
-        0: '自身',
-        1: 'traP',
-        2: '支援課'
-      },
+      ownerOptions: [
+        { id: 0, name: '自身' },
+        { id: 1, name: 'traP' },
+        { id: 2, name: '支援課' }
+      ],
       rentalable: true,
       count: 1,
       error: '',
@@ -64,13 +64,15 @@ export default {
         alert('個数を正常にしてください')
         return false
       }
+      let newOwnerID = 0
       if (Number(this.ownerID) === 0) {
         this.message = '所有者に' + this.$store.state.me.name + 'を追加しました。'
-        this.ownerID = this.$store.state.me.ID
+        newOwnerID = this.$store.state.me.ID
       } else {
-        this.message = '所有者に' + this.ownerOptions[this.ownerID] + 'を追加しました。'
+        this.message = '所有者に' + this.ownerOptions.find(element => element.id === this.ownerID).name + 'を追加しました。'
+        newOwnerID = this.ownerID
       }
-      await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: Number(this.ownerID), rentalable: this.rentalable, count: this.count })
+      await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: newOwnerID, rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e
