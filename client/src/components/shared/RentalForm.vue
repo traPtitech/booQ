@@ -6,7 +6,7 @@
         <v-card width="320">
           <v-card-title class="headline">物品を借りる</v-card-title>
           <v-card-actions>
-            <v-menu bottom origin="center center" transition="scale-transition" open-on-hover>
+            <v-menu bottom origin="center center" transition="scale-transition" >
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark v-on="on">所有者を選ぶ</v-btn>
               </template>
@@ -20,6 +20,9 @@
                 </v-list-item>
               </v-list>
             </v-menu>
+              <div>
+                 {{rentOwnerName}}
+              </div>
           </v-card-actions>
           <v-card-actions>
             <div v-if="propItem.type == 1">

@@ -15,35 +15,42 @@
       </v-col>
       <v-col cols="8">
         <div :style="`width: ${contentWidth}px;`">
-          <div class="content" v-if="items.length != 0">
-            <h3>所有物一覧</h3>
-            <div>
-              <ItemList :items="items" />
+          <div v-if="items !== null && comments !== null">
+            <div class="content" v-if="items.length !== 0">
+              <h3>所有物一覧</h3>
+              <div>
+                <ItemList :items="items" />
+              </div>
+            </div>
+            <div class="content" v-else>
+              <h3>このユーザーは物品を所有していません</h3>
+            </div>
+            <div v-if="comments.length !== 0">
+              <div class="content">
+                <h3>コメント一覧</h3>
+                <div v-for="comment in comments" :key="comment.id">
+                  <v-container class="pa-2" fluid>
+                    <v-row>
+                      <v-col>
+                        <v-card :to="`/items/${comment.item_id}`">
+                          <v-card-text>
+                            <div class="headline mb-2">
+                              {{comment.text}}
+                            </div>
+                          </v-card-text>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </div>
+              </div>
+            </div>
+            <div v-else>
+              <h3>このユーザーはまだコメントを投稿していません</h3>
             </div>
           </div>
-          <div class="content" v-else>
-            <h3>このユーザーは物品を所有していません</h3>
-          </div>
-          <div v-if="comments.length == 0">
-            <h3>このユーザーはまだコメントを投稿していません</h3>
-          </div>
-          <div class="content" v-else>
-            <h3>コメント一覧</h3>
-            <div v-for="comment in comments" :key="comment.id">
-              <p>
-                <v-container class="pa-2" fluid>
-                  <v-row>
-                    <v-col>
-                      <v-card>
-                        <v-card-text>
-                          <div class="headline mb-2">{{comment.comment}}</div>
-                        </v-card-text>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </p>
-            </div>
+          <div v-else>
+            読み込み中...
           </div>
         </div>
       </v-col>

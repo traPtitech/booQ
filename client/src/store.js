@@ -12,6 +12,7 @@ export default new Vuex.Store({
     color: 'success',
     sidebarBackgroundColor: 'rgba(27, 27, 27, 0.74)',
     loginDialog: false,
+    aboutDialog: false,
     authToken: null,
     cart: []
   },
@@ -34,6 +35,9 @@ export default new Vuex.Store({
     },
     toggleLoginDialog (state) {
       state.loginDialog = !state.loginDialog
+    },
+    toggleAboutDialog (state) {
+      state.aboutDialog = !state.aboutDialog
     },
     item2Cart (state, data) {
       state.cart.push(data)

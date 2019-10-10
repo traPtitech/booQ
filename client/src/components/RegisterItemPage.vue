@@ -149,7 +149,9 @@ export default {
           if (this.data['CollateralDetail']['TextContent']) {
             this.description = this.data['CollateralDetail']['TextContent'][0]['Text']
           }
-          this.img_url = `http://images-jp.amazon.com/images/P/${this.isbn13Toisbn10(this.code)}.09.LZZZZZZZ.jpg`
+          if (this.data['CollateralDetail']['SupportingResource']) {
+            this.img_url = this.data['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
+          }
         } else {
           alert('本がみつかりませんでした。')
         }
