@@ -14,15 +14,15 @@
                 <v-list-item
                 v-for="(owner, i) in propItem.owners"
                 :key="i"
-                @click="rentOwnerID = owner.user.ID,rentOwnerName = owner.user.name"
+                @click="rentOwnerID = owner.user.ID;rentOwnerName = owner.user.name"
                 :disabled="$emit('checkRentalable', owner) === '貸し出しできません' || $emit('checkRentalable', owner) === '現在すべて貸しだし中'">
                   <v-list-item-title>{{ owner.user.name }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
-            <div>
-          {{this.rentOwnerName}}
-           </div>
+              <div>
+                 {{this.rentOwnerName}}
+              </div>
           </v-card-actions>
           <v-card-actions>
             <div v-if="propItem.type == 1">

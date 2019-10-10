@@ -14,14 +14,14 @@
                 <v-list-item
                 v-for="(rentalUser, i) in propItem.rental_users.filter(function (element) {return element.user_id = $store.state.me.ID})"
                 :key="i"
-                @click="returnOwnerID = rentalUser.owner.ID,renturnOwnerName = rentalUser.owner.name">
+                @click="returnOwnerID = rentalUser.owner.ID;returnOwnerName = rentalUser.owner.name">
                   <v-list-item-title>{{ rentalUser.owner.name }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
-            <div>
-          {{this.renturnOwnerName}}
-           </div>
+              <div>
+                 {{this.returnOwnerName}}
+              </div>
           </v-card-actions>
           <v-card-actions v-if="getRentalCount(returnOwnerID) > 1">
             <v-slider :max="getRentalCount(returnOwnerID)" v-model="returnCount" thumb-label="always" />
@@ -48,7 +48,7 @@ export default {
   data () {
     return {
       returnOwnerID: 0,
-      renturnOwnerName: '',
+      returnOwnerName: '',
       returnCount: 1,
       error: '',
       isOpenReturnForm: false
