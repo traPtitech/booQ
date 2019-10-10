@@ -6,7 +6,7 @@
         <v-card width="320">
           <v-card-title class="headline">物品を返却する</v-card-title>
           <v-card-actions>
-            <v-menu bottom origin="center center" transition="scale-transition" open-on-hover>
+            <v-menu bottom origin="center center" transition="scale-transition">
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark v-on="on">返却する所有者を選ぶ</v-btn>
               </template>
@@ -14,11 +14,14 @@
                 <v-list-item
                 v-for="(rentalUser, i) in propItem.rental_users.filter(function (element) {return element.user_id = $store.state.me.ID})"
                 :key="i"
-                @click="returnOwnerID = rentalUser.owner.ID">
+                @click="returnOwnerID = rentalUser.owner.ID,renturnOwnerName = rentalUser.owner.name">
                   <v-list-item-title>{{ rentalUser.owner.name }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
+            <div>
+          {{this.renturnOwnerName}}
+           </div>
           </v-card-actions>
           <v-card-actions v-if="getRentalCount(returnOwnerID) > 1">
             <v-slider :max="getRentalCount(returnOwnerID)" v-model="returnCount" thumb-label="always" />
@@ -45,6 +48,7 @@ export default {
   data () {
     return {
       returnOwnerID: 0,
+      renturnOwnerName: '',
       returnCount: 1,
       error: '',
       isOpenReturnForm: false
