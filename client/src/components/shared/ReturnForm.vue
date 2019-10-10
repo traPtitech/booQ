@@ -14,7 +14,7 @@
                 <v-list-item
                 v-for="(rentalUser, i) in propItem.rental_users.filter(function (element) {return element.user_id = $store.state.me.ID})"
                 :key="i"
-                @click="returnOwnerID = rentalUser.owner.ID">
+                @click="returnOwnerID = rentalUser.owner.ID; returnOwnerName = rentalUser.owner.name">
                   <v-list-item-title>{{ rentalUser.owner.name }}</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -36,6 +36,7 @@
 
 <script>
 import axios from 'axios'
+import { traQBaseURL } from '../../utils/api.js'
 
 export default {
   name: 'ReturnForm',
@@ -45,6 +46,7 @@ export default {
   data () {
     return {
       returnOwnerID: 0,
+      returnOwnerName: '',
       returnCount: 1,
       error: '',
       isOpenReturnForm: false
@@ -80,6 +82,13 @@ export default {
       if (!this.error) { alert('あなたは”' + this.propItem.name + '”を返しました。') }
       this.isOpenReturnForm = !this.isOpenReturnForm
       this.$emit('reload')
+      if (this.propItem.type === 0) {
+        const traQmessage = '@' + this.rentalOwnerName + ' の' + this.propItem.name + 'を返しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
+        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=` + 1, { text: traQmessage }).catch(e => { alert(e) })
+      } else {
+        const traQmessage = this.propItem.name + '\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
+        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + `/messages?embed=` + 1, { text: traQmessage }).catch(e => { alert(e) })
+      }
     },
     open () {
       this.isOpenReturnForm = !this.isOpenReturnForm

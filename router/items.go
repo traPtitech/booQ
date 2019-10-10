@@ -72,6 +72,25 @@ func GetItem(c echo.Context) error {
 	return c.JSON(http.StatusOK, item)
 }
 
+// DeleteItem DELETE /items/:id
+func DeleteItem(c echo.Context) error {
+	ID := c.Param("id")
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, err := model.GetItemByID(uint(itemID))
+	if err != nil {
+		return c.JSON(http.StatusNotFound, err)
+	}
+	item, err = model.DestroyItem(item)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, err)
+	}
+
+	return c.JSON(http.StatusOK, item)
+}
+
 // PostOwners POST /items/:id/owners
 func PostOwners(c echo.Context) error {
 	ID := c.Param("id")

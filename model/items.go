@@ -265,3 +265,9 @@ func SearchItems(searchString string) ([]Item, error) {
 	}
 	return res, nil
 }
+
+// DestroyItem itemを削除する
+func DestroyItem(item Item) (Item, error) {
+	db.Delete(&item)
+	return item, nil
+}

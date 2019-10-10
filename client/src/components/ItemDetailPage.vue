@@ -16,6 +16,7 @@
             <div>
               <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
               <ReturnForm @reload="reload" :propItem="data"/>
+              <v-btn color="error" block v-if="$store.state.me.admin" @click="destroyItem" error>削除</v-btn>
             </div>
             <div>
               <v-btn v-if="isLiked" block @click="removeLike">
@@ -216,6 +217,13 @@ export default {
     async reload () {
       const res = await axios.get(`/api/items/` + this.$route.params.id).catch(e => { alert(e) })
       this.data = res.data
+    },
+    async destroyItem () {
+      const result = window.confirm('本当に削除しますか？')
+      if ( result === true ) {
+        await axios.delete(`/api/items/` + this.$route.params.id).catch(e => { alert(e) })
+        this.$router.push({ path: `/items` })
+      }
     }
   }
 }
