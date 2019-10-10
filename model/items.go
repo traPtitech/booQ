@@ -14,7 +14,7 @@ type Item struct {
 	Code        string       `gorm:"type:varchar(13);" json:"code"`
 	Description string       `gorm:"type:text;" json:"description"`
 	ImgURL      string       `gorm:"type:text;" json:"img_url"`
-	Owners      []Owner      `gorm:"many2many:ownership_maps;" json:"owners"`
+	Owners      []*Owner     `gorm:"many2many:ownership_maps;" json:"owners"`
 	RentalUsers []RentalUser `gorm:"many2many:rental_user_maps;" json:"rental_users"`
 	Logs        []Log        `json:"logs"`
 	LatestLogs  []Log        `json:"latest_logs"`
@@ -225,6 +225,27 @@ func CancelLike(itemID, userID uint) (Item, error) {
 	}
 	db.Model(&item).Association("Likes").Delete(&user)
 	return item, nil
+}
+
+// SearchItemsByOwnerName itemsをOwnerNameから取得する
+func SearchItemByOwner(ownerName string) ([]Item, error) {
+	res := []Item{}
+	items := []Item{}
+	db.Find(&res)
+	for _, item := range res {
+		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.RentalUsers, "RentalUsers").Related(&item.Comments, "Comments").Related(&item.Likes, "Likes")
+		var err error
+		item.LatestLogs, err = GetLatestLogs(item.Logs)
+		if err != nil {
+			return []Item{}, err
+		}
+		for _, owner := range item.Owners {
+			if owner.User.Name == ownerName {
+				items = append(items, item)
+			}
+		}
+	}
+	return items, nil
 }
 
 // SearchItems itemsをNameの部分一致で取得する

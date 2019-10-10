@@ -77,7 +77,7 @@ export default {
         })
       if (!this.error) { alert(this.message) }
       this.isOpenAddOwner = !this.isOpenAddOwner
-      this.$emit('add')
+      this.$emit('reload')
     },
     open () {
       this.isOpenAddOwner = !this.isOpenAddOwner

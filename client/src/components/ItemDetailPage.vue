@@ -49,7 +49,7 @@
       <div class="content">
         <h2>
           所有者
-          <RegisterOwnerForm/>
+          <RegisterOwnerForm @reload="reload"/>
         </h2>
         <!-- FIXME: 他のタスクに手をつけたかったので表示が適当です -->
         <div v-for="owner in data.owners" :key="owner.id">
