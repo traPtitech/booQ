@@ -6,7 +6,7 @@
         <v-card width="320">
           <v-card-title class="headline">物品を借りる</v-card-title>
           <v-card-actions>
-            <v-menu bottom origin="center center" transition="scale-transition" open-on-hover>
+            <v-menu bottom origin="center center" transition="scale-transition" >
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark v-on="on">所有者を選ぶ</v-btn>
               </template>
@@ -14,12 +14,15 @@
                 <v-list-item
                 v-for="(owner, i) in propItem.owners"
                 :key="i"
-                @click="rentOwnerID = owner.user.ID"
+                @click="rentOwnerID = owner.user.ID; rentOwnerName = owner.user.name"
                 :disabled="$emit('checkRentalable', owner) === '貸し出しできません' || $emit('checkRentalable', owner) === '現在すべて貸しだし中'">
                   <v-list-item-title>{{ owner.user.name }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
+              <div>
+                 {{rentOwnerName}}
+              </div>
           </v-card-actions>
           <v-card-actions>
             <div v-if="propItem.type == 1">
@@ -70,6 +73,7 @@ export default {
       rentalCount: 1,
       dueDate: null,
       rentOwnerID: 0,
+      rentOwnerName: '',
       error: '',
       isOpenRentalForm: false
     }
