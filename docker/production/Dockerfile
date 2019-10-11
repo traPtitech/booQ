@@ -23,7 +23,7 @@ RUN go build
 
 FROM alpine:3.9
 WORKDIR /app
-RUN apk --update add tzdata && \
+RUN apk --update add tzdata ca-certificates && \
   cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
   rm -rf /var/cache/apk/*
 COPY --from=build /go/src/github.com/traPtitech/booQ ./
