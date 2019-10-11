@@ -14,12 +14,19 @@
         dark
         icon
         @click.stop="onClickBtn"
+        style="width: 30px;"
       >
         <v-avatar>
-          <v-img :src="logo" />
+          <img
+            :src="logo"
+            style="width: 30px;"
+          />
         </v-avatar>
       </v-btn>
-      booQ
+      <img
+        :src="logoTitle"
+        class="logo-title"
+      />
     </v-toolbar-title>
     <v-toolbar-title
       v-else
@@ -108,7 +115,8 @@ import axios from 'axios'
 export default {
   data () {
     return {
-      logo: '/img/logo.png',
+      logo: '/img/logo-main.svg',
+      logoTitle: '/img/logo-type.svg',
       title: null,
       responsive: false,
       responsiveInput: false,
@@ -198,5 +206,11 @@ export default {
   }
   #core-app-bar a {
     text-decoration: none;
+  }
+  .logo-title {
+    position: absolute;
+    padding-left: 10px;
+    padding-top: 15px;
+    width: 60px;
   }
 </style>

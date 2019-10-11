@@ -33,10 +33,10 @@
       </label>
       <div class="preview-item">
         <v-img
-          :src="img_url"
+          :src="img_url.length ? img_url : '/img/no-image.svg'"
           aspect-ratio="1"
           position="left"
-          :contain="true"
+          contain
           max-height="400px"
         />
         <div>
@@ -78,7 +78,7 @@ export default {
       name: '',
       description: '',
       img_name: '',
-      img_url: 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail', // NoImage
+      img_url: '',
       count: 1
     }
   },
@@ -122,7 +122,7 @@ export default {
       this.img_url = `${traQBaseURL}/files/${data.data.fileId}/thumbnail`
     },
     remove () {
-      this.img_url = 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail' // NoImage
+      this.img_url = ''
       this.img_name = ''
     },
     isbn13Toisbn10 (isbn13) {
