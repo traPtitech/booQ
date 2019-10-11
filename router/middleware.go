@@ -38,8 +38,12 @@ func (client *TraqClient) GetUsersMe(c echo.Context) (echo.Context, error) {
 	}
 	req, _ := http.NewRequest("GET", baseURL+"/users/me", nil)
 	req.Header.Set("Authorization", token)
+	// FIXME: http.Clientの代わりにhttp.DefaultClientを使う
 	httpClient := new(http.Client)
-	res, _ := httpClient.Do(req)
+	res, err := httpClient.Do(req)
+	if err != nil {
+		return c, errors.New(err.Error())
+	}
 	if res.StatusCode != 200 {
 		return c, errors.New("認証に失敗しました")
 	}
