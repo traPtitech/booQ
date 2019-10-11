@@ -9,7 +9,7 @@
           <div class="image">
             <div>
               <img
-                :src="data.img_url.length ? data.img_url : 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail'"
+                :src="data.img_url.length ? data.img_url : '/img/no-image.svg'"
                 style="width: 250px;"
               />
             </div>

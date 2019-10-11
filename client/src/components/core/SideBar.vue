@@ -11,13 +11,16 @@
   >
     <v-list-item two-line>
       <v-list-item-avatar>
-        <v-img
+        <img
           :src="logo"
-          height="45"
+          style="width: 30px;"
         />
       </v-list-item-avatar>
-      <v-list-item-title class="title">
-        booQ
+      <v-list-item-title>
+        <img
+          :src="logoTitle"
+          class="logo-title"
+        />
       </v-list-item-title>
     </v-list-item>
     <v-divider/>
@@ -102,7 +105,8 @@ export default {
   name: 'SideBar',
   data () {
     return {
-      logo: '/img/logo.png',
+      logo: '/img/logo-main.svg',
+      logoTitle: '/img/logo-type-white.svg',
       searchString: '',
       links: [
         {
@@ -179,3 +183,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.logo-title {
+  position: relative;
+  padding-top: 10px;
+  padding-left: 5px;
+  width: 60px;
+}
+</style>

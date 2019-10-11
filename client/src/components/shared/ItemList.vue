@@ -19,7 +19,7 @@
             style="height: 100px;"
           >
             <img
-              :src="item.img_url.length ? item.img_url : 'https://q.trap.jp/api/1.0/files/3380fbc6-6141-4b60-99ae-a1d270842d60/thumbnail'"
+              :src="item.img_url.length ? item.img_url : '/img/no-image.svg'"
               class="item-list-image"
             />
             <v-list-item-content style="padding-left: 15px;" :to="`/items/${item.ID}`">
