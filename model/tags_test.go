@@ -126,7 +126,7 @@ func TestGetTagByName(t *testing.T) {
 		t.Parallel()
 		assert := assert.New(t)
 
-		tag, err := GetTagByName("testGetTagByNameTag")
+		tag, err := GetTagByName("testGetTagByNameTagFail")
 		assert.Error(err)
 		assert.Empty(tag)
 	})
