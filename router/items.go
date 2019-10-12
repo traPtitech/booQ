@@ -127,6 +127,9 @@ func PostOwners(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+	if body.UserID > 2 && item.Type > 0 {
+		return c.NoContent(http.StatusForbidden)
+	}
 	if item.Type == 1 {
 		user, _ = model.GetUserByName("traP")
 	}
