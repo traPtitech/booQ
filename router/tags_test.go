@@ -41,17 +41,21 @@ func TestPostTags(t *testing.T) {
 }
 
 func TestPostTags2Item(t *testing.T) {
-	item, _ := model.CreateItem(model.Item{Name: "testPostTags2ItemItem"})
-	tag1, _ := model.CreateTag("testPostTags2ItemTag1")
-	tag2, _ := model.CreateTag("testPostTags2ItemTag2")
-	tag3, _ := model.CreateTag("testPostTags2ItemTag3")
+	assert := assert.New(t)
+	item, err := model.CreateItem(model.Item{Name: "testPostTags2ItemItem"})
+	assert.NoError(err)
+	tag1, err := model.CreateTag("testPostTags2ItemTag1")
+	assert.NoError(err)
+	tag2, err := model.CreateTag("testPostTags2ItemTag2")
+	assert.NoError(err)
+	tag3, err := model.CreateTag("testPostTags2ItemTag3")
+	assert.NoError(err)
 	testPostBody := model.RequestPostTags2ItemBody{}
 	testPostBody.ID = append(testPostBody.ID, tag1.ID)
 	testPostBody.ID = append(testPostBody.ID, tag2.ID)
 	testPostBody.ID = append(testPostBody.ID, tag3.ID)
 
 	t.Run("success", func(t *testing.T) {
-		assert := assert.New(t)
 		e := echoSetupWithAdminUser()
 
 		reqBody, _ := json.Marshal(testPostBody)
@@ -72,11 +76,13 @@ func TestPostTags2Item(t *testing.T) {
 }
 
 func TestDeleteTag(t *testing.T) {
+	assert := assert.New(t)
 	t.Run("fail", func(t *testing.T) {
-		assert := assert.New(t)
 		e := echoSetupWithAdminUser()
-		item, _ := model.CreateItem(model.Item{Name: "testDeleteTagFailItem"})
-		tag, _ := model.CreateTag("testDeleteTagFailTag")
+		item, err := model.CreateItem(model.Item{Name: "testDeleteTagFailItem"})
+		assert.NoError(err)
+		tag, err := model.CreateTag("testDeleteTagFailTag")
+		assert.NoError(err)
 
 		req := httptest.NewRequest(echo.DELETE, "/api/items/"+strconv.Itoa(int(item.ID))+"/tags/"+strconv.Itoa(int(tag.ID)), nil)
 		req.Header.Set("Content-Type", "application/json")
@@ -87,11 +93,12 @@ func TestDeleteTag(t *testing.T) {
 	})
 
 	t.Run("success", func(t *testing.T) {
-		assert := assert.New(t)
 		e := echoSetupWithAdminUser()
-		item, _ := model.CreateItem(model.Item{Name: "testDeleteTagSuccessItem"})
-		tag, _ := model.CreateTag("testDeleteTagSuccessTag")
-		_, err := model.AttachTag(tag.ID, item.ID)
+		item, err := model.CreateItem(model.Item{Name: "testDeleteTagSuccessItem"})
+		assert.NoError(err)
+		tag, err := model.CreateTag("testDeleteTagSuccessTag")
+		assert.NoError(err)
+		_, err = model.AttachTag(tag.ID, item.ID)
 		assert.NoError(err)
 
 		req := httptest.NewRequest(echo.DELETE, "/api/items/"+strconv.Itoa(int(item.ID))+"/tags/"+strconv.Itoa(int(tag.ID)), nil)
