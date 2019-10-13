@@ -12,7 +12,7 @@
               </template>
               <v-list>
                 <v-list-item
-                v-for="(rentalUser, i) in propItem.rental_users.filter(function (element) {return element.user_id = $store.state.me.ID})"
+                v-for="(rentalUser, i) in propItem.rental_users.filter(function (element) {return element.user_id === $store.state.me.ID})"
                 :key="i"
                 @click="returnOwnerID = rentalUser.owner.ID; returnOwnerName = rentalUser.owner.name">
                   <v-list-item-title>{{ rentalUser.owner.name }}</v-list-item-title>
