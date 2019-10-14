@@ -45,7 +45,7 @@
         v-model="isOpen2Cart"
         max-width="290"
       >
-        <v-card width="290">
+        <v-card width="270">
           <v-card-title class="headline grey lighten-2" primary-title>
             個数を選択
           </v-card-title>
@@ -73,7 +73,7 @@ export default {
   data () {
     return {
       isOpen2Cart: false,
-      itemCount: 0,
+      itemCount: 1,
       maxCount: 0,
       item: {}
     }
@@ -110,15 +110,25 @@ export default {
       }
       this.item.rentalCount = this.itemCount
       this.$store.commit('item2Cart', this.item)
-      this.itemCount = 0
+      this.itemCount = 1
       this.maxCount = 0
       this.item = {}
       this.isOpen2Cart = !this.isOpen2Cart
     },
     click2Cart (item) {
       this.item = item
-      this.maxCount = this.getBihinLatestCount(item.ID)
+      this.maxCount = this.getBihinLatestCount(item.ID) - this.searchItemCountInCart(item)
       this.isOpen2Cart = !this.isOpen2Cart
+    },
+    searchItemCountInCart (item) {
+      const targetItem = this.$store.state.cart.find(element => {
+        return element.ID === item.ID
+      })
+      if (targetItem) {
+        return targetItem.rentalCount
+      } else {
+        return 0
+      }
     }
   }
 }
