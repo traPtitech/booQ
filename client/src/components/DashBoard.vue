@@ -59,6 +59,7 @@
                   <v-card
                     color="grey lighten-4"
                     min-width="350px"
+                    max-width="600px"
                     flat
                   >
                     <v-toolbar
