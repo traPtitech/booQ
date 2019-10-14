@@ -15,5 +15,6 @@
     ],
     "theme_color": "#5cb860",
     "background_color": "#5cb860",
+    "start_url": "https://booq.trap.jp",
     "display": "standalone"
 }
