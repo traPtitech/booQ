@@ -76,8 +76,11 @@ export default {
         alert('所有者を選択してください')
         return
       }
-      const today = new Date()
-      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', due_date: today.getFullYear() + '-' + ('00' + (today.getMonth() + 1)).slice(-2) + '-' + ('00' + today.getDate()).slice(-2) })
+      const myLatest = this.propItem.latest_logs.find(element => {
+        return element.user_id === this.$store.state.me.ID
+      })
+      const dueDate = myLatest.due_date
+      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', due_date: dueDate })
         .catch(e => {
           alert(e)
           this.error = e

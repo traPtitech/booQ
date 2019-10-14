@@ -9,46 +9,87 @@
         <h2>あなたが現在借りている物品はありません</h2>
       </div>
       <div v-else style="padding-bottom: 30px;">
-        <h2>あなたが借りている物品</h2>
-        <v-card
-          class="mx-auto"
-          width="1500"
-          elevation="5"
-          tile
-        >
-          <v-list
-            two-line
-            avatar
-            nav
+        <div>
+          <div
+            v-for="item in items"
+            :key="item.ID"
           >
-            <v-list-item-group color="primary">
-              <v-list-item
-                v-for="item in items"
-                :key="item.id"
-                @click.stop="$router.push({path: `/items/${item.ID}`})"
-                style="height: 100px;"
-              >
-                <img
-                  :src="item.img_url.length ? item.img_url : '/img/no-image.svg'"
-                  class="item-list-image"
-                />
-                <v-list-item-content style="padding-left: 15px;" :to="`/items/${item.ID}`">
-                  <v-list-item-title class="headline mb-1">{{ item.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ item.owners.map(i => i.user.name).join(', ') }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action class="item-list-icons">
-                  <v-btn
-                    v-if="item.type !== 0"
-                    icon
-                    :disabled="getBihinMyRentalCount(item.ID) === 0"
-                    @click.stop="click2Cart(item)">
-                    <v-icon>mdi-undo-variant</v-icon>
+            <v-alert type="error" v-if="checkDueDate(item)">
+              {{ item.name }}が未返却です
+            </v-alert>
+          </div>
+        </div>
+        <div>
+          <v-row class="fill-height">
+            <v-col>
+              <v-sheet height="64">
+                <v-toolbar flat color="white">
+                  <v-btn fab text small @click="prev">
+                    <v-icon small>mdi-chevron-left</v-icon>
                   </v-btn>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-card>
+                  <v-btn fab text small @click="next">
+                    <v-icon small>mdi-chevron-right</v-icon>
+                  </v-btn>
+                  <v-toolbar-title>あなたが借りている物品</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-btn @click="returnItems" :disabled="!returnCart.length">まとめて返却</v-btn>
+                  <v-btn @click="type='month'">Month</v-btn>
+                </v-toolbar>
+              </v-sheet>
+              <v-sheet height="600">
+                <v-calendar
+                  ref="calendar"
+                  v-model="focus"
+                  color="primary"
+                  :type="type"
+                  :events="items"
+                  :event-color="getItemColor"
+                  :event-margin-bottom="3"
+                  @click:event="showEvent"
+                  @click:more="viewDay"
+                  @change="updateRange"
+                ></v-calendar>
+                <v-menu
+                  v-model="selectedOpen"
+                  :close-on-content-click="false"
+                  :activator="selectedElement"
+                  full-width
+                  offset-x
+                >
+                  <v-card
+                    color="grey lighten-4"
+                    min-width="350px"
+                    flat
+                  >
+                    <v-toolbar
+                      :color="selectedItem.type === 0 ? 'green' : 'grey darken-1'"
+                      dark
+                    >
+                      <v-toolbar-title v-html="selectedItem.name"></v-toolbar-title>
+                    </v-toolbar>
+                    <br>
+                    <div class="text-center">
+                      <v-img v-if="selectedItem.img_url" contain :src="selectedItem.img_url.length ? selectedItem.img_url : '/img/no-image.svg'" height="194" />
+                    </div>
+                    <v-card-text>
+                      <span v-html="selectedItem.description"></span>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-btn
+                        text
+                        color="secondary"
+                        @click="click2Cart(selectedItem)"
+                        outlined
+                      >
+                        返却するものにまとめる
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-menu>
+              </v-sheet>
+            </v-col>
+          </v-row>
+        </div>
       </div>
       <div v-if="returnCart.length">
         <div>まとめて返却する備品</div>
@@ -102,7 +143,51 @@ export default {
       maxCount: 0,
       item: {},
       items: null,
-      error: null
+      error: null,
+      // 以下カレンダー
+      type: 'month',
+      today: null,
+      focus: null,
+      start: null,
+      end: null,
+      selectedItem: {},
+      selectedElement: null,
+      selectedOpen: false
+    }
+  },
+  computed: {
+    title () {
+      const { start, end } = this
+      if (!start || !end) {
+        return ''
+      }
+
+      const startMonth = this.monthFormatter(start)
+      const endMonth = this.monthFormatter(end)
+      const suffixMonth = startMonth === endMonth ? '' : endMonth
+
+      const startYear = start.year
+      const endYear = end.year
+      const suffixYear = startYear === endYear ? '' : endYear
+
+      const startDay = start.day + this.nth(start.day)
+      const endDay = end.day + this.nth(end.day)
+
+      switch (this.type) {
+        case 'month':
+          return `${startMonth} ${startYear}`
+        case 'week':
+        case '4day':
+          return `${startMonth} ${startDay} ${startYear} - ${suffixMonth} ${endDay} ${suffixYear}`
+        case 'day':
+          return `${startMonth} ${startDay} ${startYear}`
+      }
+      return ''
+    },
+    monthFormatter () {
+      return this.$refs.calendar.getFormatter({
+        timeZone: 'GMT', month: 'long'
+      })
     }
   },
   mounted () {
@@ -154,12 +239,15 @@ export default {
     },
     async returnItems () {
       if (!this.returnCart) return false
-      const today = new Date()
       for (let i = 0; i < this.returnCart.length; i++) {
         let names = []
+        const myLatest = this.returnCart[i].latest_logs.find(element => {
+          return element.user_id === this.$store.state.me.ID
+        })
+        const dueDate = myLatest.due_date
         names = names.push(this.returnCart[i].name)
         const ownerID = this.returnCart[i].rental_users.length === 1 ? this.returnCart[i].rental_users[0].owner_id : 1
-        await axios.post(`/api/items/` + this.returnCart[i].ID + `/logs`, { owner_id: ownerID, type: 1, count: this.returnCart[i].returnCount, purpose: '', due_date: today.getFullYear() + '-' + ('00' + (today.getMonth() + 1)).slice(-2) + '-' + ('00' + today.getDate()).slice(-2) })
+        await axios.post(`/api/items/` + this.returnCart[i].ID + `/logs`, { owner_id: ownerID, type: 1, count: this.returnCart[i].returnCount, purpose: '', due_date: dueDate })
           .catch(e => {
             this.error = e
             alert(e)
@@ -183,7 +271,71 @@ export default {
         .catch(e => {
           alert(e)
         })
+      for (let i = 0; i < res.data.length; i++) {
+        res.data[i].start = res.data[i].latest_logs[0].due_date.substr(0, 10)
+        // res.data[i].stop = res.data[i].due_date
+      }
       this.items = res.data
+      let day = new Date()
+      day = day.getFullYear() + '-' + ('00' + (day.getMonth() + 1)).slice(-2) + '-' + ('00' + day.getDate()).slice(-2)
+      this.today = day
+      this.focus = day
+    },
+    viewDay ({ date }) {
+      this.focus = date
+      this.type = 'day'
+    },
+    getItemColor (item) {
+      if (item.type === 0) {
+        return 'green'
+      } else {
+        return 'grey darken-1'
+      }
+    },
+    setToday () {
+      this.focus = this.today
+    },
+    prev () {
+      this.$refs.calendar.prev()
+    },
+    next () {
+      this.$refs.calendar.next()
+    },
+    showEvent ({ nativeEvent, event }) {
+      const open = () => {
+        this.selectedItem = event
+        this.selectedElement = nativeEvent.target
+        setTimeout(this.selectedOpen = true, 10)
+        return true
+      }
+
+      if (this.selectedOpen) {
+        this.selectedOpen = false
+        setTimeout(open, 10)
+      } else {
+        open()
+      }
+
+      nativeEvent.stopPropagation()
+    },
+    updateRange ({ start, end }) {
+      // You could load events from an outside source (like database) now that we have the start and end dates on the calendar
+      this.start = start
+      this.end = end
+    },
+    nth (d) {
+      return d > 3 && d < 21
+        ? 'th'
+        : ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'][d % 10]
+    },
+    checkDueDate (item) {
+      let today = new Date()
+      today = today.getFullYear() + '-' + ('00' + (today.getMonth() + 1)).slice(-2) + '-' + ('00' + today.getDate()).slice(-2)
+      if (today > item.start) {
+        return true
+      } else {
+        return false
+      }
     }
   }
 }
