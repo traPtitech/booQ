@@ -81,6 +81,7 @@
                         color="secondary"
                         @click="click2Cart(selectedItem)"
                         outlined
+                        v-if="selectedItem.type != 0"
                       >
                         返却するものにまとめる
                       </v-btn>
