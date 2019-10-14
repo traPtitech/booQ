@@ -115,9 +115,14 @@ export default {
           text: 'Dashboard'
         },
         {
-          to: '/items',
-          icon: 'mdi-view-list',
-          text: 'Item List'
+          to: '/items/equipment',
+          icon: 'home_work',
+          text: 'Equipment List'
+        },
+        {
+          to: '/items/property',
+          icon: 'menu_book',
+          text: 'Personal Property List'
         },
         // {
         //   to: `/users`,

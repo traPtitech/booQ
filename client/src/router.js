@@ -7,7 +7,7 @@ import UserPage from './components/UserPage.vue'
 import RegisterItemPage from './components/RegisterItemPage'
 import ItemDetailPage from './components/ItemDetailPage'
 import AdminPage from './components/AdminPage'
-import AllItemPage from './components/AllItemPage'
+import ItemListPage from './components/ItemListPage'
 import { fetchAuthToken, setAuthToken, getMe } from './utils/api'
 
 setAuthToken(store.state.authToken)
@@ -46,6 +46,16 @@ export default new Router({
       component: RegisterItemPage
     },
     {
+      path: '/items/equipment',
+      name: 'Equipments',
+      component: ItemListPage
+    },
+    {
+      path: '/items/property',
+      name: 'Personal Property Items',
+      component: ItemListPage
+    },
+    {
       path: '/items/:id',
       name: 'Item',
       component: ItemDetailPage
@@ -53,7 +63,7 @@ export default new Router({
     {
       path: '/items',
       name: 'All Items',
-      component: AllItemPage
+      component: ItemListPage
     },
     {
       path: '/admin',
