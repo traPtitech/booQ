@@ -45,7 +45,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$route)
     switch (this.$route.path) {
       case '/items/equipment':
         this.getItemsByType(1)
