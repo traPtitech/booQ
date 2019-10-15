@@ -256,7 +256,7 @@ export default {
         const dueDate = myLatest.due_date
         names = names.push(this.returnCart[i].name)
         const ownerID = this.returnCart[i].rental_users.length === 1 ? this.returnCart[i].rental_users[0].owner_id : 1
-        await axios.post(`/api/items/` + this.returnCart[i].ID + `/logs`, { owner_id: ownerID, type: 1, count: this.returnCart[i].returnCount, purpose: '', due_date: dueDate })
+        await axios.post(`/api/items/` + this.returnCart[i].ID + `/logs`, { owner_id: ownerID, type: 1, count: this.returnCart[i].returnCount, purpose: '', due_date: dueDate.substr(0, 10) })
           .catch(e => {
             this.error = e
             alert(e)
