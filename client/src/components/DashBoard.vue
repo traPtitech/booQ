@@ -276,7 +276,7 @@ export default {
     },
     async mount () {
       const me = await getMe()
-      const res = await axios.get(`/api/items?rental=` + me.name)
+      const res = await axios.get(`/api/items?rental=` + me.data.name)
         .catch(e => {
           alert(e)
         })

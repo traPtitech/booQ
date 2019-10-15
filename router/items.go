@@ -1,6 +1,7 @@
 package router
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -13,9 +14,12 @@ import (
 func GetItems(c echo.Context) error {
 	ownerName := c.QueryParam("user")
 	if ownerName != "" {
-		_, err := model.GetUserByName(ownerName)
+		user, err := model.GetUserByName(ownerName)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)
+		}
+		if user.ID == 0 {
+			return c.JSON(http.StatusBadRequest, errors.New("指定してるNameが不正です"))
 		}
 		res, err := model.SearchItemByOwner(ownerName)
 		if err != nil {
@@ -36,6 +40,9 @@ func GetItems(c echo.Context) error {
 		user, err := model.GetUserByName(rentalName)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)
+		}
+		if user.ID == 0 {
+			return c.JSON(http.StatusBadRequest, errors.New("指定してるNameが不正です"))
 		}
 		res, err := model.SearchItemByRental(user.ID)
 		if err != nil {
