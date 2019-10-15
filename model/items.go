@@ -268,7 +268,7 @@ func SearchItemByRental(rentalUserID uint) ([]Item, error) {
 			return []Item{}, err
 		}
 		for _, rentalUser := range item.RentalUsers {
-			if rentalUser.UserID == rentalUserID || rentalUser.Count < 0 {
+			if rentalUser.UserID == rentalUserID && rentalUser.Count < 0 {
 				res = append(res, item)
 			}
 		}
