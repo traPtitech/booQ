@@ -168,7 +168,7 @@ func RentalItem(rentalUser RentalUser, ownerID uint, item Item, logType int) (It
 	db.Preload("RentalUsers").Preload("Owners").Find(&item)
 	// owner.User, _ = GetUserByID(int(owner.UserID))
 	for _, nowRentalUser := range item.RentalUsers {
-		if nowRentalUser.UserID != rentalUser.UserID || nowRentalUser.Owner.ID != ownerID {
+		if nowRentalUser.UserID != rentalUser.UserID || nowRentalUser.OwnerID != ownerID {
 			continue
 		}
 		existed = true
