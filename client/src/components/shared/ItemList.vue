@@ -126,9 +126,8 @@ export default {
       })
       if (targetItem) {
         return targetItem.rentalCount
-      } else {
-        return 0
       }
+      return 0
     }
   }
 }
