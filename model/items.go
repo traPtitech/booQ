@@ -27,7 +27,7 @@ type Owner struct {
 	gorm.Model
 	UserID     uint `gorm:"type:int;not null" json:"owner_id"`
 	User       User `json:"user"`
-	Rentalable bool `gorm:"type:bool;not null;primary_key" json:"rentalable"`
+	Rentalable bool `gorm:"type:bool;not null;primary_key;default:true" json:"rentalable"`
 	Count      int  `gorm:"type:int;default:1" json:"count"`
 }
 
@@ -125,7 +125,7 @@ func CreateItem(item Item) (Item, error) {
 // RegisterOwner 新しい所有者を登録する
 func RegisterOwner(owner Owner, item Item) (Item, error) {
 	var existed bool
-	db.Preload("Owners").Find(&item)
+	db.Set("gorm:auto_preload", true).Find(&item).Related(&item.Owners, "Owners")
 	owner.User, _ = GetUserByID(int(owner.UserID))
 	for _, nowOwner := range item.Owners {
 		if nowOwner.UserID != owner.UserID {
@@ -246,7 +246,7 @@ func SearchItemByOwner(ownerName string) ([]Item, error) {
 		}
 		item.LatestLogs = []Log{}
 		if latestLog.ID != 0 {
-			item.LatestLogs[0] = latestLog
+			item.LatestLogs = append(item.LatestLogs, latestLog)
 			items = append(items, item)
 		}
 	}

@@ -431,8 +431,6 @@ func TestSearchItemByRental(t *testing.T) {
 }
 
 func TestSearchItemByOwner(t *testing.T) {
-	t.Parallel()
-
 	t.Run("failuer", func(t *testing.T) {
 		assert := assert.New(t)
 		items, err := SearchItemByOwner("testSearchItemByOwnerFailOwner")
@@ -442,22 +440,20 @@ func TestSearchItemByOwner(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		assert := assert.New(t)
-		user, err := CreateUser(User{Name: "testSearchItemByOwnerSuccessUser"})
-		assert.NotEmpty(user)
-		assert.NoError(err)
-		ownerUser, err := CreateUser(User{Name: "testSearchItemByOwnerSuccessOwner"})
+		ownerUser, err := CreateUser(User{Name: "testSearchItemByOwSucOwner"})
 		assert.NotEmpty(ownerUser)
 		assert.NoError(err)
-		item1, err := CreateItem(Item{Name: "testSearchItemByOwnerSuccessItem1"})
+		item1, err := CreateItem(Item{Name: "testSearchItemByOwSucItem1"})
 		assert.NotEmpty(item1)
 		assert.NoError(err)
-		item2, err := CreateItem(Item{Name: "testSearchItemByOwnerSuccessItem2"})
+		item2, err := CreateItem(Item{Name: "testSearchItemByOwSucItem2"})
 		assert.NotEmpty(item2)
 		assert.NoError(err)
 		owner := Owner{
-			UserID: ownerUser.ID,
-			User:   ownerUser,
-			Count:  1,
+			UserID:     ownerUser.ID,
+			User:       ownerUser,
+			Count:      1,
+			Rentalable: true,
 		}
 		item1, err = RegisterOwner(owner, item1)
 		assert.NotEmpty(item1)
@@ -468,12 +464,18 @@ func TestSearchItemByOwner(t *testing.T) {
 		exist1 := false
 		exist2 := false
 		for _, item := range items {
-			for _, nowOwner := range item.Owners {
-				if nowOwner.UserID == owner.UserID && item.Name == item1.Name {
-					exist1 = true
+			if item.Name == item1.Name {
+				for _, nowOwner := range item.Owners {
+					if nowOwner.User.Name == ownerUser.Name {
+						exist1 = true
+					}
 				}
-				if nowOwner.UserID == owner.UserID && item.Name == item2.Name {
-					exist2 = true
+			}
+			if item.Name == item2.Name {
+				for _, nowOwner := range item.Owners {
+					if nowOwner.User.Name == ownerUser.Name {
+						exist2 = true
+					}
 				}
 			}
 		}

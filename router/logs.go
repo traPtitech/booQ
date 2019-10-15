@@ -31,10 +31,12 @@ func PostLogs(c echo.Context) error {
 	var itemCount int
 	var exist bool
 	for _, owner := range item.Owners {
-		if owner.User.ID == body.OwnerID {
+		if owner.UserID == body.OwnerID {
 			if !owner.Rentalable {
+				fmt.Print("aaaaa")
 				return c.NoContent(http.StatusForbidden)
 			}
+			fmt.Print("bbbbb")
 			itemCount = owner.Count
 			exist = true
 		}

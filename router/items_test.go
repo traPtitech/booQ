@@ -87,6 +87,36 @@ func TestPostItems(t *testing.T) {
 	})
 }
 
+func TestDeleteItem(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+
+	item, err := model.CreateItem(model.Item{Name: "testDeleteKojinItem"})
+	assert.NoError(err)
+	assert.NotEmpty(item)
+
+	t.Run("admin user", func(t *testing.T) {
+		e := echoSetupWithAdminUser()
+
+		req := httptest.NewRequest(echo.DELETE, "/api/items/"+strconv.Itoa(int(item.ID)), nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusOK, rec.Code)
+
+		nowItem, err := model.GetItemByID(item.ID)
+		assert.Empty(nowItem)
+		assert.Error(err)
+	})
+
+	// admin以外を弾くようにしたら書いてください
+	// t.Run("not admin user", func(t *testing.T) {
+	// 	e := echoSetupWithUser()
+
+	// })
+}
+
 func TestPostOwners(t *testing.T) {
 	testBodyTrap := model.Item{
 		Name:        "testPostOwnersTrapItem",
