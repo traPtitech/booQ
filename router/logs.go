@@ -83,7 +83,7 @@ func PostLogs(c echo.Context) error {
 			OwnerID: body.OwnerID,
 			Count:   body.Count * -1,
 		}
-		_, err = model.RentalItem(rentalUser, body.OwnerID, item, 0)
+		_, err = model.RentalItem(rentalUser, item)
 		if err != nil {
 			fmt.Print("rentalItemErr")
 			return c.JSON(http.StatusBadRequest, err)
@@ -105,7 +105,7 @@ func PostLogs(c echo.Context) error {
 			OwnerID: body.OwnerID,
 			Count:   body.Count,
 		}
-		_, err = model.RentalItem(rentalUser, body.OwnerID, item, 0)
+		_, err = model.RentalItem(rentalUser, item)
 		if err != nil {
 			fmt.Print("rentalItemErr")
 			return c.JSON(http.StatusBadRequest, err)

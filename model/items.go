@@ -163,21 +163,16 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 }
 
 // RentalItem 物品を借りたりするときにRentalUserを作成する
-func RentalItem(rentalUser RentalUser, ownerID uint, item Item, logType int) (Item, error) {
+func RentalItem(rentalUser RentalUser, item Item) (Item, error) {
 	var existed bool
 	db.Preload("RentalUsers").Preload("Owners").Find(&item)
 	// owner.User, _ = GetUserByID(int(owner.UserID))
 	for _, nowRentalUser := range item.RentalUsers {
-		if nowRentalUser.UserID != rentalUser.UserID || nowRentalUser.Owner.ID != ownerID {
+		if nowRentalUser.UserID != rentalUser.UserID || nowRentalUser.OwnerID != rentalUser.OwnerID {
 			continue
 		}
 		existed = true
-		if logType == 0 {
-			nowRentalUser.Count += rentalUser.Count
-		}
-		if logType == 1 {
-			nowRentalUser.Count += rentalUser.Count
-		}
+		nowRentalUser.Count += rentalUser.Count
 		if nowRentalUser.Count > 0 {
 			return Item{}, errors.New("Return超過3")
 		}
@@ -234,14 +229,17 @@ func CancelLike(itemID, userID uint) (Item, error) {
 func SearchItemByOwner(ownerName string) ([]Item, error) {
 	res := []Item{}
 	items := []Item{}
+	owner, err := GetUserByName(ownerName)
+	if owner.ID == 0 {
+		return []Item{}, errors.New("該当のUserが存在しません")
+	}
+	if err != nil {
+		return []Item{}, err
+	}
 	db.Find(&res)
 	for _, item := range res {
 		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.RentalUsers, "RentalUsers").Related(&item.Comments, "Comments").Related(&item.Likes, "Likes")
 		var err error
-		owner, err := GetUserByName(ownerName)
-		if err != nil {
-			return []Item{}, errors.New("該当のUserが存在しません")
-		}
 		latestLog, err := GetLatestLog(item.Logs, owner.ID)
 		if err != nil {
 			return []Item{}, err
@@ -296,6 +294,7 @@ func SearchItems(searchString string) ([]Item, error) {
 
 // DestroyItem itemを削除する
 func DestroyItem(item Item) (Item, error) {
+	// ここでは指定のItemがあるかどうか判定していません
 	db.Delete(&item)
 	return item, nil
 }
