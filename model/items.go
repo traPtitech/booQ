@@ -185,6 +185,9 @@ func RentalItem(rentalUser RentalUser, ownerID uint, item Item, logType int) (It
 		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.RentalUsers, "RentalUsers")
 	}
 	if !existed {
+		if rentalUser.Count > 0 {
+			return Item{}, errors.New("該当のUserは指定のItemを借りていません")
+		}
 		db.Create(&rentalUser)
 		db.Model(&item).Association("RentalUsers").Append(&rentalUser)
 	}
