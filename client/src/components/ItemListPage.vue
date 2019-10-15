@@ -19,7 +19,7 @@ import ItemList from './shared/ItemList'
 import axios from 'axios'
 
 export default {
-  name: 'AllItemPage',
+  name: 'ItemListPage',
   components: {
     ItemList
   },
@@ -31,14 +31,34 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      this.mount()
+      switch (to.path) {
+        case '/items/equipment':
+          this.getItemsByType(1)
+          break
+        case '/items/property':
+          this.getItemsByType(0)
+          break
+        default:
+          this.search()
+          break
+      }
     }
   },
   mounted () {
-    this.mount()
+    switch (this.$route.path) {
+      case '/items/equipment':
+        this.getItemsByType(1)
+        break
+      case '/items/property':
+        this.getItemsByType(0)
+        break
+      default:
+        this.search()
+        break
+    }
   },
   methods: {
-    async mount () {
+    async search () {
       let searchParam = this.$route.query.search
       if (this.$route.query.search === undefined) {
         searchParam = ''
@@ -46,9 +66,18 @@ export default {
       const res = await axios.get(`/api/items?search=` + searchParam)
         .catch(e => {
           alert(e)
-          return false
         })
       this.data = res.data
+    },
+    async getItemsByType (type) {
+      const res = await axios.get('/api/items')
+        .catch(e => {
+          alert(e)
+        })
+      const items = res.data.filter(item => {
+        return item.type === type
+      })
+      this.data = items
     }
   }
 }
