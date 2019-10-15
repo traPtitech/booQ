@@ -31,7 +31,7 @@
                     <v-icon small>mdi-chevron-right</v-icon>
                   </v-btn>
                   <v-toolbar-title>あなたが借りている物品</v-toolbar-title>
-                  <v-spacer></v-spacer>
+                  <v-spacer />
                   <v-btn @click="returnItems" :disabled="!returnCart.length">まとめて返却</v-btn>
                   <v-btn @click="type='month'">Month</v-btn>
                 </v-toolbar>
@@ -48,7 +48,7 @@
                   @click:event="showEvent"
                   @click:more="viewDay"
                   @change="updateRange"
-                ></v-calendar>
+                />
                 <v-menu
                   v-model="selectedOpen"
                   :close-on-content-click="false"
@@ -66,14 +66,14 @@
                       :color="selectedItem.type === 0 ? 'green' : 'grey darken-1'"
                       dark
                     >
-                      <v-toolbar-title v-html="selectedItem.name"></v-toolbar-title>
+                      <v-toolbar-title>{{ selectedItem.name }}</v-toolbar-title>
                     </v-toolbar>
                     <br>
                     <div class="text-center">
                       <v-img v-if="selectedItem.img_url" contain :src="selectedItem.img_url.length ? selectedItem.img_url : '/img/no-image.svg'" height="194" />
                     </div>
                     <v-card-text>
-                      <span v-html="selectedItem.description"></span>
+                      <span>{{ selectedItem.description }}</span>
                     </v-card-text>
                     <v-card-actions>
                       <v-btn
@@ -333,11 +333,7 @@ export default {
     checkDueDate (item) {
       let today = new Date()
       today = today.getFullYear() + '-' + ('00' + (today.getMonth() + 1)).slice(-2) + '-' + ('00' + today.getDate()).slice(-2)
-      if (today > item.start) {
-        return true
-      } else {
-        return false
-      }
+      return today > item.start
     }
   }
 }
