@@ -218,7 +218,14 @@ export default {
         return
       }
       this.item.returnCount = this.itemCount
-      this.returnCart.push(this.item)
+      const targetItem = this.returnCart.filter(element => {
+        return element.ID === this.item.ID
+      })
+      if (targetItem.length === 1) {
+        targetItem[0].returnCount += this.item.returnCount
+      } else {
+        this.returnCart.push(this.item)
+      }
       this.itemCount = 0
       this.maxCount = 0
       this.item = {}

@@ -40,7 +40,14 @@ export default new Vuex.Store({
       state.aboutDialog = !state.aboutDialog
     },
     item2Cart (state, data) {
-      state.cart.push(data)
+      const targetItem = state.cart.filter(element => {
+        return element.ID === data.ID
+      })
+      if (targetItem.length === 1) {
+        targetItem[0].rentalCount += data.rentalCount
+      } else {
+        state.cart.push(data)
+      }
     },
     removeItemFromCart (state, i) {
       state.cart.splice(i, 1)
