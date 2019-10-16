@@ -240,14 +240,14 @@ func SearchItemByOwner(ownerName string) ([]Item, error) {
 	for _, item := range res {
 		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.RentalUsers, "RentalUsers").Related(&item.Comments, "Comments").Related(&item.Likes, "Likes")
 		var err error
-		latestLog, err := GetLatestLog(item.Logs, owner.ID)
+		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
 			return []Item{}, err
 		}
-		item.LatestLogs = []Log{}
-		if latestLog.ID != 0 {
-			item.LatestLogs = append(item.LatestLogs, latestLog)
-			items = append(items, item)
+		for _, owner := range item.Owners {
+			if owner.User.Name == ownerName {
+				items = append(items, item)
+			}
 		}
 	}
 	return items, nil

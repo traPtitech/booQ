@@ -117,6 +117,141 @@ func TestDeleteItem(t *testing.T) {
 	// })
 }
 
+func TestGetItem(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+
+	t.Run("fail", func(t *testing.T) {
+		e := echoSetupWithUser()
+
+		req := httptest.NewRequest(echo.GET, "/api/items/999", nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusNotFound, rec.Code)
+
+		req = httptest.NewRequest(echo.GET, "/api/items/testfail", nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec = httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusBadRequest, rec.Code)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		e := echoSetupWithUser()
+
+		item, err := model.CreateItem(model.Item{Name: "testGetItemRouter"})
+		assert.NoError(err)
+		assert.NotEmpty(item)
+		req := httptest.NewRequest(echo.DELETE, "/api/items/"+strconv.Itoa(int(item.ID)), nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusOK, rec.Code)
+
+		gotItem := model.Item{}
+		_ = json.NewDecoder(rec.Body).Decode(&gotItem)
+		assert.Equal(item.Name, gotItem.Name)
+	})
+}
+
+func TestGetItems(t *testing.T) {
+	assert := assert.New(t)
+	ownerUser, err := model.CreateUser(model.User{Name: "testGetItemsUser"})
+	assert.NoError(err)
+
+	t.Run("failed", func(t *testing.T) {
+		e := echoSetupWithUser()
+
+		req := httptest.NewRequest(echo.GET, "/api/items?rental=testUser", nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusOK, rec.Code)
+		gotItemsFail1 := []model.Item{}
+		_ = json.NewDecoder(rec.Body).Decode(&gotItemsFail1)
+		assert.Equal([]model.Item{}, gotItemsFail1)
+
+		req = httptest.NewRequest(echo.GET, "/api/items?user=testGetItemsUser", nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec = httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusOK, rec.Code)
+		gotItemsFail2 := []model.Item{}
+		_ = json.NewDecoder(rec.Body).Decode(&gotItemsFail2)
+		assert.Equal([]model.Item{}, gotItemsFail2)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		e := echoSetupWithUser()
+
+		item, err := model.CreateItem(model.Item{Name: "testGetItemsItem"})
+		assert.NoError(err)
+		owner := model.Owner{
+			UserID:     ownerUser.ID,
+			Rentalable: true,
+			Count:      1,
+		}
+		_, err = model.RegisterOwner(owner, item)
+		assert.NoError(err)
+		testBodyLogRental := model.RequestPostLogsBody{
+			OwnerID: owner.UserID,
+			Type:    0,
+			Purpose: "GetItemのテストのPurposeですrental1",
+			DueDate: "2000-02-16",
+			Count:   1,
+		}
+
+		reqBody, _ := json.Marshal(testBodyLogRental)
+		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(item.ID))+"/logs", bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusCreated, rec.Code)
+
+		req = httptest.NewRequest(echo.GET, "/api/items?rental=testUser", nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec = httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusOK, rec.Code)
+		gotItemsSuccess1 := []model.Item{}
+		_ = json.NewDecoder(rec.Body).Decode(&gotItemsSuccess1)
+		assert.NotEmpty(gotItemsSuccess1)
+		exist1 := false
+		for _, gotItem := range gotItemsSuccess1 {
+			if item.Name == gotItem.Name {
+				exist1 = true
+			}
+		}
+		assert.Equal(true, exist1)
+
+		req = httptest.NewRequest(echo.GET, "/api/items?user=testGetItemsUser", nil)
+		req.Header.Set("Content-Type", "application/json")
+		rec = httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusOK, rec.Code)
+		gotItemsSuccess2 := []model.Item{}
+		_ = json.NewDecoder(rec.Body).Decode(&gotItemsSuccess2)
+		assert.NotEmpty(gotItemsSuccess2)
+		exist2 := false
+		for _, gotItem := range gotItemsSuccess2 {
+			if item.Name == gotItem.Name {
+				exist2 = true
+			}
+		}
+		assert.Equal(true, exist2)
+	})
+
+}
+
 func TestPostOwners(t *testing.T) {
 	testBodyTrap := model.Item{
 		Name:        "testPostOwnersTrapItem",
