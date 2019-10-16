@@ -168,7 +168,7 @@ func RentalItem(rentalUser RentalUser, ownerID uint, item Item, logType int) (It
 	db.Preload("RentalUsers").Preload("Owners").Find(&item)
 	// owner.User, _ = GetUserByID(int(owner.UserID))
 	for _, nowRentalUser := range item.RentalUsers {
-		if nowRentalUser.UserID != rentalUser.UserID || nowRentalUser.Owner.ID != ownerID {
+		if nowRentalUser.UserID != rentalUser.UserID || nowRentalUser.OwnerID != ownerID {
 			continue
 		}
 		existed = true
@@ -238,18 +238,14 @@ func SearchItemByOwner(ownerName string) ([]Item, error) {
 	for _, item := range res {
 		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.RentalUsers, "RentalUsers").Related(&item.Comments, "Comments").Related(&item.Likes, "Likes")
 		var err error
-		owner, err := GetUserByName(ownerName)
-		if err != nil {
-			return []Item{}, errors.New("該当のUserが存在しません")
-		}
-		latestLog, err := GetLatestLog(item.Logs, owner.ID)
+		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
 			return []Item{}, err
 		}
-		item.LatestLogs = []Log{}
-		if latestLog.ID != 0 {
-			item.LatestLogs[0] = latestLog
-			items = append(items, item)
+		for _, owner := range item.Owners {
+			if owner.User.Name == ownerName {
+				items = append(items, item)
+			}
 		}
 	}
 	return items, nil

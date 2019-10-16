@@ -81,7 +81,7 @@ export default {
         return element.user_id === this.$store.state.me.ID
       })
       const dueDate = myLatest.due_date
-      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', due_date: dueDate })
+      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', due_date: dueDate.substr(0, 10) })
         .catch(e => {
           alert(e)
           this.error = e
