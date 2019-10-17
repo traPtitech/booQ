@@ -119,6 +119,7 @@ export default {
       if (this.checkDigit(data.codeResult.code) && this.checkISBN(data.codeResult.code)) {
         this.$parent.code = data.codeResult.code
         this.$emit('search')
+        this.$parent.isBarcodeRead = false
       }
     },
     checkDigit (isbn) {
