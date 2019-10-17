@@ -17,6 +17,12 @@
       <v-btn class="green green-text" @click="getBookInformation">
         自動入力
       </v-btn>
+      <v-btn class="green green-text" @click="toggleBarcodeRead">
+        バーコード読み取り
+      </v-btn>
+    </div>
+    <div id="barcodewrapper">
+      <BarCode v-if="isBarcodeRead" @search="getBookInformation"/>
     </div>
     <div>
       <div>物品名</div>
@@ -62,9 +68,13 @@
 <script>
 import axios from 'axios'
 import { traQBaseURL } from '../utils/api.js'
+import BarCode from './BarCode'
 
 export default {
   name: 'RegisterItemPage',
+  components: {
+    BarCode
+  },
   data () {
     return {
       ownerID: 0,
@@ -79,7 +89,8 @@ export default {
       description: '',
       img_name: '',
       img_url: '',
-      count: 1
+      count: 1,
+      isBarcodeRead: false
     }
   },
   watch: {
@@ -158,6 +169,9 @@ export default {
       } else {
         alert('不正な値です。')
       }
+    },
+    toggleBarcodeRead () {
+      this.isBarcodeRead = !this.isBarcodeRead
     }
   }
 }
