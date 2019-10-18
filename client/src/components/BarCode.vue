@@ -108,8 +108,6 @@ export default {
     const width = Math.min(displaySize, 640)
     this.quaggaState.inputStream.constraints.width = width
     this.quaggaState.inputStream.constraints.height = width * 0.75
-    console.log(displaySize)
-    console.log(this.width)
     Quagga.init(this.quaggaState, function (err) {
       if (err) {
         return console.error(err)
@@ -130,9 +128,9 @@ export default {
   methods: {
     onDetected (data) {
       if (this.checkDigit(data.codeResult.code) && this.checkISBN(data.codeResult.code)) {
-        this.$parent.code = data.codeResult.code
+        this.$emit('changeCode', data.codeResult.code)
         this.$emit('search')
-        this.$parent.isBarcodeRead = false
+        this.$parent.modal = false
       }
     },
     checkDigit (isbn) {

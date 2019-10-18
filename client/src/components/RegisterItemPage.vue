@@ -23,7 +23,7 @@
     </div>
     <div id="barcodewrapper">
       <Modal @close="closeModal" v-if="modal">
-        <BarCode  @search="getBookInformation"/>
+        <BarCode  @search="getBookInformation" @changeCode="changeCode"/>
       </Modal>
     </div>
     <div>
@@ -179,6 +179,9 @@ export default {
     },
     closeModal () {
       this.modal = false
+    },
+    changeCode (code) {
+      this.code = code
     }
   }
 }
