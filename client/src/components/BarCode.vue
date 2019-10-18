@@ -130,7 +130,6 @@ export default {
       if (this.checkDigit(data.codeResult.code) && this.checkISBN(data.codeResult.code)) {
         this.$emit('changeCode', data.codeResult.code)
         this.$emit('search')
-        this.$parent.modal = false
       }
     },
     checkDigit (isbn) {

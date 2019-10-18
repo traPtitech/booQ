@@ -182,6 +182,7 @@ export default {
     },
     changeCode (code) {
       this.code = code
+      this.closeModal()
     }
   }
 }
