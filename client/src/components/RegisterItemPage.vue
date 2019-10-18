@@ -17,12 +17,14 @@
       <v-btn class="green green-text" @click="getBookInformation">
         自動入力
       </v-btn>
-      <v-btn class="green green-text" @click="toggleBarcodeRead">
+      <v-btn class="green green-text" @click="openModal">
         バーコード読み取り
       </v-btn>
     </div>
     <div id="barcodewrapper">
-      <BarCode v-if="isBarcodeRead" @search="getBookInformation"/>
+      <Modal @close="closeModal" v-if="modal">
+        <BarCode  @search="getBookInformation"/>
+      </Modal>
     </div>
     <div>
       <div>物品名</div>
@@ -69,11 +71,13 @@
 import axios from 'axios'
 import { traQBaseURL } from '../utils/api.js'
 import BarCode from './BarCode'
+import Modal from './Modal'
 
 export default {
   name: 'RegisterItemPage',
   components: {
-    BarCode
+    BarCode,
+    Modal
   },
   data () {
     return {
@@ -90,7 +94,7 @@ export default {
       img_name: '',
       img_url: '',
       count: 1,
-      isBarcodeRead: false
+      modal: false
     }
   },
   watch: {
@@ -170,8 +174,11 @@ export default {
         alert('不正な値です。')
       }
     },
-    toggleBarcodeRead () {
-      this.isBarcodeRead = !this.isBarcodeRead
+    openModal () {
+      this.modal = true
+    },
+    closeModal () {
+      this.modal = false
     }
   }
 }
@@ -180,5 +187,8 @@ export default {
 <style scoped>
 .contents {
   padding-bottom: 30px;
+}
+v-btn {
+  margin: 50px
 }
 </style>

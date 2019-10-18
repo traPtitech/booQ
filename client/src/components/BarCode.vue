@@ -1,7 +1,7 @@
 <template>
-  <div id="interactive" class="viewport scanner quagga">
-    <video />
-    <canvas class="drawingBuffer" />
+  <div id="interactive" class="viewport scanner" :style="styles">
+    <video class="quagga"/>
+    <canvas class="drawingBuffer quagga" />
   </div>
 </template>
 
@@ -96,6 +96,11 @@ export default {
         },
         locate: true
       }
+      // styles: {
+      //   display: 'inlineBlock',
+      //   width: `${this.quaggaState.inputStream.constraints.width}px`,
+      //   height: `${this.quaggaState.inputStream.constraints.width * 0.75}px`
+      // }
     }
   },
   mounted () {
@@ -113,6 +118,14 @@ export default {
     })
     Quagga.onDetected(this.onDetected)
     Quagga.onProcessed(this.onProcessed)
+  },
+  computed: {
+    styles () {
+      return {
+        width: `${this.quaggaState.inputStream.constraints.width}px`,
+        height: `${this.quaggaState.inputStream.constraints.width * 0.75}px`
+      }
+    }
   },
   methods: {
     onDetected (data) {
@@ -158,9 +171,15 @@ export default {
   left: 0;
   top: 0;
 }
+.quagga-wrapper {
+  display: inline-block;
+  width: 640px;
+  height: 480px;
+}
 .quagga {
   display: inline-block;
-  height: 540px;
+  left: 0;
+  right:0;
   margin: auto;
 }
 </style>
