@@ -110,7 +110,7 @@ export default {
     this.quaggaState.inputStream.constraints.height = width * 0.75
     Quagga.init(this.quaggaState, function (err) {
       if (err) {
-        return console.error(err)
+        alert('カメラの初期化処理に失敗しました')
       }
       Quagga.start()
     })
