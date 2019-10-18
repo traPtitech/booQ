@@ -192,7 +192,4 @@ export default {
 .contents {
   padding-bottom: 30px;
 }
-v-btn {
-  margin: 50px
-}
 </style>

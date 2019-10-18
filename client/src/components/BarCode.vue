@@ -8,7 +8,7 @@
 <script>
 import Quagga from 'quagga'
 export default {
-  name: 'QuaggaScanner',
+  name: 'BarCode',
   props: {
     onProcessed: {
       type: Function,
@@ -96,11 +96,6 @@ export default {
         },
         locate: true
       }
-      // styles: {
-      //   display: 'inlineBlock',
-      //   width: `${this.quaggaState.inputStream.constraints.width}px`,
-      //   height: `${this.quaggaState.inputStream.constraints.width * 0.75}px`
-      // }
     }
   },
   mounted () {

@@ -15,7 +15,7 @@
   </transition>
 </template>
 
-<style  scoped>
+<style scoped>
 .modal.modal-overlay {
   display: flex;
   align-items: center;
