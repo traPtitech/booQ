@@ -17,14 +17,16 @@
       <v-btn class="green green-text" @click="getBookInformation">
         自動入力
       </v-btn>
-      <v-btn class="green green-text" @click="openModal">
+      <v-btn class="green green-text" @click="openDialog('barcodeDialog')">
         バーコード読み取り
       </v-btn>
-    </div>
-    <div id="barcodewrapper">
-      <Modal @close="closeModal" v-if="modal">
-        <BarCode  @search="getBookInformation" @changeCode="changeCode"/>
-      </Modal>
+
+        <Dialog ref="barcodeDialog">
+          <template v-slot:content>
+            <BarCode  @search="getBookInformation" @changeCode="changeCode"/>
+          </template>
+        </Dialog>
+
     </div>
     <div>
       <div>物品名</div>
@@ -71,13 +73,13 @@
 import axios from 'axios'
 import { traQBaseURL } from '../utils/api.js'
 import BarCode from './BarCode'
-import Modal from './Modal'
+import Dialog from './core/Dialog'
 
 export default {
   name: 'RegisterItemPage',
   components: {
     BarCode,
-    Modal
+    Dialog
   },
   data () {
     return {
@@ -94,7 +96,7 @@ export default {
       img_name: '',
       img_url: '',
       count: 1,
-      modal: false
+      dialog: false
     }
   },
   watch: {
@@ -174,15 +176,15 @@ export default {
         alert('不正な値です。')
       }
     },
-    openModal () {
-      this.modal = true
+    openDialog (refs) {
+      this.$refs[refs].dialog = true
     },
-    closeModal () {
-      this.modal = false
+    closeDialog () {
+      this.dialog = false
     },
     changeCode (code) {
       this.code = code
-      this.closeModal()
+      this.closeDialog()
     }
   }
 }
