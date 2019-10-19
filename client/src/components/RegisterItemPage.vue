@@ -24,7 +24,7 @@
 
         <Dialog ref="barcodeDialog" closeText="閉じる">
           <template v-slot:content>
-            <BarCode  @search="getBookInformation" @changeCode="changeCode"/>
+            <BarCode  @search="getBookInformation" @changeCode="changeCode($event,'barcodeDialog')"/>
           </template>
         </Dialog>
 
@@ -102,10 +102,10 @@ export default {
       dialog: false,
       alert: {
         isAlert: false,
-        errMessage: 'エラー',
+        title: 'エラー',
+        message: 'エラー',
         alertType: 'error'
-      },
-      isAlert: true
+      }
 
     }
   },
@@ -189,12 +189,12 @@ export default {
     openDialog (refs) {
       this.$refs[refs].dialog = true
     },
-    closeDialog () {
-      this.dialog = false
+    closeDialog (refs) {
+      this.$refs[refs].dialog = false
     },
-    changeCode (code) {
+    changeCode (code, refs) {
       this.code = code
-      this.closeDialog()
+      this.closeDialog(refs)
     },
     setAlert (type, title, message) {
       this.alert = {

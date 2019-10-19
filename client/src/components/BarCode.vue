@@ -1,14 +1,21 @@
 <template>
-  <div id="interactive" class="viewport scanner quagga-wrapper" :style="styles">
-    <video class="quagga"/>
-    <canvas class="drawingBuffer quagga" />
+  <div>
+    <AlertDialog :alert="alert" />
+    <div id="interactive" class="viewport scanner quagga-wrapper" :style="styles">
+      <video class="quagga"/>
+      <canvas class="drawingBuffer quagga" />
+    </div>
   </div>
 </template>
 
 <script>
 import Quagga from 'quagga'
+import AlertDialog from './AleartDialog'
 export default {
   name: 'BarCode',
+  components: {
+    AlertDialog
+  },
   props: {
     onProcessed: {
       type: Function,
@@ -95,6 +102,12 @@ export default {
           readers: this.readerTypes
         },
         locate: true
+      },
+      alert: {
+        isAlert: false,
+        title: 'エラー',
+        message: 'エラー',
+        alertType: 'error'
       }
     }
   },
@@ -146,6 +159,14 @@ export default {
     },
     checkISBN (isbn) {
       return isbn.slice(0, 3) === '978' || isbn.slice(0, 3) === '979'
+    },
+    setAlert (type, title, message) {
+      this.alert = {
+        isAlert: true,
+        title: title,
+        message: message,
+        alertType: type
+      }
     }
   },
   destroyed () {
