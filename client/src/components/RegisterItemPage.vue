@@ -17,11 +17,11 @@
       <v-btn class="green green-text" @click="getBookInformation">
         自動入力
       </v-btn>
-      <v-btn class="green green-text" @click="openDialog('barcodeDialog')">
+      <v-btn class="green green-text" @click.stop="openDialog('barcodeDialog')">
         バーコード読み取り
       </v-btn>
 
-        <Dialog ref="barcodeDialog">
+        <Dialog ref="barcodeDialog" closeText="閉じる">
           <template v-slot:content>
             <BarCode  @search="getBookInformation" @changeCode="changeCode"/>
           </template>
