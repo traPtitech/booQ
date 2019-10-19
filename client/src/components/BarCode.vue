@@ -1,5 +1,5 @@
 <template>
-  <div id="interactive" class="viewport scanner" :style="styles">
+  <div id="interactive" class="viewport scanner quagga-wrapper" :style="styles">
     <video class="quagga"/>
     <canvas class="drawingBuffer quagga" />
   </div>
@@ -99,7 +99,8 @@ export default {
     }
   },
   mounted () {
-    const displaySize = document.getElementById('barcodewrapper').clientWidth
+    const displaySize = document.getElementById('barcodewrapper').clientWidth * 0.9
+    console.log(displaySize)
     const width = Math.min(displaySize, 640)
     this.quaggaState.inputStream.constraints.width = width
     this.quaggaState.inputStream.constraints.height = width * 0.75
@@ -164,9 +165,7 @@ export default {
   top: 0;
 }
 .quagga-wrapper {
-  display: inline-block;
-  width: 640px;
-  height: 480px;
+  margin: 0 auto;
 }
 .quagga {
   display: inline-block;
