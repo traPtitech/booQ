@@ -1,5 +1,6 @@
 <template>
   <div>
+    <AlertDialog :alert="alert" />
     <h1>物品登録ページ</h1>
     <div
       v-if="$store.state.me && $store.state.me.admin"
@@ -73,13 +74,15 @@
 import axios from 'axios'
 import { traQBaseURL } from '../utils/api.js'
 import BarCode from './BarCode'
-import Dialog from './core/Dialog'
+import Dialog from './shared/Dialog'
+import AlertDialog from './AleartDialog'
 
 export default {
   name: 'RegisterItemPage',
   components: {
     BarCode,
-    Dialog
+    Dialog,
+    AlertDialog
   },
   data () {
     return {
@@ -96,7 +99,14 @@ export default {
       img_name: '',
       img_url: '',
       count: 1,
-      dialog: false
+      dialog: false,
+      alert: {
+        isAlert: false,
+        errMessage: 'エラー',
+        alertType: 'error'
+      },
+      isAlert: true
+
     }
   },
   watch: {
@@ -108,14 +118,14 @@ export default {
     async register () {
       const res = await axios.post(`/api/items`, { name: this.name, code: this.code, type: Number(this.ownerID), description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
       if (!res) {
-        alert('エラーが発生したため物品の登録が行われませんでした。')
+        this.setAlert('error', 'error', 'エラーが発生したため物品の登録が行われませんでした。')
         return
       }
       const itemID = res.data.ID
       const userID = Number(this.ownerID) === 0 ? Number(this.$store.state.me.ID) : Number(this.ownerID)
       const res2 = await axios.post(`/api/items/` + itemID + `/owners`, { user_id: userID, rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
       if (!res2) {
-        alert('エラーが発生したため所有者の登録が行われませんでした。')
+        this.setAlert('error', 'error', 'エラーが発生したため所有者の登録が行われませんでした。')
         return
       }
       await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=1`, {
@@ -134,7 +144,7 @@ export default {
       form.append('file', file)
       const data = await axios.post(`${traQBaseURL}/files`, form).catch(e => alert(e))
       if (!data) {
-        alert('画像の投稿に失敗しました。')
+        this.setAlert('error', 'error', '画像の投稿に失敗しました')
       }
       this.img_url = `${traQBaseURL}/files/${data.data.fileId}/thumbnail`
     },
@@ -170,10 +180,10 @@ export default {
             this.img_url = this.data['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
           }
         } else {
-          alert('本がみつかりませんでした。')
+          this.setAlert('error', 'error', '本が見つかりませんでした')
         }
       } else {
-        alert('不正な値です。')
+        this.setAlert('error', 'error', '不正な値です')
       }
     },
     openDialog (refs) {
@@ -185,6 +195,14 @@ export default {
     changeCode (code) {
       this.code = code
       this.closeDialog()
+    },
+    setAlert (type, title, message) {
+      this.alert = {
+        isAlert: true,
+        title: title,
+        message: message,
+        alertType: type
+      }
     }
   }
 }
