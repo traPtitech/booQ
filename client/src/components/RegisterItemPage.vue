@@ -21,13 +21,11 @@
       <v-btn class="green green-text" @click.stop="openDialog('barcodeDialog')">
         バーコード読み取り
       </v-btn>
-
-        <Dialog ref="barcodeDialog" closeText="閉じる">
-          <template v-slot:content>
-            <BarCode  @search="getBookInformation" @changeCode="changeCode($event,'barcodeDialog')"/>
-          </template>
-        </Dialog>
-
+      <Dialog ref="barcodeDialog" closeText="閉じる">
+        <template v-slot:content>
+          <BarCode  @search="getBookInformation" @changeCode="changeCode($event,'barcodeDialog')"/>
+        </template>
+      </Dialog>
     </div>
     <div>
       <div>物品名</div>
@@ -106,7 +104,6 @@ export default {
         message: 'エラー',
         alertType: 'error'
       }
-
     }
   },
   watch: {

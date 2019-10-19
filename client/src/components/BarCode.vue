@@ -113,7 +113,6 @@ export default {
   },
   mounted () {
     const displaySize = document.getElementById('barcodewrapper').clientWidth * 0.9
-    console.log(displaySize)
     const width = Math.min(displaySize, 640)
     this.quaggaState.inputStream.constraints.width = width
     this.quaggaState.inputStream.constraints.height = width * 0.75
