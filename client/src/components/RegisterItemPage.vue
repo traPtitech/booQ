@@ -73,7 +73,7 @@ import axios from 'axios'
 import { traQBaseURL } from '../utils/api.js'
 import BarCode from './BarCode'
 import Dialog from './shared/Dialog'
-import AlertDialog from './AleartDialog'
+import AlertDialog from './AlertDialog'
 
 export default {
   name: 'RegisterItemPage',

@@ -20,7 +20,7 @@
                 text
                 @click="dialog = false"
             >
-                {{this.closeText}}
+                {{ this.closeText }}
             </v-btn>
           </v-layout>
         </v-card-actions>

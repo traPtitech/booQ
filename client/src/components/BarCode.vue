@@ -10,7 +10,7 @@
 
 <script>
 import Quagga from 'quagga'
-import AlertDialog from './AleartDialog'
+import AlertDialog from './AlertDialog'
 export default {
   name: 'BarCode',
   components: {
