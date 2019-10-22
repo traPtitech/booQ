@@ -8,7 +8,7 @@
           </div>
           <div>
             <v-avatar size="200">
-              <img :src="$route.params.name!=='sienka'?`https://q.trap.jp/api/1.0/public/icon/${$route.params.name}`:'https://pbs.twimg.com/profile_images/877073041351622657/n31PKuuM.jpg'" />
+              <img :src="checkSienka ?`https://q.trap.jp/api/1.0/public/icon/${$route.params.name}`:sienka" />
             </v-avatar>
           </div>
         </div>
@@ -74,12 +74,18 @@ export default {
     return {
       items: null,
       comments: null,
-      contentWidth: 600
+      contentWidth: 600,
+      sienka: './../img/sienka-icon.jpg'
     }
   },
   watch: {
     '$route' (to, from) {
       this.mount()
+    }
+  },
+  computed: {
+    checkSienka () {
+      return this.$route.params.name !== 'sienka'
     }
   },
   mounted () {

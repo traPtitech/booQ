@@ -1,11 +1,7 @@
 <template>
-<v-btn
-          dark
-          icon
-          :to="`/users/${user.name}`"
-        >
+<v-btn dark icon :to="`/users/${user.name}`">
   <v-avatar :size="size">
-    <v-img :src="user.name!=='sienka'?'https://q.trap.jp/api/1.0/public/icon/' + user.name:'https://pbs.twimg.com/profile_images/877073041351622657/n31PKuuM.jpg'" width="100%" alt=""/>
+    <v-img :src="checkSienka?'https://q.trap.jp/api/1.0/public/icon/' + user.name:sienka" width="100%" alt=""/>
   </v-avatar>
 </v-btn>
 </template>
@@ -13,6 +9,16 @@
 <script>
 export default {
   name: 'Icon',
+  data () {
+    return {
+      sienka: './../../img/sienka-icon.jpg'
+    }
+  },
+  computed: {
+    checkSienka () {
+      return this.user.name !== 'sienka'
+    }
+  },
   props: {
     user: Object,
     size: {
