@@ -24,7 +24,7 @@
               </div>
           </v-card-actions>
           <v-card-actions v-if="getRentalCount(returnOwnerID) > 1">
-            <v-slider :max="getRentalCount(returnOwnerID)" v-model="returnCount" thumb-label="always" />
+            <v-slider :max="getRentalCount(returnOwnerID)" min="1" v-model="returnCount" thumb-label="always" />
           </v-card-actions>
           <v-divider></v-divider>
           <v-card-actions>
