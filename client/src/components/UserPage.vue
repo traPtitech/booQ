@@ -8,7 +8,7 @@
           </div>
           <div>
             <v-avatar size="200">
-              <img :src="`https://q.trap.jp/api/1.0/public/icon/${$route.params.name}`" />
+              <img :src="$route.params.name!=='sienka'?`https://q.trap.jp/api/1.0/public/icon/${$route.params.name}`:'https://pbs.twimg.com/profile_images/877073041351622657/n31PKuuM.jpg'" />
             </v-avatar>
           </div>
         </div>
