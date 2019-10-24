@@ -41,7 +41,7 @@
               個数
             </div>
             <v-card-actions >
-              <v-slider :max="getBihinLatestCount()" v-model="rentalCount" thumb-label="always" />
+              <v-slider :max="getBihinLatestCount()" min="1" v-model="rentalCount" thumb-label="always" />
             </v-card-actions>
           </div>
           <div>返却日</div>
