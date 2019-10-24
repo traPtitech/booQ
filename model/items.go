@@ -166,7 +166,7 @@ func RentalItem(rentalUser RentalUser, item Item) (Item, error) {
 	var existed bool
 	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").Find(&item)
 	// owner.User, _ = GetUserByID(int(owner.UserID))
-	for _, nowRentalUser := range item.RentalUsers {
+	for i, nowRentalUser := range item.RentalUsers {
 		if nowRentalUser.UserID != rentalUser.UserID || nowRentalUser.OwnerID != rentalUser.OwnerID {
 			continue
 		}
