@@ -62,7 +62,7 @@ func (rentalUser *RentalUser) TableName() string {
 // GetItemByID IDからitemを取得する
 func GetItemByID(id uint) (Item, error) {
 	res := Item{}
-	db.Set("gorm:auto_preload", true).First(&res, id).Related(&res.Owners, "Owners").Related(&res.Logs, "Logs").Related(&res.RentalUsers, "RentalUsers").Related(&res.Comments, "Comments").Related(&res.Likes, "Likes")
+	db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").First(&res, id)
 	if res.Name == "" {
 		return Item{}, errors.New("該当するItemがありません")
 	}
@@ -77,7 +77,7 @@ func GetItemByID(id uint) (Item, error) {
 // GetItemByName Nameからitemを取得する
 func GetItemByName(name string) (Item, error) {
 	res := Item{}
-	db.Set("gorm:auto_preload", true).First(&res, "name = ?", name).Related(&res.Owners, "Owners").Related(&res.RentalUsers, "RentalUsers").Related(&res.Logs, "Logs").Related(&res.Comments, "Comments").Related(&res.Likes, "Likes")
+	db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").First(&res, "name = ?", name)
 	if res.Name == "" {
 		return Item{}, errors.New("該当するNameがありません")
 	}
@@ -92,9 +92,8 @@ func GetItemByName(name string) (Item, error) {
 // GetItems 全itemを取得する
 func GetItems() ([]Item, error) {
 	res := []Item{}
-	db.Find(&res)
+	db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").Find(&res)
 	for i, item := range res {
-		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.RentalUsers, "RentalUsers").Related(&item.Comments, "Comments").Related(&item.Likes, "Likes")
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
@@ -125,9 +124,9 @@ func CreateItem(item Item) (Item, error) {
 // RegisterOwner 新しい所有者を登録する
 func RegisterOwner(owner Owner, item Item) (Item, error) {
 	var existed bool
-	db.Preload("Owners").Find(&item)
+	db.Set("gorm:auto_preload", true).Find(&item)
 	owner.User, _ = GetUserByID(int(owner.UserID))
-	for _, nowOwner := range item.Owners {
+	for i, nowOwner := range item.Owners {
 		if nowOwner.UserID != owner.UserID {
 			continue
 		}
@@ -139,7 +138,7 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 		existed = true
 		nowOwner.User = owner.User
 		db.Save(&nowOwner)
-		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs")
+		item.Owners[i] = nowOwner
 		latestLog, err := GetLatestLog(item.Logs, owner.UserID)
 		if err != nil {
 			return Item{}, err
@@ -165,9 +164,9 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 // RentalItem 物品を借りたりするときにRentalUserを作成する
 func RentalItem(rentalUser RentalUser, ownerID uint, item Item, logType int) (Item, error) {
 	var existed bool
-	db.Preload("RentalUsers").Preload("Owners").Find(&item)
+	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").Find(&item)
 	// owner.User, _ = GetUserByID(int(owner.UserID))
-	for _, nowRentalUser := range item.RentalUsers {
+	for i, nowRentalUser := range item.RentalUsers {
 		if nowRentalUser.UserID != rentalUser.UserID || nowRentalUser.OwnerID != ownerID {
 			continue
 		}
@@ -182,7 +181,7 @@ func RentalItem(rentalUser RentalUser, ownerID uint, item Item, logType int) (It
 			return Item{}, errors.New("Return超過3")
 		}
 		db.Save(&nowRentalUser)
-		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.RentalUsers, "RentalUsers")
+		item.RentalUsers[i] = nowRentalUser
 	}
 	if !existed {
 		if rentalUser.Count > 0 {
@@ -198,7 +197,7 @@ func RentalItem(rentalUser RentalUser, ownerID uint, item Item, logType int) (It
 func CreateLike(itemID, userID uint) (Item, error) {
 	existed := false
 	item := Item{}
-	db.Set("gorm:auto_preload", true).First(&item, itemID).Related(&item.Likes, "Likes")
+	db.Set("gorm:auto_preload", true).First(&item, itemID)
 	user, _ := GetUserByID(int(userID))
 	for _, likeUser := range item.Likes {
 		if likeUser.ID == userID {
@@ -216,7 +215,7 @@ func CreateLike(itemID, userID uint) (Item, error) {
 func CancelLike(itemID, userID uint) (Item, error) {
 	existed := false
 	item := Item{}
-	db.Set("gorm:auto_preload", true).First(&item, itemID).Related(&item.Likes, "Likes")
+	db.Set("gorm:auto_preload", true).First(&item, itemID)
 	user, _ := GetUserByID(int(userID))
 	for _, likeUser := range item.Likes {
 		if likeUser.ID == userID {
@@ -234,9 +233,8 @@ func CancelLike(itemID, userID uint) (Item, error) {
 func SearchItemByOwner(ownerName string) ([]Item, error) {
 	res := []Item{}
 	items := []Item{}
-	db.Find(&res)
+	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").Find(&res)
 	for _, item := range res {
-		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.RentalUsers, "RentalUsers").Related(&item.Comments, "Comments").Related(&item.Likes, "Likes")
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
@@ -255,9 +253,8 @@ func SearchItemByOwner(ownerName string) ([]Item, error) {
 func SearchItemByRental(rentalUserID uint) ([]Item, error) {
 	items := []Item{}
 	res := []Item{}
-	db.Find(&items)
+	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").Find(&items)
 	for _, item := range items {
-		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.RentalUsers, "RentalUsers").Related(&item.Likes, "Likes")
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
@@ -275,9 +272,8 @@ func SearchItemByRental(rentalUserID uint) ([]Item, error) {
 // SearchItems itemsをNameの部分一致で取得する
 func SearchItems(searchString string) ([]Item, error) {
 	res := []Item{}
-	db.Where("name LIKE ?", "%"+searchString+"%").Find(&res)
+	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").Where("name LIKE ?", "%"+searchString+"%").Find(&res)
 	for i, item := range res {
-		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs").Related(&item.Likes, "Likes")
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
