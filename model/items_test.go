@@ -274,3 +274,212 @@ func TestCancelLike(t *testing.T) {
 		assert.Equal(false, exist)
 	})
 }
+
+func TestDestroyItem(t *testing.T) {
+	t.Parallel()
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+		item, err := CreateItem(Item{Name: "testDestroyItemSuccess"})
+		assert.NotEmpty(item)
+		assert.NoError(err)
+		updateItem, err := DestroyItem(item)
+		assert.NotEmpty(updateItem)
+		assert.NoError(err)
+		item, err = GetItemByID(item.ID)
+		assert.Empty(item)
+		assert.Error(err)
+	})
+}
+
+func TestRentalItem(t *testing.T) {
+	t.Parallel()
+
+	t.Run("failuer", func(t *testing.T) {
+		assert := assert.New(t)
+		user, err := CreateUser(User{Name: "testRentalItemFailUser"})
+		assert.NotEmpty(user)
+		assert.NoError(err)
+		owner, err := CreateUser(User{Name: "testRentalItemFailOwner"})
+		assert.NotEmpty(owner)
+		assert.NoError(err)
+		item, err := CreateItem(Item{Name: "testRentalItemFailItem"})
+		assert.NotEmpty(item)
+		assert.NoError(err)
+		rentalUserReturn := RentalUser{
+			UserID:  user.ID,
+			Count:   2,
+			OwnerID: owner.ID,
+		}
+		failItem1, err := RentalItem(rentalUserReturn, item)
+		assert.Empty(failItem1)
+		assert.Error(err)
+		rentalUserRental := RentalUser{
+			UserID:  user.ID,
+			Count:   -1,
+			OwnerID: owner.ID,
+		}
+		successItem, err := RentalItem(rentalUserRental, item)
+		assert.NotEmpty(successItem)
+		assert.NoError(err)
+		failItem2, err := RentalItem(rentalUserReturn, item)
+		assert.Empty(failItem2)
+		assert.Error(err)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+		user, err := CreateUser(User{Name: "testRentalItemSuccessUser"})
+		assert.NotEmpty(user)
+		assert.NoError(err)
+		owner, err := CreateUser(User{Name: "testRentalItemSuccessOwner"})
+		assert.NotEmpty(owner)
+		assert.NoError(err)
+		item, err := CreateItem(Item{Name: "testRentalItemSuccessItem"})
+		assert.NotEmpty(item)
+		assert.NoError(err)
+		rentalUserRental := RentalUser{
+			UserID:  user.ID,
+			Count:   -2,
+			OwnerID: owner.ID,
+		}
+		successItem1, err := RentalItem(rentalUserRental, item)
+		assert.NotEmpty(successItem1)
+		assert.NoError(err)
+		exist1 := false
+		for _, rentalUser := range successItem1.RentalUsers {
+			if rentalUser.UserID == user.ID {
+				exist1 = true
+			}
+		}
+		assert.Equal(true, exist1)
+		rentalUserReturn := RentalUser{
+			UserID:  user.ID,
+			Count:   1,
+			OwnerID: owner.ID,
+		}
+		successItem2, err := RentalItem(rentalUserReturn, item)
+		assert.NotEmpty(successItem2)
+		assert.NoError(err)
+		assert.Equal(-1, successItem2.RentalUsers[0].Count)
+		successItem3, err := RentalItem(rentalUserReturn, item)
+		assert.NotEmpty(successItem3)
+		assert.NoError(err)
+	})
+}
+
+func TestSearchItemByRental(t *testing.T) {
+	t.Parallel()
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+		user, err := CreateUser(User{Name: "testSearchItemByRentalUser"})
+		assert.NotEmpty(user)
+		assert.NoError(err)
+		owner, err := CreateUser(User{Name: "testSearchItemByRentalOwner"})
+		assert.NotEmpty(owner)
+		assert.NoError(err)
+		item1, err := CreateItem(Item{Name: "testSearchItemByRentalItem1"})
+		assert.NotEmpty(item1)
+		assert.NoError(err)
+		item2, err := CreateItem(Item{Name: "testSearchItemByRentalItem2"})
+		assert.NotEmpty(item2)
+		assert.NoError(err)
+		item3, err := CreateItem(Item{Name: "testSearchItemByRentalItem3"})
+		assert.NotEmpty(item3)
+		assert.NoError(err)
+		rentalUserRental := RentalUser{
+			UserID:  user.ID,
+			Count:   -1,
+			OwnerID: owner.ID,
+		}
+		successItem1, err := RentalItem(rentalUserRental, item1)
+		assert.NotEmpty(successItem1)
+		assert.NoError(err)
+		successItem2, err := RentalItem(rentalUserRental, item2)
+		assert.NotEmpty(successItem2)
+		assert.NoError(err)
+		rentalUserReturn := RentalUser{
+			UserID:  user.ID,
+			Count:   1,
+			OwnerID: owner.ID,
+		}
+		successItem2, err = RentalItem(rentalUserReturn, item2)
+		assert.NotEmpty(successItem2)
+		assert.NoError(err)
+		items, err := SearchItemByRental(user.ID)
+		assert.NotEmpty(successItem2)
+		assert.NoError(err)
+		exist1 := false
+		exist2 := false
+		exist3 := false
+		for _, item := range items {
+			if item.Name == item1.Name {
+				exist1 = true
+			}
+			if item.Name == item2.Name {
+				exist2 = true
+			}
+			if item.Name == item3.Name {
+				exist3 = true
+			}
+		}
+		assert.Equal(true, exist1)
+		assert.Equal(false, exist2)
+		assert.Equal(false, exist3)
+	})
+}
+
+func TestSearchItemByOwner(t *testing.T) {
+	t.Run("failuer", func(t *testing.T) {
+		assert := assert.New(t)
+		items, err := SearchItemByOwner("testSearchItemByOwnerFailOwner")
+		assert.Empty(items)
+		assert.Error(err)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+		ownerUser, err := CreateUser(User{Name: "testSearchItemByOwSucOwner"})
+		assert.NotEmpty(ownerUser)
+		assert.NoError(err)
+		item1, err := CreateItem(Item{Name: "testSearchItemByOwSucItem1"})
+		assert.NotEmpty(item1)
+		assert.NoError(err)
+		item2, err := CreateItem(Item{Name: "testSearchItemByOwSucItem2"})
+		assert.NotEmpty(item2)
+		assert.NoError(err)
+		owner := Owner{
+			UserID:     ownerUser.ID,
+			User:       ownerUser,
+			Count:      1,
+			Rentalable: true,
+		}
+		item1, err = RegisterOwner(owner, item1)
+		assert.NotEmpty(item1)
+		assert.NoError(err)
+		items, err := SearchItemByOwner(ownerUser.Name)
+		assert.NotEmpty(items)
+		assert.NoError(err)
+		exist1 := false
+		exist2 := false
+		for _, item := range items {
+			if item.Name == item1.Name {
+				for _, nowOwner := range item.Owners {
+					if nowOwner.User.Name == ownerUser.Name {
+						exist1 = true
+					}
+				}
+			}
+			if item.Name == item2.Name {
+				for _, nowOwner := range item.Owners {
+					if nowOwner.User.Name == ownerUser.Name {
+						exist2 = true
+					}
+				}
+			}
+		}
+		assert.Equal(true, exist1)
+		assert.Equal(false, exist2)
+	})
+}
