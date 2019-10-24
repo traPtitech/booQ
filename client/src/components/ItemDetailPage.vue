@@ -14,6 +14,7 @@
               />
             </div>
             <div>
+              <WannaRental @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
               <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
               <ReturnForm @reload="reload" :propItem="data"/>
               <v-btn color="error" block v-if="$store.state.me.admin" @click="destroyItem" error>削除</v-btn>
@@ -106,6 +107,7 @@ import RegisterOwnerForm from './shared/RegisterOwnerForm'
 import RentalForm from './shared/RentalForm'
 import CommentDialog from './shared/CommentDialog'
 import ReturnForm from './shared/ReturnForm'
+import WannaRental from './shared/WannaRental'
 
 export default {
   name: 'ItemDetailPage',
@@ -114,7 +116,8 @@ export default {
     RegisterOwnerForm,
     RentalForm,
     CommentDialog,
-    ReturnForm
+    ReturnForm,
+    WannaRental
   },
   data () {
     return {
