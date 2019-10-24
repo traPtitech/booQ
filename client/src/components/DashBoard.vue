@@ -113,7 +113,7 @@
               個数を選択
             </v-card-title>
             <v-card-actions>
-              <v-slider :max="maxCount" v-model="itemCount" thumb-label="always" />
+              <v-slider :max="maxCount" min="1" v-model="itemCount" thumb-label="always" />
             </v-card-actions>
             <v-divider />
             <v-card-actions>
