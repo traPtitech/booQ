@@ -8,7 +8,7 @@
           </div>
           <div>
             <v-avatar size="200">
-              <img :src="checkSienka ?`https://q.trap.jp/api/1.0/public/icon/${$route.params.name}`:sienka" />
+              <img :src="navigateImagePath" />
             </v-avatar>
           </div>
         </div>
@@ -84,8 +84,8 @@ export default {
     }
   },
   computed: {
-    checkSienka () {
-      return this.$route.params.name !== 'sienka'
+    navigateImagePath () {
+      return this.$route.params.name !== 'sienka' ? `https://q.trap.jp/api/1.0/public/icon/${this.$route.params.name}` : this.sienka
     }
   },
   mounted () {

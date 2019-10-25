@@ -1,7 +1,7 @@
 <template>
 <v-btn dark icon :to="`/users/${user.name}`">
   <v-avatar :size="size">
-    <v-img :src="checkSienka?'https://q.trap.jp/api/1.0/public/icon/' + user.name:sienka" width="100%" alt=""/>
+    <v-img :src="navigateImagePath"  width="100%" alt=""/>
   </v-avatar>
 </v-btn>
 </template>
@@ -15,8 +15,8 @@ export default {
     }
   },
   computed: {
-    checkSienka () {
-      return this.user.name !== 'sienka'
+    navigateImagePath () {
+      return this.user.name !== 'sienka' ? `https://q.trap.jp/api/1.0/public/icon/${this.user.name}` : this.sienka
     }
   },
   props: {
