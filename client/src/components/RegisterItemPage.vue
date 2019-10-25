@@ -5,7 +5,7 @@
         <h2 style="color:red;">エラー</h2>
       </template>
       <template v-slot:content>
-        <h3 >{{ errorMessage }}</h3>
+        <h3>{{ errorMessage }}</h3>
       </template>
     </Dialog>
     <h1>物品登録ページ</h1>
