@@ -2,7 +2,7 @@
   <div>
     <Dialog :dialog="dialog" target="alert">
       <template v-slot:headline>
-        <h2 style="color:red;">エラー</h2>
+        エラー
       </template>
       <template v-slot:content>
         <h3 >{{ errorMessage }}</h3>
@@ -80,14 +80,12 @@ import axios from 'axios'
 import { traQBaseURL } from '../utils/api.js'
 import BarCode from './BarCode'
 import Dialog from './shared/Dialog'
-// import AlertDialog from './AlertDialog'
 
 export default {
   name: 'RegisterItemPage',
   components: {
     BarCode,
     Dialog
-    // AlertDialog
   },
   data () {
     return {

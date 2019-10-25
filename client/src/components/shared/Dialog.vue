@@ -7,7 +7,7 @@
       max-height="650"
     >
       <v-card id="barcodewrapper">
-        <v-card-title class="headline">
+        <v-card-title class="headline red">
             <slot name="headline"></slot>
         </v-card-title>
         <v-card-text>
@@ -51,6 +51,5 @@ export default {
       return this.$props.target === this.$props.dialog.target
     }
   }
-
 }
 </script>
