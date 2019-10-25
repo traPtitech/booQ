@@ -2,22 +2,27 @@
   <div>
     <h4>ユーザーに権限を付与します</h4>
     <div v-if="users.length">
-      <div>
-        <v-btn @click="changeUserInfo">
-          確定
-        </v-btn>
+      <div v-if="$store.state.me && $store.state.me.admin">
+        <div>
+          <v-btn @click="changeUserInfo">
+            確定
+          </v-btn>
+        </div>
+        <div v-for="user in users" :key="user.id">
+          <v-checkbox
+            v-model="user.admin"
+            :label="user.name"
+            hide-details
+          />
+        </div>
+        <div>
+          <v-btn @click="changeUserInfo">
+            確定
+          </v-btn>
+        </div>
       </div>
-      <div v-for="user in users" :key="user.id">
-        <v-checkbox
-          v-model="user.admin"
-          :label="user.name"
-          hide-details
-        />
-      </div>
-      <div>
-        <v-btn @click="changeUserInfo">
-          確定
-        </v-btn>
+      <div v-else>
+        権限がありません
       </div>
     </div>
     <div v-else>
