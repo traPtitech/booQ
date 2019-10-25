@@ -59,6 +59,10 @@
             :size="25"
           />
           {{ owner.user.name }} {{ checkRentalable(owner) }}
+          <EditOwner @reload="reload" :propOwner="owner"/>
+          <!-- <v-btn class="ma-2" tile outlined color="success" v-if="owner.user.name === $store.state.me.name || owner.user.ID === 1">
+            <v-icon left>mdi-pencil</v-icon>編集
+          </v-btn> -->
         </div>
       </div>
       <div class="content">
@@ -106,6 +110,7 @@ import RegisterOwnerForm from './shared/RegisterOwnerForm'
 import RentalForm from './shared/RentalForm'
 import CommentDialog from './shared/CommentDialog'
 import ReturnForm from './shared/ReturnForm'
+import EditOwner from './shared/EditOwner'
 
 export default {
   name: 'ItemDetailPage',
@@ -114,7 +119,8 @@ export default {
     RegisterOwnerForm,
     RentalForm,
     CommentDialog,
-    ReturnForm
+    ReturnForm,
+    EditOwner
   },
   data () {
     return {
@@ -188,6 +194,10 @@ export default {
       if (log.type === 2) {
         ownerWord = ''
         logComment = '追加しました'
+      }
+      if (log.type === 3) {
+        ownerWord = ''
+        logComment = '減らしました'
       }
       const logTime = log.CreatedAt.replace('T', ' ').replace('+09:00', '')
       return `${userName}さんが${ownerWord}物品を${logComment} - ${logTime}`

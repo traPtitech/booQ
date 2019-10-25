@@ -152,9 +152,6 @@ func PostOwners(c echo.Context) error {
 		Rentalable: body.Rentalable,
 		Count:      body.Count,
 	}
-	if owner.Count < 1 {
-		return c.NoContent(http.StatusBadRequest)
-	}
 	res, err := model.RegisterOwner(owner, item)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

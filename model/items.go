@@ -144,14 +144,27 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 		if err != nil {
 			return Item{}, err
 		}
+		log := Log{
+			ItemID:  latestLog.ItemID,
+			UserID:  owner.UserID,
+			OwnerID: owner.UserID,
+			Type:    2,
+			Count:   latestLog.Count + owner.Count,
+		}
+		if owner.Count < 0 {
+			log.Type = 3
+		}
 		if latestLog.ItemID != 0 {
-			_, err = CreateLog(Log{ItemID: latestLog.ItemID, UserID: owner.UserID, OwnerID: owner.UserID, Type: 2, Count: latestLog.Count + owner.Count})
+			_, err = CreateLog(log)
 			if err != nil {
 				return Item{}, err
 			}
 		}
 	}
 	if !existed {
+		if owner.Count < 1 {
+			return Item{}, errors.New("該当の物品を所有していないため数を減らせません")
+		}
 		db.Create(&owner)
 		db.Model(&item).Association("Owners").Append(&owner)
 		_, err := CreateLog(Log{ItemID: item.ID, UserID: owner.UserID, OwnerID: owner.UserID, Type: 2, Count: owner.Count})

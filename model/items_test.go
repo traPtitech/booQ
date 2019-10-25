@@ -72,6 +72,19 @@ func TestRegisterOwner(t *testing.T) {
 		assert.NoError(err)
 		assert.NotEmpty(item)
 	})
+
+	t.Run("delete success", func(t *testing.T) {
+		assert := assert.New(t)
+
+		owner.Count = -2
+		item, err := RegisterOwner(owner, item)
+
+		assert.Equal(4, item.Owners[0].Count)
+		assert.Equal(item.Owners[0].User.Name, user.Name)
+
+		assert.NoError(err)
+		assert.NotEmpty(item)
+	})
 }
 
 func TestGetItems(t *testing.T) {
