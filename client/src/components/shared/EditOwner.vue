@@ -63,11 +63,12 @@ export default {
           this.error = e
         })
       if (this.count - this.propOwner.count > 0) {
-        this.message = this.count - this.propOwner.count + "個追加しました"
-      }if (this.count - this.propOwner.count < 0) {
-        this.message = this.propOwner.count - this.count + "個減らしました"
+        this.message = this.count - this.propOwner.count + '個追加しました'
       }
-      if (this.error) { alert("何らかの原因で処理が完了しませんでした") }
+      if (this.count - this.propOwner.count < 0) {
+        this.message = this.propOwner.count - this.count + '個減らしました'
+      }
+      if (this.error) { alert('何らかの原因で処理が完了しませんでした') }
       if (!this.error) { alert(this.message) }
       this.isOpenEditOwner = !this.isOpenEditOwner
       this.$emit('reload')
