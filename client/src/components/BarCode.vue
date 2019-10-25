@@ -97,12 +97,6 @@ export default {
           readers: this.readerTypes
         },
         locate: true
-      },
-      alert: {
-        isAlert: false,
-        title: 'エラー',
-        message: 'エラー',
-        alertType: 'error'
       }
     }
   },

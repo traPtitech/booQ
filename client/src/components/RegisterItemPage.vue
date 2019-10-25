@@ -189,6 +189,11 @@ export default {
     },
     changeCode (code) {
       this.code = code
+      this.dialog = {
+        isOpen: false,
+        closeText: '',
+        target: ''
+      }
     },
     setDialog (closeText, target) {
       this.dialog = {
