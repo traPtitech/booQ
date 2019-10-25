@@ -2,7 +2,7 @@
   <div>
     <Dialog :dialog="dialog" target="alert">
       <template v-slot:headline>
-        エラー
+        <h2 style="color:red;">エラー</h2>
       </template>
       <template v-slot:content>
         <h3 >{{ errorMessage }}</h3>
