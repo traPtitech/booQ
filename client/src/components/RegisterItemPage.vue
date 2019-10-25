@@ -1,6 +1,13 @@
 <template>
   <div>
-    <AlertDialog :alert="alert" />
+    <Dialog :dialog="dialog" target="alert">
+      <template v-slot:headline>
+        <h2 style="color:red;">エラー</h2>
+      </template>
+      <template v-slot:content>
+        <h3 >{{ errorMessage }}</h3>
+      </template>
+    </Dialog>
     <h1>物品登録ページ</h1>
     <div
       v-if="$store.state.me && $store.state.me.admin"
@@ -18,12 +25,12 @@
       <v-btn class="green green-text" @click="getBookInformation">
         自動入力
       </v-btn>
-      <v-btn class="green green-text" @click.stop="openDialog('barcodeDialog')">
+      <v-btn class="green green-text" @click.stop="setDialog('close','barcodeDialog')">
         バーコード読み取り
       </v-btn>
-      <Dialog ref="barcodeDialog" closeText="閉じる">
+      <Dialog :dialog="dialog" target="barcodeDialog">
         <template v-slot:content>
-          <BarCode  @search="getBookInformation" @changeCode="changeCode($event,'barcodeDialog')"/>
+          <BarCode  @search="getBookInformation" @changeCode="changeCode"/>
         </template>
       </Dialog>
     </div>
@@ -73,14 +80,14 @@ import axios from 'axios'
 import { traQBaseURL } from '../utils/api.js'
 import BarCode from './BarCode'
 import Dialog from './shared/Dialog'
-import AlertDialog from './AlertDialog'
+// import AlertDialog from './AlertDialog'
 
 export default {
   name: 'RegisterItemPage',
   components: {
     BarCode,
-    Dialog,
-    AlertDialog
+    Dialog
+    // AlertDialog
   },
   data () {
     return {
@@ -97,13 +104,12 @@ export default {
       img_name: '',
       img_url: '',
       count: 1,
-      dialog: false,
-      alert: {
-        isAlert: false,
-        title: 'エラー',
-        message: 'エラー',
-        alertType: 'error'
-      }
+      dialog: {
+        isOpen: false,
+        closeText: 'close',
+        target: ''
+      },
+      errorMessage: 'エラー'
     }
   },
   watch: {
@@ -115,14 +121,14 @@ export default {
     async register () {
       const res = await axios.post(`/api/items`, { name: this.name, code: this.code, type: Number(this.ownerID), description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
       if (!res) {
-        this.setAlert('error', 'error', 'エラーが発生したため物品の登録が行われませんでした。')
+        this.setAlert('close', 'エラーが発生したため物品の登録が行われませんでした。')
         return
       }
       const itemID = res.data.ID
       const userID = Number(this.ownerID) === 0 ? Number(this.$store.state.me.ID) : Number(this.ownerID)
       const res2 = await axios.post(`/api/items/` + itemID + `/owners`, { user_id: userID, rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
       if (!res2) {
-        this.setAlert('error', 'error', 'エラーが発生したため所有者の登録が行われませんでした。')
+        this.setAlert('close', 'エラーが発生したため所有者の登録が行われませんでした。')
         return
       }
       await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=1`, {
@@ -141,7 +147,7 @@ export default {
       form.append('file', file)
       const data = await axios.post(`${traQBaseURL}/files`, form).catch(e => alert(e))
       if (!data) {
-        this.setAlert('error', 'error', '画像の投稿に失敗しました')
+        this.setAlert('close', '画像の投稿に失敗しました')
       }
       this.img_url = `${traQBaseURL}/files/${data.data.fileId}/thumbnail`
     },
@@ -177,29 +183,25 @@ export default {
             this.img_url = this.data['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
           }
         } else {
-          this.setAlert('error', 'error', '本が見つかりませんでした')
+          this.setAlert('close', '本が見つかりませんでした')
         }
       } else {
-        this.setAlert('error', 'error', '不正な値です')
+        this.setAlert('close', '不正な値です')
       }
     },
-    openDialog (refs) {
-      this.$refs[refs].dialog = true
-    },
-    closeDialog (refs) {
-      this.$refs[refs].dialog = false
-    },
-    changeCode (code, refs) {
+    changeCode (code) {
       this.code = code
-      this.closeDialog(refs)
     },
-    setAlert (type, title, message) {
-      this.alert = {
-        isAlert: true,
-        title: title,
-        message: message,
-        alertType: type
+    setDialog (closeText, target) {
+      this.dialog = {
+        isOpen: true,
+        closeText: closeText,
+        target: target
       }
+    },
+    setAlert (closeText, errmsg) {
+      this.errorMessage = errmsg
+      this.setDialog(closeText, 'alert')
     }
   }
 }

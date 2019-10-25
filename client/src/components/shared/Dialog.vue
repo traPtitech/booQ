@@ -1,8 +1,8 @@
 <template>
-  <v-row justify="center">
+  <v-row justify="center" v-if="isTargeted">
     <v-dialog
-      v-model="dialog"
-      v-if="dialog"
+      v-model="dialog.isOpen"
+      v-if="dialog.isOpen"
       max-width="700"
       max-height="650"
     >
@@ -18,9 +18,9 @@
             <v-btn
                 color="green darken-1"
                 text
-                @click="dialog = false"
+                @click="dialog.isOpen = false"
             >
-                {{ this.closeText }}
+                {{ dialog.closeText }}
             </v-btn>
           </v-layout>
         </v-card-actions>
@@ -31,20 +31,26 @@
 
 <script>
 export default {
+  name: 'Dialog',
   props: {
-    openText: {
-      type: String,
-      default: 'Open'
+    dialog: {
+      type: Object,
+      default: () => ({
+        closeButton: 'close',
+        isOpen: false,
+        target: ''
+      })
     },
-    closeText: {
+    target: {
       type: String,
-      default: 'close'
+      default: ''
     }
   },
-  data () {
-    return {
-      dialog: false
+  computed: {
+    isTargeted () {
+      return this.$props.target === this.$props.dialog.target
     }
   }
+
 }
 </script>

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <AlertDialog :alert="alert" />
     <div id="interactive" class="viewport scanner quagga-wrapper" :style="styles">
       <video class="quagga"/>
       <canvas class="drawingBuffer quagga" />
@@ -10,12 +9,8 @@
 
 <script>
 import Quagga from 'quagga'
-import AlertDialog from './AlertDialog'
 export default {
   name: 'BarCode',
-  components: {
-    AlertDialog
-  },
   props: {
     onProcessed: {
       type: Function,
