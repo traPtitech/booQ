@@ -27,16 +27,16 @@
           <v-card-actions>
             <div v-if="propItem.type == 1">
               <v-form ref="form">
-                <v-textarea outlined v-model="main" :rules="[() => !!main || 'This field is required']" label="目的"/>
+                <v-textarea outlined v-model="message" :rules="[() => !!message || 'This field is required']" label="目的"/>
               </v-form>
             </div>
             <div v-else>
               <v-form ref="form">
-                <v-textarea outlined v-model="main" label="文面"/>
+                <v-textarea outlined v-model="message" label="文面"/>
               </v-form>
             </div>
           </v-card-actions>
-          <v-divider></v-divider>
+          <v-divider/>
           <v-card-actions>
             <div class="flex-grow-1"></div>
             <v-btn v-on:click="send()">送る</v-btn>
@@ -58,7 +58,7 @@ export default {
   },
   data () {
     return {
-      main: null,
+      message: null,
       rentalCount: 1,
       dueDate: null,
       rentOwnerID: 0,
@@ -68,7 +68,7 @@ export default {
     }
   },
   mounted () {
-    this.main = '[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')を借りたいです。'
+    this.message = '[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')を借りたいです。'
   },
   methods: {
     getBihinLatestCount (itemID) {
@@ -95,7 +95,7 @@ export default {
         alert('所有者を選択してください')
         return false
       }
-      if (this.main === null) {
+      if (this.message === null) {
         alert('文面を入力してください')
         return false
       }
@@ -112,7 +112,7 @@ export default {
       }
       this.isOpenWannaRentalForm = !this.isOpenWannaRentalForm
       this.$emit('reload')
-      await axios.post(`${traQBaseURL}/users/` + targetUser.userId + `/messages?embed=1`, { text: this.main })
+      await axios.post(`${traQBaseURL}/users/` + targetUser.userId + `/messages?embed=1`, { text: this.message })
         .catch(e => {
           alert(e)
           this.error = e

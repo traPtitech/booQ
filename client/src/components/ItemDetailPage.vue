@@ -14,7 +14,7 @@
               />
             </div>
             <div>
-              <WannaRental @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
+              <WannaRental v-if="data.type === 0" @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
               <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
               <ReturnForm @reload="reload" :propItem="data"/>
               <v-btn color="error" block v-if="$store.state.me.admin" @click="destroyItem" error>削除</v-btn>
