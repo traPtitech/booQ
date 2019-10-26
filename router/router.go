@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/labstack/echo/middleware"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -37,6 +38,12 @@ func SetupRouting(e *echo.Echo, client Traq) {
 		apiComments := api.Group("/comments")
 		{
 			apiComments.GET("", GetComments)
+		}
+
+		apiFiles := api.Group("/files")
+		{
+			apiFiles.POST("", PostFile, middleware.BodyLimit("3MB"))
+			apiFiles.GET("/:id", GetFile)
 		}
 	}
 }
