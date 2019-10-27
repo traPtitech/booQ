@@ -7,7 +7,7 @@ host: "booq-dev.tokyotech.org"
 basePath: /api/
 schemes:
  - https
- 
+
 tags:
 - name: "items"
   description: "物品に関するAPI"
@@ -23,6 +23,8 @@ tags:
   description: "タグに関するAPI"
 - name: "users"
   description: "ユーザーに関するAPI"
+- name: "files"
+  description: "画像アップロードに関するAPI"
 
 paths:
   /items:
@@ -483,7 +485,7 @@ paths:
       tags:
       - "users"
       summary: "ユーザー一覧を取得します。"
-      parameters: 
+      parameters:
       - name: "name"
         in: "query"
         description: "取得したいユーザーのIDを指定します。"
@@ -523,6 +525,50 @@ paths:
             $ref: "#/definitions/user"
         403:
           description: "権限がありません"
+
+  /files:
+    post:
+      tags:
+      - "files"
+      summary: "画像ファイルをアップロードします。"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "formData"
+        name: "file"
+        type: "file"
+        description: "3MBまでのJPG, PNGファイル"
+      responses:
+        201:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "integer"
+                example: 1
+                description: "ファイルID"
+              url:
+                type: "string"
+                example: "/api/files/1"
+                description: "ファイルURL"
+        400:
+          description: "不正なリクエストです。"
+
+  /files/:id:
+    get:
+      tags:
+      - "files"
+      summary: "画像ファイルをダウンロードします。"
+      produces:
+      - "image/jpeg"
+      responses:
+        200:
+          description: "OK"
+        404:
+          description: "ファイルが存在しません。"
 
 definitions:
   item:
