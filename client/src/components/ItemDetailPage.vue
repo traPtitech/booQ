@@ -34,7 +34,7 @@
           </div>
           <v-container class="pa-0">
             <v-row row wrap no-gutters>
-              <v-col class="ma-1 flex-grow-0 flex-shrink-0" no-gutter v-for="like in [{id:1},{id:2},{id:3},{id:4},{id:5},{id:6},{id:7},{id:8},{id:9},{id:10},{id:11},{id:12},]" :key="like.id" >
+              <v-col class="ma-1 flex-grow-0 flex-shrink-0" no-gutter v-for="like in data.likes" :key="like.id" >
                 <Icon
                   :user="like"
                   :size="25"
@@ -50,10 +50,10 @@
           :xl="10"
         >
           <h1>{{data.name}}</h1>
-          <div class="content">
+          <div class="mb-8">
             {{ data.description }}
           </div>
-          <div class="content">
+          <div class="mb-8">
             <h2>
               所有者
               <RegisterOwnerForm @reload="reload"/>
@@ -67,24 +67,26 @@
               {{ owner.user.name }} {{ checkRentalable(owner) }}
             </div>
           </div>
-          <div class="content">
+          <div class="mb-4">
             <h2>
               コメント
               <CommentDialog />
             </h2>
-            <div v-if="data.comments.length">
-              <div v-for="comment in data.comments" :key="comment.id">
-                <v-flex>
-                  <Icon :user="comment.user" />
+            <v-list v-if="data.comments.length" color="transparent">
+              <v-list-item v-for="comment in data.comments" :key="comment.id" class="pl-0">
+                <v-list-item-avatar>
+                  <Icon :user="comment.user" :size="40" />
+                </v-list-item-avatar>
+                <v-list-item-content>
                   {{ comment.text }}
-                </v-flex>
-              </div>
-            </div>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
             <div v-else>
               コメントがありません
             </div>
           </div>
-          <div class="content">
+          <div class="mb-8">
             <div>
               <h2>ログ</h2>
               <div v-if="data.logs.length">
@@ -241,7 +243,4 @@ export default {
 </script>
 
 <style scoped>
-  .content {
-    margin-bottom: 32px;
-  }
 </style>
