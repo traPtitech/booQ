@@ -97,7 +97,7 @@ func TestPostFile(t *testing.T) {
 		rec := httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
 
-		assert.Equal(http.StatusOK, rec.Code)
+		assert.Equal(http.StatusCreated, rec.Code)
 	})
 }
 

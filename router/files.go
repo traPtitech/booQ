@@ -56,7 +56,7 @@ func PostFile(c echo.Context) error {
 	}
 
 	// レスポンス
-	return c.JSON(http.StatusOK, map[string]interface{}{"id": f.ID, "url": fmt.Sprintf("/api/files/%d", f.ID)})
+	return c.JSON(http.StatusCreated, map[string]interface{}{"id": f.ID, "url": fmt.Sprintf("/api/files/%d", f.ID)})
 }
 
 // GetFile GET /files/:id
