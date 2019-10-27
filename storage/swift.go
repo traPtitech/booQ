@@ -12,12 +12,13 @@ type Swift struct {
 }
 
 // SetSwiftStorage Swiftオブジェクトストレージをカレントストレージに設定します
-func SetSwiftStorage(container, userName, apiKey, tenant, authURL string) error {
+func SetSwiftStorage(container, userName, apiKey, tenant, tenantID, authURL string) error {
 	conn := swift.Connection{
 		AuthUrl:  authURL,
 		UserName: userName,
 		ApiKey:   apiKey,
 		Tenant:   tenant,
+		TenantId: tenantID,
 	}
 
 	// 認証

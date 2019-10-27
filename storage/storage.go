@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-var current Storage
+var current Storage = &Memory{files: map[string][]byte{}}
 
 var (
 	// ErrFileNotFound 指定されたファイル名のファイルは存在しません
