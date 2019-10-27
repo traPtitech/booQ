@@ -8,12 +8,12 @@ import (
 // Swift Swiftオブジェクトストレージ
 type Swift struct {
 	container string
-	conn      swift.Connection
+	conn      *swift.Connection
 }
 
 // SetSwiftStorage Swiftオブジェクトストレージをカレントストレージに設定します
 func SetSwiftStorage(container, userName, apiKey, tenant, tenantID, authURL string) error {
-	conn := swift.Connection{
+	conn := &swift.Connection{
 		AuthUrl:  authURL,
 		UserName: userName,
 		ApiKey:   apiKey,
