@@ -3,100 +3,107 @@
     v-if="data"
     class="d-flex flex-wrap"
   >
-    <div>
-      <v-row no-gutters>
-        <v-col md="auto">
-          <div class="image">
-            <div>
-              <img
-                :src="data.img_url.length ? data.img_url : '/img/no-image.svg'"
-                style="width: 250px;"
+    <v-container>
+      <v-row>
+        <v-col
+          :cols="12"
+          :sm="4"
+          :lg="3"
+          :xl="2"
+        >
+          <div>
+            <img
+              :src="data.img_url.length ? data.img_url : '/img/no-image.svg'"
+            />
+          </div>
+          <div>
+            <WannaRental v-if="data.type === 0" @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
+            <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
+            <ReturnForm @reload="reload" :propItem="data"/>
+            <v-btn color="error" block v-if="$store.state.me.admin" @click="destroyItem" error>削除</v-btn>
+          </div>
+          <div>
+            <v-btn v-if="isLiked" block @click="removeLike" class="my-1">
+              <v-icon left color="indigo">mdi-thumb-up</v-icon>
+              いいね {{ likeCount }}
+            </v-btn>
+            <v-btn v-else block @click="like" class="my-1">
+              <v-icon left disabled>mdi-thumb-up</v-icon>
+              いいね {{ likeCount }}
+            </v-btn>
+          </div>
+          <v-container class="pa-0">
+            <v-row row wrap no-gutters>
+              <v-col class="ma-1 flex-grow-0 flex-shrink-0" no-gutter v-for="like in [{id:1},{id:2},{id:3},{id:4},{id:5},{id:6},{id:7},{id:8},{id:9},{id:10},{id:11},{id:12},]" :key="like.id" >
+                <Icon
+                  :user="like"
+                  :size="25"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-col>
+        <v-col
+          :cols="12"
+          :sm="8"
+          :lg="9"
+          :xl="10"
+        >
+          <h1>{{data.name}}</h1>
+          <div class="content">
+            {{ data.description }}
+          </div>
+          <div class="content">
+            <h2>
+              所有者
+              <RegisterOwnerForm @reload="reload"/>
+            </h2>
+            <!-- FIXME: 他のタスクに手をつけたかったので表示が適当です -->
+            <div v-for="owner in data.owners" :key="owner.id">
+              <Icon
+                :user="owner.user"
+                :size="25"
               />
+              {{ owner.user.name }} {{ checkRentalable(owner) }}
             </div>
-            <div>
-              <WannaRental v-if="data.type === 0" @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
-              <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
-              <ReturnForm @reload="reload" :propItem="data"/>
-              <v-btn color="error" block v-if="$store.state.me.admin" @click="destroyItem" error>削除</v-btn>
+          </div>
+          <div class="content">
+            <h2>
+              コメント
+              <CommentDialog />
+            </h2>
+            <div v-if="data.comments.length">
+              <div v-for="comment in data.comments" :key="comment.id">
+                <v-flex>
+                  <Icon :user="comment.user" />
+                  {{ comment.text }}
+                </v-flex>
+              </div>
             </div>
-            <div>
-              <v-btn v-if="isLiked" block @click="removeLike">
-                <v-icon left color="indigo">mdi-thumb-up</v-icon>
-                いいね {{ likeCount }}
-              </v-btn>
-              <v-btn v-else block @click="like">
-                <v-icon left disabled>mdi-thumb-up</v-icon>
-                いいね {{ likeCount }}
-              </v-btn>
+            <div v-else>
+              コメントがありません
             </div>
+          </div>
+          <div class="content">
             <div>
-              <v-layout row wrap class="d-inline-flex">
-                <v-flex v-for="like in data.likes" :key="like.id" >
+              <h2>ログ</h2>
+              <div v-if="data.logs.length">
+                <div v-for="log in reverseLogs" :key="log.id">
                   <Icon
-                    :user="like"
+                    :user="log.user"
                     :size="25"
                   />
-                </v-flex>
-              </v-layout>
+                  {{ createLogMessage(log) }}
+                </div>
+              </div>
+              <div v-else>
+                ログがありません
+              </div>
             </div>
           </div>
         </v-col>
       </v-row>
-    </div>
-    <div :style="`width: ${contentWidth}px;`">
-      <h1>{{data.name}}</h1>
-      <div class="content">
-        {{ data.description }}
-      </div>
-      <div class="content">
-        <h2>
-          所有者
-          <RegisterOwnerForm @reload="reload"/>
-        </h2>
-        <!-- FIXME: 他のタスクに手をつけたかったので表示が適当です -->
-        <div v-for="owner in data.owners" :key="owner.id">
-          <Icon
-            :user="owner.user"
-            :size="25"
-          />
-          {{ owner.user.name }} {{ checkRentalable(owner) }}
-        </div>
-      </div>
-      <div class="content">
-        <h2>
-          コメント
-          <CommentDialog />
-        </h2>
-        <div v-if="data.comments.length">
-          <div v-for="comment in data.comments" :key="comment.id">
-            <v-flex>
-              <Icon :user="comment.user" />
-              {{ comment.text }}
-            </v-flex>
-          </div>
-        </div>
-        <div v-else>
-          コメントがありません
-        </div>
-      </div>
-      <div class="content">
-        <div>
-          <h2>ログ</h2>
-          <div v-if="data.logs.length">
-            <div v-for="log in reverseLogs" :key="log.id">
-              <Icon
-                :user="log.user"
-                :size="25"
-              />
-              {{ createLogMessage(log) }}
-            </div>
-          </div>
-          <div v-else>
-            ログがありません
-          </div>
-        </div>
-      </div>
-    </div>
+    </v-container>
   </div>
 </template>
 
@@ -122,7 +129,8 @@ export default {
   data () {
     return {
       data: null,
-      contentWidth: 600
+      contentWidth: 600,
+      imageWidth: 250
     }
   },
   created () {
@@ -233,10 +241,7 @@ export default {
 </script>
 
 <style scoped>
-  .image {
-    padding-right: 10px;
-  }
   .content {
-    margin-bottom: 30px;
+    margin-bottom: 32px;
   }
 </style>
