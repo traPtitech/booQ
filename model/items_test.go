@@ -72,16 +72,34 @@ func TestRegisterOwner(t *testing.T) {
 		assert.NoError(err)
 		assert.NotEmpty(item)
 	})
+}
 
-	t.Run("delete success", func(t *testing.T) {
+func TestDecreaceOwner(t *testing.T) {
+	user, _ := CreateUser(User{Name: "testDecreceOwnerUser"})
+	var owner Owner
+	owner.UserID = user.ID
+	owner.Rentalable = true
+	owner.Count = 5
+	item, _ := CreateItem(Item{Name: "testDecreaceOwnerItem"})
+
+	t.Run("decreace fail", func(t *testing.T) {
+		assert := assert.New(t)
+		item1, err := DecreaceOwner(owner, item)
+
+		assert.Error(err)
+		assert.Empty(item1)
+	})
+
+	t.Run("decreace success", func(t *testing.T) {
 		assert := assert.New(t)
 
-		owner.Count = -2
 		item, err := RegisterOwner(owner, item)
-
-		assert.Equal(4, item.Owners[0].Count)
+		assert.NoError(err)
+		assert.NotEmpty(item)
+		owner.Count = -3
+		item, err = RegisterOwner(owner, item)
+		assert.Equal(2, item.Owners[0].Count)
 		assert.Equal(item.Owners[0].User.Name, user.Name)
-
 		assert.NoError(err)
 		assert.NotEmpty(item)
 	})

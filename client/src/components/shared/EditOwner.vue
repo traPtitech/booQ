@@ -1,8 +1,9 @@
 <template>
   <nobr>
-    <v-btn class="ma-2" tile outlined color="success" v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1" @click.stop="open">
+    <nobr style="color: #66CC33; border: solid 2px #66CC33; margin: 2px;" v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1" @click.stop="open"><v-icon style="color: #66CC33;" left>mdi-pencil</v-icon>編集 </nobr>
+    <!-- <v-btn class="ma-2" tile outlined color="success" v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1" @click.stop="open">
       <v-icon left>mdi-pencil</v-icon>編集
-    </v-btn>
+    </v-btn> -->
     <div class="text-center">
       <v-dialog light v-model="isOpenEditOwner" max-width="290">
         <v-card width="290">
@@ -43,7 +44,7 @@ export default {
     return {
       rentalable: true,
       count: 1,
-      error: '',
+      error: null,
       isOpenEditOwner: false,
       message: ''
     }
@@ -53,8 +54,13 @@ export default {
   },
   methods: {
     async updateOwner () {
-      if (!Number.isInteger(this.count) || this.count < 0 || this.count === this.propOwner.count) {
+      this.error = null      
+      if (!Number.isInteger(this.count) || this.count < 0) {
         alert('個数を正常にしてください')
+        return false
+      }
+      if (this.count === this.propOwner.count && this.rentalable === this.propOwner.rentalable) {
+        alert('変更されていません')
         return false
       }
       await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count - this.propOwner.count })
@@ -64,9 +70,11 @@ export default {
         })
       if (this.count - this.propOwner.count > 0) {
         this.message = this.count - this.propOwner.count + '個追加しました'
-      }
-      if (this.count - this.propOwner.count < 0) {
+      } else if (this.count - this.propOwner.count < 0) {
         this.message = this.propOwner.count - this.count + '個減らしました'
+      }
+      if (this.rentalable !== this.propOwner.rentalable) {
+        this.message = this.rentalable === true ? '貸し出し可' : '貸し出し不可' + 'な物品を' + this.count + '個登録しました'
       }
       if (this.error) { alert('何らかの原因で処理が完了しませんでした') }
       if (!this.error) { alert(this.message) }

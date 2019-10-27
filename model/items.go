@@ -134,7 +134,8 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 		if owner.Rentalable == nowOwner.Rentalable {
 			nowOwner.Count += owner.Count
 		} else {
-			nowOwner.Count = owner.Count
+			nowOwner.Rentalable = !nowOwner.Rentalable
+			nowOwner.Count += owner.Count
 		}
 		existed = true
 		nowOwner.User = owner.User
@@ -150,9 +151,6 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 			OwnerID: owner.UserID,
 			Type:    2,
 			Count:   latestLog.Count + owner.Count,
-		}
-		if owner.Count < 0 {
-			log.Type = 3
 		}
 		if latestLog.ItemID != 0 {
 			_, err = CreateLog(log)
@@ -171,6 +169,49 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 		if err != nil {
 			return Item{}, err
 		}
+	}
+	return item, nil
+}
+
+// DecreaceOwner 新しい所有者を登録する
+func DecreaceOwner(owner Owner, item Item) (Item, error) {
+	var existed bool
+	db.Preload("Owners").Find(&item)
+	owner.User, _ = GetUserByID(int(owner.UserID))
+	for _, nowOwner := range item.Owners {
+		if nowOwner.UserID != owner.UserID {
+			continue
+		}
+		if owner.Rentalable == nowOwner.Rentalable {
+			nowOwner.Count += owner.Count
+		} else {
+			nowOwner.Rentalable = !nowOwner.Rentalable
+			nowOwner.Count += owner.Count
+		}
+		existed = true
+		nowOwner.User = owner.User
+		db.Save(&nowOwner)
+		db.Set("gorm:auto_preload", true).First(&item).Related(&item.Owners, "Owners").Related(&item.Logs, "Logs")
+		latestLog, err := GetLatestLog(item.Logs, owner.UserID)
+		if err != nil {
+			return Item{}, err
+		}
+		log := Log{
+			ItemID:  latestLog.ItemID,
+			UserID:  owner.UserID,
+			OwnerID: owner.UserID,
+			Type:    3,
+			Count:   latestLog.Count + owner.Count,
+		}
+		if latestLog.ItemID != 0 {
+			_, err = CreateLog(log)
+			if err != nil {
+				return Item{}, err
+			}
+		}
+	}
+	if !existed {
+		return Item{}, errors.New("該当の物品を所有していないため数を減らせません")
 	}
 	return item, nil
 }
