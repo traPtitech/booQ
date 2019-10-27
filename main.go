@@ -11,6 +11,7 @@ import (
 
 	"github.com/traPtitech/booQ/model"
 	"github.com/traPtitech/booQ/router"
+	"github.com/traPtitech/booQ/storage"
 )
 
 func main() {
@@ -28,6 +29,32 @@ func main() {
 	err = model.Migrate()
 	if err != nil {
 		panic(err)
+	}
+
+	// Storage
+	if os.Getenv("OS_CONTAINER") != "" {
+		// Swiftオブジェクトストレージ
+		err := storage.SetSwiftStorage(
+			os.Getenv("OS_CONTAINER"),
+			os.Getenv("OS_USERNAME"),
+			os.Getenv("OS_PASSWORD"),
+			os.Getenv("OS_TENANT_NAME"),
+			os.Getenv("OS_TENANT_ID"),
+			os.Getenv("OS_AUTH_URL"),
+		)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		// ローカルストレージ
+		dir := os.Getenv("UPLOAD_DIR")
+		if dir == "" {
+			dir = "./uploads"
+		}
+		err := storage.SetLocalStorage(dir)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	// Echo instance
