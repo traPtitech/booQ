@@ -1,8 +1,11 @@
 <template>
   <div>
     <div id="interactive" class="viewport scanner quagga-wrapper" :style="styles">
-      <video class="quagga"/>
-      <canvas class="drawingBuffer quagga" />
+      <video class="quagga" />
+      <canvas
+        class="drawingBuffer quagga"
+        :width="computeWidth()"
+      />
     </div>
   </div>
 </template>
@@ -63,8 +66,7 @@ export default {
         width: 320,
         height: 240
       }),
-      validator: o =>
-        typeof o.width === 'number' && typeof o.height === 'number'
+      validator: o => typeof o.width === 'number' && typeof o.height === 'number'
     },
     aspectRatio: {
       type: Object,
@@ -101,8 +103,7 @@ export default {
     }
   },
   mounted () {
-    const displaySize = document.getElementById('barcodewrapper').clientWidth * 0.9
-    const width = Math.min(displaySize, 640)
+    const width = this.computeWidth()
     this.quaggaState.inputStream.constraints.width = width
     this.quaggaState.inputStream.constraints.height = width * 0.75
     Quagga.init(this.quaggaState, function (err) {
@@ -123,6 +124,10 @@ export default {
     }
   },
   methods: {
+    computeWidth () {
+      const width = window.innerWidth * 0.75
+      return Math.min(width, 640)
+    },
     onDetected (data) {
       if (this.checkDigit(data.codeResult.code) && this.checkISBN(data.codeResult.code)) {
         this.$emit('changeCode', data.codeResult.code)
