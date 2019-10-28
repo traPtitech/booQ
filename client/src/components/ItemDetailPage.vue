@@ -11,8 +11,8 @@
           :lg="3"
           :xl="2"
         >
-          <div>
-            <img
+          <div class="mb-4 cover-container">
+            <img class="cover"
               :src="data.img_url.length ? data.img_url : '/img/no-image.svg'"
             />
           </div>
@@ -243,4 +243,11 @@ export default {
 </script>
 
 <style scoped>
+.cover {
+  width: 100%;
+}
+.cover-container {
+  display: flex;
+  justify-content: center;
+}
 </style>
