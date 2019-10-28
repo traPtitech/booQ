@@ -154,7 +154,7 @@ func TestGetItem(t *testing.T) {
 		item, err := model.CreateItem(model.Item{Name: "testGetItemRouter"})
 		assert.NoError(err)
 		assert.NotEmpty(item)
-		req := httptest.NewRequest(echo.DELETE, "/api/items/"+strconv.Itoa(int(item.ID)), nil)
+		req := httptest.NewRequest(echo.GET, "/api/items/"+strconv.Itoa(int(item.ID)), nil)
 		req.Header.Set("Content-Type", "application/json")
 		rec := httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
