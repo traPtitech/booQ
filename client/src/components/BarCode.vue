@@ -60,7 +60,7 @@ export default {
     start () {
       this.codeReader
         .decodeFromVideoDevice(this.selectedDeviceId, 'video', result => {
-          if (result !== null) {
+          if (result !== null && result !== undefined) {
             if (this.checkDigit(result.text) && this.checkISBN(result.text)) {
               this.$emit('changeCode', result.text)
               this.$emit('search')
@@ -68,7 +68,9 @@ export default {
           }
         })
         .then(result => {
-          document.getElementById('result').textContent = result.text
+          if (result !== null && result !== undefined) {
+            document.getElementById('result').textContent = result.text
+          }
         })
         .catch(err => {
           this.setAlert(err)
