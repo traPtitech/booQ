@@ -1,4 +1,4 @@
-const production = 'v1.0.2' // バージョンアップの時はここを書き換えてください
+const production = 'v1.1.0' // バージョンアップの時はここを書き換えてください
 
 let version = ''
 switch (process.env.VUE_APP_API_ENDPOINT) {
