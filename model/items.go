@@ -46,6 +46,13 @@ type RequestPostOwnersBody struct {
 	Count      int  `json:"count"`
 }
 
+type RequestPutItemBody struct {
+	Name        string        `json:"name"`
+	Code        string        `json:"code"`
+	Description string        `json:"description"`
+	ImgURL      string        `json:"img_url"`
+}
+
 // TableName dbのテーブル名を指定する
 func (item *Item) TableName() string {
 	return "items"
@@ -293,4 +300,10 @@ func DestroyItem(item Item) (Item, error) {
 	// ここでは指定のItemがあるかどうか判定していません
 	db.Delete(&item)
 	return item, nil
+}
+
+// UpdateItem itemを変更する
+func UpdateItem(item *Item, body *RequestPutItemBody) (Item, error) {
+	db.Model(item).Updates(body)
+	return *item, nil
 }

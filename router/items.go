@@ -91,6 +91,35 @@ func GetItem(c echo.Context) error {
 	return c.JSON(http.StatusOK, item)
 }
 
+// PutItem PUT /items/:id
+func PutItem(c echo.Context) error {
+	ID := c.Param("id")
+	user := c.Get("user").(model.User)
+	body := model.RequestPutItemBody{}
+	if err := c.Bind(&body); err != nil {
+		return err
+	}
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, err := model.GetItemByID(uint(itemID))
+	if err != nil {
+		return c.JSON(http.StatusNotFound, err)
+	}
+	err = model.CheckOwnsOrAdmin(&user, &item)
+	if err != nil {
+		return c.JSON(http.StatusForbidden, err)
+	}
+
+	item, err = model.UpdateItem(&item, &body)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, err)
+	}
+
+	return c.JSON(http.StatusOK, item)
+}
+
 // DeleteItem DELETE /items/:id
 func DeleteItem(c echo.Context) error {
 	ID := c.Param("id")
