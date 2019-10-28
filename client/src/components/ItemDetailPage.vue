@@ -138,7 +138,10 @@ export default {
   created () {
     axios
       .get(`/api/items/` + this.$route.params.id)
-      .then(res => (this.data = res.data))
+      .then(res => {
+        this.data = res.data
+        this.$store.commit('setNavBarTitle', res.data.name)
+      })
       .catch(e => { alert(e) })
   },
   mounted () {
@@ -146,6 +149,7 @@ export default {
     window.addEventListener('resize', this.conputeWidth)
   },
   beforeDestroy () {
+    this.$store.commit('resetNavBarTitle')
     window.removeEventListener('resize', this.conputeWidth)
   },
   computed: {
