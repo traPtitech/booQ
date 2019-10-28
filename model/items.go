@@ -21,6 +21,7 @@ type Item struct {
 	Comments    []Comment     `json:"comments"`
 	Likes       []User        `gorm:"many2many:like_maps;" json:"likes"`
 	LikeCounts  int           `gorm:"-" json:"like_counts"`
+	Tags        []Tag         `gorm:"many2many:items_tags;" json:"tags"`
 }
 
 type Owner struct {

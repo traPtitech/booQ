@@ -32,11 +32,18 @@ func SetupRouting(e *echo.Echo, client Traq) {
 			apiItems.POST("/:id/comments", PostComments)
 			apiItems.POST("/:id/likes", PostLikes)
 			apiItems.DELETE("/:id/likes", DeleteLikes)
+			apiItems.POST("/:id/tags", PostTags2Item)
+			apiItems.DELETE("/:itemId/tags/:tagId", DeleteTag)
 		}
 
 		apiComments := api.Group("/comments")
 		{
 			apiComments.GET("", GetComments)
+		}
+
+		apiTags := api.Group("/tags")
+		{
+			apiTags.POST("", PostTags)
 		}
 	}
 }
