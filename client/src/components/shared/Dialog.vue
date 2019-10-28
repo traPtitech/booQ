@@ -6,7 +6,7 @@
       max-width="700"
       max-height="650"
     >
-      <v-card id="barcodewrapper">
+      <v-card>
         <v-card-title class="headline">
             <slot name="headline"></slot>
         </v-card-title>
