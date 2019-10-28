@@ -1,5 +1,13 @@
 <template>
   <div>
+    <Dialog :dialog="dialog" target="alert">
+      <template v-slot:headline>
+        <h2 style="color:red;">エラー</h2>
+      </template>
+      <template v-slot:content>
+        <h3>{{ errorMessage }}</h3>
+      </template>
+    </Dialog>
     <div>
       <video id="video" width="100%" height="100%" style="border: 1px solid gray"></video>
     </div>
@@ -12,11 +20,21 @@
 
 <script>
 import { BrowserBarcodeReader } from '@zxing/library'
+import Dialog from './shared/Dialog'
 export default {
   name: 'BarCode',
+  components: {
+    Dialog
+  },
   data () {
     return {
-      selectedDeviceId: null
+      selectedDeviceId: null,
+      dialog: {
+        isOpen: false,
+        closeText: 'close',
+        target: ''
+      },
+      errorMessage: 'エラー'
     }
   },
   methods: {
@@ -50,25 +68,30 @@ export default {
           }
         })
         .then(result => {
-          console.log(result)
           document.getElementById('result').textContent = result.text
         })
         .catch(err => {
-          console.error(err, 'error')
+          this.setAlert(err)
           document.getElementById('result').textContent = 'err'
         })
-      console.log(
-        `Started continous decode from camera with id ${this.selectedDeviceId}`
-      )
     },
     stop () {
       this.codeReader.reset()
-      console.log('reset')
+    },
+    setDialog (closeText, target) {
+      this.dialog = {
+        isOpen: true,
+        closeText: closeText,
+        target: target
+      }
+    },
+    setAlert (errmsg) {
+      this.errorMessage = errmsg
+      this.setDialog('close', 'alert')
     }
   },
   mounted () {
     this.codeReader = new BrowserBarcodeReader()
-    console.log('ZXing code reader initialized')
     this.codeReader
       .getVideoInputDevices()
       .then(videoInputDevices => {
@@ -93,7 +116,7 @@ export default {
         }
       })
       .catch(err => {
-        console.error(err)
+        this.setAlert(err)
       })
     this.start()
   },
