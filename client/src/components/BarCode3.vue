@@ -40,10 +40,8 @@ export default {
       return isbn.slice(0, 3) === '978' || isbn.slice(0, 3) === '979'
     },
     start () {
-      console.log(this.codeReader)
       this.codeReader
         .decodeFromVideoDevice(this.selectedDeviceId, 'video', result => {
-          console.log(result)
           if (result !== null) {
             if (this.checkDigit(result.text) && this.checkISBN(result.text)) {
               this.$emit('changeCode', result.text)
@@ -70,7 +68,6 @@ export default {
   computed: {
     computedWidth () {
       let width = 100
-      console.log(window.innerWidth * 0.75)
       return {
         width: `${width}px`,
         height: `${width * 0.75}px`
