@@ -94,9 +94,13 @@ func GetItem(c echo.Context) error {
 // DeleteItem DELETE /items/:id
 func DeleteItem(c echo.Context) error {
 	ID := c.Param("id")
+	user := c.Get("user").(model.User)
 	itemID, err := strconv.Atoi(ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
+	}
+	if !user.Admin {
+		return c.NoContent(http.StatusForbidden)
 	}
 	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
