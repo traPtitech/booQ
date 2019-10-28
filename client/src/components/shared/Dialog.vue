@@ -4,7 +4,6 @@
       v-model="dialog.isOpen"
       v-if="dialog.isOpen"
       max-width="700"
-      max-height="650"
     >
       <v-card>
         <v-card-title class="headline">

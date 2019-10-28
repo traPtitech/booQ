@@ -78,7 +78,7 @@
 <script>
 import axios from 'axios'
 import { traQBaseURL } from '../utils/api.js'
-import BarCode from './BarCode3'
+import BarCode from './BarCode'
 import Dialog from './shared/Dialog'
 
 export default {
