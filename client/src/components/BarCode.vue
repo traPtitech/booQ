@@ -11,7 +11,7 @@
     <div>
       <video id="video" width="100%" height="100%" style="border: 1px solid gray"></video>
     </div>
-    <div id="sourceSelectPanel" style="display:none">
+    <div id="sourceSelectPanel" style="display:block" v-show="isSelect">
       <label for="sourceSelect">Change video source:</label>
       <select id="sourceSelect" style="max-width:400px"></select>
     </div>
@@ -34,7 +34,8 @@ export default {
         closeText: 'close',
         target: ''
       },
-      errorMessage: 'エラー'
+      errorMessage: 'エラー',
+      isSelect: false
     }
   },
   methods: {
@@ -101,10 +102,6 @@ export default {
         this.selectedDeviceId = videoInputDevices[0].deviceId
         if (videoInputDevices.length > 1) {
           videoInputDevices.forEach(element => {
-            // const sourceOption = document.createElement('option')
-            // sourceOption.text = element.label
-            // sourceOption.value = element.deviceId
-            // sourceOption.setAttribute('selected', '')
             const sourceOption = new Option(element.label, element.deviceId, true, true)
             sourceSelect.appendChild(sourceOption)
           })
@@ -113,10 +110,7 @@ export default {
             this.stop()
             this.start()
           }
-          const sourceSelectPanel = document.getElementById(
-            'sourceSelectPanel'
-          )
-          sourceSelectPanel.style.display = 'block'
+          this.isSelect = true
         }
       })
       .catch(err => {
