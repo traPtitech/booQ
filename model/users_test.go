@@ -55,10 +55,7 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestUpdateUser(t *testing.T) {
-	t.Parallel()
-
 	t.Run("failures", func(t *testing.T) {
-		t.Parallel()
 		assert := assert.New(t)
 
 		user, err := UpdateUser(User{DisplayName: "test3display"})
@@ -69,14 +66,21 @@ func TestUpdateUser(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		assert := assert.New(t)
 
-		user1, err1 := CreateUser(User{Name: "test3"})
-		assert.NoError(err1)
+		user1, err := CreateUser(User{Name: "test3", DisplayName: "test3before", Admin: true})
+		assert.NoError(err)
 		assert.NotEmpty(user1)
 
-		user, err := UpdateUser(User{Name: "test3", DisplayName: "test3display"})
+		user, err := UpdateUser(User{Name: "test3", DisplayName: "test3after", Admin: false})
 		assert.NoError(err)
 		assert.NotEmpty(user)
-		assert.Equal("test3display", user.DisplayName)
+		assert.Equal("test3after", user.DisplayName)
+		assert.Equal(false, user.Admin)
+
+		user2, err := GetUserByName("test3")
+		assert.NoError(err)
+		assert.NotEmpty(user)
+		assert.NotEqual(user2.DisplayName, user1.DisplayName)
+		assert.NotEqual(user2.Admin, user1.Admin)
 	})
 }
 

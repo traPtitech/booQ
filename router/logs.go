@@ -31,10 +31,12 @@ func PostLogs(c echo.Context) error {
 	var itemCount int
 	var exist bool
 	for _, owner := range item.Owners {
-		if owner.User.ID == body.OwnerID {
+		if owner.UserID == body.OwnerID {
 			if !owner.Rentalable {
+				fmt.Print("aaaaa")
 				return c.NoContent(http.StatusForbidden)
 			}
+			fmt.Print("bbbbb")
 			itemCount = owner.Count
 			exist = true
 		}
@@ -83,7 +85,7 @@ func PostLogs(c echo.Context) error {
 			OwnerID: body.OwnerID,
 			Count:   body.Count * -1,
 		}
-		_, err = model.RentalItem(rentalUser, body.OwnerID, item, 0)
+		_, err = model.RentalItem(rentalUser, item)
 		if err != nil {
 			fmt.Print("rentalItemErr")
 			return c.JSON(http.StatusBadRequest, err)
@@ -105,7 +107,7 @@ func PostLogs(c echo.Context) error {
 			OwnerID: body.OwnerID,
 			Count:   body.Count,
 		}
-		_, err = model.RentalItem(rentalUser, body.OwnerID, item, 0)
+		_, err = model.RentalItem(rentalUser, item)
 		if err != nil {
 			fmt.Print("rentalItemErr")
 			return c.JSON(http.StatusBadRequest, err)

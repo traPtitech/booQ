@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-btn block color="primary" @click.stop="open">借りる</v-btn>
+    <v-btn block color="success" @click.stop="open">借りたい</v-btn>
     <div class="text-center">
-      <v-dialog light v-model="isOpenRentalForm" max-width="320">
+      <v-dialog light v-model="isOpenWannaRentalForm" max-width="320">
         <v-card width="320">
-          <v-card-title class="headline">物品を借りる</v-card-title>
+          <v-card-title class="headline">所有者にメッセージを送る</v-card-title>
           <v-card-actions>
             <v-menu bottom origin="center center" transition="scale-transition" >
               <template v-slot:activator="{ on }">
@@ -27,31 +27,19 @@
           <v-card-actions>
             <div v-if="propItem.type == 1">
               <v-form ref="form">
-                <v-textarea outlined v-model="purpose" :rules="[() => !!purpose || 'This field is required']" label="目的"/>
+                <v-textarea outlined v-model="message" :rules="[() => !!message || 'This field is required']" label="目的"/>
               </v-form>
             </div>
             <div v-else>
               <v-form ref="form">
-                <v-textarea outlined v-model="purpose" label="目的"/>
+                <v-textarea outlined v-model="message" label="文面"/>
               </v-form>
             </div>
           </v-card-actions>
-          <div v-if="propItem.type === 1">
-            <div style="padding-bottom: 30px;">
-              個数
-            </div>
-            <v-card-actions >
-              <v-slider :max="getBihinLatestCount()" min="1" v-model="rentalCount" thumb-label="always" />
-            </v-card-actions>
-          </div>
-          <div>返却日</div>
-          <v-card-actions max-width="320">
-            <v-date-picker v-model="dueDate"></v-date-picker>
-          </v-card-actions>
-          <v-divider></v-divider>
+          <v-divider/>
           <v-card-actions>
             <div class="flex-grow-1"></div>
-            <v-btn v-on:click="rental()">借りる</v-btn>
+            <v-btn v-on:click="send()">送る</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -64,20 +52,23 @@ import axios from 'axios'
 import { traQBaseURL } from '../../utils/api.js'
 
 export default {
-  name: 'RentalForm',
+  name: 'WannaRental',
   props: {
     propItem: Object
   },
   data () {
     return {
-      purpose: null,
+      message: null,
       rentalCount: 1,
       dueDate: null,
       rentOwnerID: 0,
       rentOwnerName: '',
       error: '',
-      isOpenRentalForm: false
+      isOpenWannaRentalForm: false
     }
+  },
+  mounted () {
+    this.message = '[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')を借りたいです。'
   },
   methods: {
     getBihinLatestCount (itemID) {
@@ -98,48 +89,38 @@ export default {
       }
       return targetLog.count
     },
-    async rental () {
+    async send () {
       this.error = null
       if (this.rentOwnerID === 0) {
         alert('所有者を選択してください')
         return false
       }
-      if (this.propItem.type === 1 && this.purpose === null) {
-        alert('目的を入力してください')
+      if (this.message === null) {
+        alert('文面を入力してください')
         return false
       }
-      if (this.dueDate === null) {
-        alert('返却日を入力してください')
-        return false
-      }
-      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
+      const users = await axios.get(`${traQBaseURL}/users`)
         .catch(e => {
           alert(e)
           this.error = e
-          return false
         })
       if (this.error) { return false }
-      if (!this.error) { alert('あなたは「' + this.propItem.name + '」を' + this.rentalCount + '個借りました。') }
-      this.isOpenRentalForm = !this.isOpenRentalForm
-      this.$emit('reload')
-      if (this.propItem.type === 0) {
-        const traQmessage = '@' + this.rentOwnerName + ' の「' + this.propItem.name + '」を借りました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=1`, { text: traQmessage })
-          .catch(e => {
-            alert(e)
-            return false
-          })
-      } else {
-        const traQmessage = '出\n[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')×' + this.rentalCount + '\n目的：' + this.purpose
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + `/messages?embed=1`, { text: traQmessage })
-          .catch(e => {
-            alert(e)
-            return false
-          })
+      const targetUser = users.data.find(element => { return element.name === this.rentOwnerName })
+      if (!targetUser) {
+        alert('所有者の名前が不正です')
+        return false
       }
+      this.isOpenWannaRentalForm = !this.isOpenWannaRentalForm
+      this.$emit('reload')
+      await axios.post(`${traQBaseURL}/users/` + targetUser.userId + `/messages?embed=1`, { text: this.message })
+        .catch(e => {
+          alert(e)
+          this.error = e
+        })
+      if (this.error) { return false }
     },
     open () {
-      this.isOpenRentalForm = !this.isOpenRentalForm
+      this.isOpenWannaRentalForm = !this.isOpenWannaRentalForm
     }
   }
 }

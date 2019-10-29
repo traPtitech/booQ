@@ -57,14 +57,21 @@ func CreateUser(user User) (User, error) {
 
 // UpdateUser userの情報(表示される名前やアイコン、管理者権限)の変更
 func UpdateUser(newUser User) (User, error) {
-	res := User{}
+	user := User{}
 	if newUser.Name == "" {
 		return User{}, errors.New("Nameが存在しません")
 	}
-	db.Model(&res).Where("name = ?", newUser.Name).Updates(newUser)
-	return res, nil
+	db.Where("name = ?", newUser.Name).Find(&user)
+	if user.Name == "" {
+		return User{}, errors.New("指定したuserが存在しません")
+	}
+	user.DisplayName = newUser.DisplayName
+	user.Admin = newUser.Admin
+	db.Save(&user)
+	return user, nil
 }
 
+// CheckTargetedOrAdmin 管理者または対象のUserかどうかを判定する
 func CheckTargetedOrAdmin(user, reqUser User) error {
 	if user.Name == "" || reqUser.Name == "" {
 		return errors.New("Nameが存在しません")

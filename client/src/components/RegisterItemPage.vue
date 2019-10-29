@@ -1,5 +1,13 @@
 <template>
   <div>
+    <Dialog :dialog="dialog" target="alert">
+      <template v-slot:headline>
+        <h2 style="color:red;">エラー</h2>
+      </template>
+      <template v-slot:content>
+        <h3>{{ errorMessage }}</h3>
+      </template>
+    </Dialog>
     <h1>物品登録ページ</h1>
     <div
       v-if="$store.state.me && $store.state.me.admin"
@@ -17,6 +25,14 @@
       <v-btn class="green green-text" @click="getBookInformation">
         自動入力
       </v-btn>
+      <v-btn class="green green-text" @click.stop="setDialog('close','barcodeDialog')">
+        バーコード読み取り
+      </v-btn>
+      <Dialog :dialog="dialog" target="barcodeDialog">
+        <template v-slot:content>
+          <BarCode  @search="getBookInformation" @changeCode="changeCode"/>
+        </template>
+      </Dialog>
     </div>
     <div>
       <div>物品名</div>
@@ -62,9 +78,15 @@
 <script>
 import axios from 'axios'
 import { traQBaseURL } from '../utils/api.js'
+import BarCode from './BarCode'
+import Dialog from './shared/Dialog'
 
 export default {
   name: 'RegisterItemPage',
+  components: {
+    BarCode,
+    Dialog
+  },
   data () {
     return {
       ownerID: 0,
@@ -79,7 +101,13 @@ export default {
       description: '',
       img_name: '',
       img_url: '',
-      count: 1
+      count: 1,
+      dialog: {
+        isOpen: false,
+        closeText: 'close',
+        target: ''
+      },
+      errorMessage: 'エラー'
     }
   },
   watch: {
@@ -91,14 +119,14 @@ export default {
     async register () {
       const res = await axios.post(`/api/items`, { name: this.name, code: this.code, type: Number(this.ownerID), description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
       if (!res) {
-        alert('エラーが発生したため物品の登録が行われませんでした。')
+        this.setAlert('close', 'エラーが発生したため物品の登録が行われませんでした。')
         return
       }
       const itemID = res.data.ID
       const userID = Number(this.ownerID) === 0 ? Number(this.$store.state.me.ID) : Number(this.ownerID)
       const res2 = await axios.post(`/api/items/` + itemID + `/owners`, { user_id: userID, rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
       if (!res2) {
-        alert('エラーが発生したため所有者の登録が行われませんでした。')
+        this.setAlert('close', 'エラーが発生したため所有者の登録が行われませんでした。')
         return
       }
       await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=1`, {
@@ -117,7 +145,7 @@ export default {
       form.append('file', file)
       const data = await axios.post(`${traQBaseURL}/files`, form).catch(e => alert(e))
       if (!data) {
-        alert('画像の投稿に失敗しました。')
+        this.setAlert('close', '画像の投稿に失敗しました')
       }
       this.img_url = `${traQBaseURL}/files/${data.data.fileId}/thumbnail`
     },
@@ -153,11 +181,30 @@ export default {
             this.img_url = this.data['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
           }
         } else {
-          alert('本がみつかりませんでした。')
+          this.setAlert('close', '本が見つかりませんでした')
         }
       } else {
-        alert('不正な値です。')
+        this.setAlert('close', '不正な値です')
       }
+    },
+    changeCode (code) {
+      this.code = code
+      this.dialog = {
+        isOpen: false,
+        closeText: '',
+        target: ''
+      }
+    },
+    setDialog (closeText, target) {
+      this.dialog = {
+        isOpen: true,
+        closeText: closeText,
+        target: target
+      }
+    },
+    setAlert (closeText, errmsg) {
+      this.errorMessage = errmsg
+      this.setDialog(closeText, 'alert')
     }
   }
 }

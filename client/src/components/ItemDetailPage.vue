@@ -4,39 +4,103 @@
     class="d-flex flex-wrap"
   >
     <div>
-      <v-row no-gutters>
-        <v-col md="auto">
-          <div class="image">
-            <div>
-              <img
-                :src="data.img_url.length ? data.img_url : '/img/no-image.svg'"
-                style="width: 250px;"
+      <v-row>
+        <v-col
+          :cols="12"
+          :sm="4"
+          :lg="3"
+          :xl="2"
+        >
+          <div class="mb-4 cover-container">
+            <img class="cover"
+              :src="data.img_url.length ? data.img_url : '/img/no-image.svg'"
+            />
+          </div>
+          <div>
+            <WannaRental v-if="data.type === 0" @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
+            <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
+            <ReturnForm @reload="reload" :propItem="data"/>
+            <v-btn color="error" block v-if="$store.state.me.admin" @click="destroyItem" error>削除</v-btn>
+          </div>
+          <div>
+            <v-btn v-if="isLiked" block @click="removeLike" class="my-1">
+              <v-icon left color="indigo">mdi-thumb-up</v-icon>
+              いいね {{ likeCount }}
+            </v-btn>
+            <v-btn v-else block @click="like" class="my-1">
+              <v-icon left disabled>mdi-thumb-up</v-icon>
+              いいね {{ likeCount }}
+            </v-btn>
+          </div>
+          <v-container class="pa-0">
+            <v-row row wrap no-gutters>
+              <v-col class="ma-1 flex-grow-0 flex-shrink-0" no-gutter v-for="like in data.likes" :key="like.id" >
+                <Icon
+                  :user="like"
+                  :size="25"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-col>
+        <v-col
+          :cols="12"
+          :sm="8"
+          :lg="9"
+          :xl="10"
+        >
+          <h1>{{data.name}}</h1>
+          <div class="mb-8">
+            {{ data.description }}
+          </div>
+          <div class="mb-8">
+            <h2>
+              所有者
+              <RegisterOwnerForm @reload="reload"/>
+            </h2>
+            <!-- FIXME: 他のタスクに手をつけたかったので表示が適当です -->
+            <div v-for="owner in data.owners" :key="owner.id">
+              <Icon
+                :user="owner.user"
+                :size="25"
               />
+              {{ owner.user.name }} {{ checkRentalable(owner) }}
             </div>
-            <div>
-              <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
-              <ReturnForm @reload="reload" :propItem="data"/>
-              <v-btn color="error" block v-if="$store.state.me.admin" @click="destroyItem" error>削除</v-btn>
+          </div>
+          <div class="mb-4">
+            <h2>
+              コメント
+              <CommentDialog />
+            </h2>
+            <v-list v-if="data.comments.length" color="transparent">
+              <v-list-item v-for="comment in data.comments" :key="comment.id" class="pl-0">
+                <v-list-item-avatar>
+                  <Icon :user="comment.user" :size="40" />
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  {{ comment.text }}
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+            <div v-else>
+              コメントがありません
             </div>
+          </div>
+          <div class="mb-8">
             <div>
-              <v-btn v-if="isLiked" block @click="removeLike">
-                <v-icon left color="indigo">mdi-thumb-up</v-icon>
-                いいね {{ likeCount }}
-              </v-btn>
-              <v-btn v-else block @click="like">
-                <v-icon left disabled>mdi-thumb-up</v-icon>
-                いいね {{ likeCount }}
-              </v-btn>
-            </div>
-            <div>
-              <v-layout row wrap class="d-inline-flex">
-                <v-flex v-for="like in data.likes" :key="like.id" >
+              <h2>ログ</h2>
+              <div v-if="data.logs.length">
+                <div v-for="log in reverseLogs" :key="log.id">
                   <Icon
-                    :user="like"
+                    :user="log.user"
                     :size="25"
                   />
-                </v-flex>
-              </v-layout>
+                  {{ createLogMessage(log) }}
+                </div>
+              </div>
+              <div v-else>
+                ログがありません
+              </div>
             </div>
           </div>
         </v-col>
@@ -52,7 +116,6 @@
           所有者
           <RegisterOwnerForm @reload="reload"/>
         </h2>
-        <!-- FIXME: 他のタスクに手をつけたかったので表示が適当です -->
         <div v-for="owner in data.owners" :key="owner.id">
           <Icon
             :user="owner.user"
@@ -60,9 +123,6 @@
           />
           {{ owner.user.name }} {{ checkRentalable(owner) }}
           <EditOwner @reload="reload" :propOwner="owner" :propLatestLogs="data.latest_logs"/>
-          <!-- <v-btn class="ma-2" tile outlined color="success" v-if="owner.user.name === $store.state.me.name || owner.user.ID === 1">
-            <v-icon left>mdi-pencil</v-icon>編集
-          </v-btn> -->
         </div>
       </div>
       <div class="content">
@@ -111,6 +171,7 @@ import RentalForm from './shared/RentalForm'
 import CommentDialog from './shared/CommentDialog'
 import ReturnForm from './shared/ReturnForm'
 import EditOwner from './shared/EditOwner'
+import WannaRental from './shared/WannaRental'
 
 export default {
   name: 'ItemDetailPage',
@@ -120,12 +181,14 @@ export default {
     RentalForm,
     CommentDialog,
     ReturnForm,
-    EditOwner
+    EditOwner,
+    WannaRental
   },
   data () {
     return {
       data: null,
-      contentWidth: 600
+      contentWidth: 600,
+      imageWidth: 250
     }
   },
   created () {
@@ -240,10 +303,11 @@ export default {
 </script>
 
 <style scoped>
-  .image {
-    padding-right: 10px;
-  }
-  .content {
-    margin-bottom: 30px;
-  }
+.cover {
+  width: 100%;
+}
+.cover-container {
+  display: flex;
+  justify-content: center;
+}
 </style>
