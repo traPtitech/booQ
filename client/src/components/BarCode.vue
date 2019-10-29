@@ -101,9 +101,11 @@ export default {
         this.selectedDeviceId = videoInputDevices[0].deviceId
         if (videoInputDevices.length > 1) {
           videoInputDevices.forEach(element => {
-            const sourceOption = document.createElement('option')
-            sourceOption.text = element.label
-            sourceOption.value = element.deviceId
+            // const sourceOption = document.createElement('option')
+            // sourceOption.text = element.label
+            // sourceOption.value = element.deviceId
+            // sourceOption.setAttribute('selected', '')
+            const sourceOption = new Option(element.label, element.deviceId, true, true)
             sourceSelect.appendChild(sourceOption)
           })
           sourceSelect.onchange = () => {
