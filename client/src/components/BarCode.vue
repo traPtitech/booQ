@@ -1,139 +1,43 @@
 <template>
   <div>
-    <div id="interactive" class="viewport scanner quagga-wrapper" :style="styles">
-      <video class="quagga" />
-      <canvas
-        class="drawingBuffer quagga"
-        :width="computeWidth()"
-      />
+    <Dialog :dialog="dialog" target="alert">
+      <template v-slot:headline>
+        <h2 style="color:red;">エラー</h2>
+      </template>
+      <template v-slot:content>
+        <h3>{{ errorMessage }}</h3>
+      </template>
+    </Dialog>
+    <div>
+      <video id="video" width="100%" height="100%" style="border: 1px solid gray"></video>
+    </div>
+    <div id="sourceSelectPanel" style="display:none">
+      <label for="sourceSelect">Change video source:</label>
+      <select id="sourceSelect" style="max-width:400px"></select>
     </div>
   </div>
 </template>
 
 <script>
-import Quagga from 'quagga'
+import { BrowserBarcodeReader } from '@zxing/library'
+import Dialog from './shared/Dialog'
 export default {
   name: 'BarCode',
-  props: {
-    onProcessed: {
-      type: Function,
-      default (result) {
-        let drawingCtx = Quagga.canvas.ctx.overlay
-        let drawingCanvas = Quagga.canvas.dom.overlay
-        if (result) {
-          if (result.boxes) {
-            drawingCtx.clearRect(
-              0,
-              0,
-              parseInt(drawingCanvas.getAttribute('width')),
-              parseInt(drawingCanvas.getAttribute('height'))
-            )
-            result.boxes
-              .filter(function (box) {
-                return box !== result.box
-              })
-              .forEach(function (box) {
-                Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, {
-                  color: 'green',
-                  lineWidth: 2
-                })
-              })
-          }
-          if (result.box) {
-            Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, {
-              color: '#00F',
-              lineWidth: 2
-            })
-          }
-          if (result.codeResult && result.codeResult.code) {
-            Quagga.ImageDebug.drawPath(
-              result.line,
-              { x: 'x', y: 'y' },
-              drawingCtx,
-              { color: 'red', lineWidth: 3 }
-            )
-          }
-        }
-      }
-    },
-    readerTypes: {
-      type: Array,
-      default: () => ['ean_reader']
-    },
-    readerSize: {
-      type: Object,
-      default: () => ({
-        width: 320,
-        height: 240
-      }),
-      validator: o => typeof o.width === 'number' && typeof o.height === 'number'
-    },
-    aspectRatio: {
-      type: Object,
-      default: () => ({
-        min: 1,
-        max: 2
-      }),
-      validator: o => typeof o.min === 'number' && typeof o.max === 'number'
-    }
+  components: {
+    Dialog
   },
   data () {
     return {
-      quaggaState: {
-        inputStream: {
-          type: 'LiveStream',
-          constraints: {
-            width: 640,
-            height: 480,
-            facingMode: 'environment',
-            aspectRatio: { min: 1, max: 2 }
-          }
-        },
-        locator: {
-          patchSize: 'medium',
-          halfSample: true
-        },
-        numOfWorkers: 2,
-        frequency: 10,
-        decoder: {
-          readers: this.readerTypes
-        },
-        locate: true
-      }
-    }
-  },
-  mounted () {
-    const width = this.computeWidth()
-    this.quaggaState.inputStream.constraints.width = width
-    this.quaggaState.inputStream.constraints.height = width * 0.75
-    Quagga.init(this.quaggaState, function (err) {
-      if (err) {
-        alert('カメラの初期化処理に失敗しました')
-      }
-      Quagga.start()
-    })
-    Quagga.onDetected(this.onDetected)
-    Quagga.onProcessed(this.onProcessed)
-  },
-  computed: {
-    styles () {
-      return {
-        width: `${this.quaggaState.inputStream.constraints.width}px`,
-        height: `${this.quaggaState.inputStream.constraints.width * 0.75}px`
-      }
+      selectedDeviceId: null,
+      dialog: {
+        isOpen: false,
+        closeText: 'close',
+        target: ''
+      },
+      errorMessage: 'エラー'
     }
   },
   methods: {
-    computeWidth () {
-      const width = window.innerWidth * 0.75
-      return Math.min(width, 640)
-    },
-    onDetected (data) {
-      if (this.checkDigit(data.codeResult.code) && this.checkISBN(data.codeResult.code)) {
-        this.$emit('changeCode', data.codeResult.code)
-        this.$emit('search')
-      }
-    },
     checkDigit (isbn) {
       const arrIsbn = isbn
         .toString()
@@ -153,38 +57,73 @@ export default {
     checkISBN (isbn) {
       return isbn.slice(0, 3) === '978' || isbn.slice(0, 3) === '979'
     },
-    setAlert (type, title, message) {
-      this.alert = {
-        isAlert: true,
-        title: title,
-        message: message,
-        alertType: type
+    start () {
+      this.codeReader
+        .decodeFromVideoDevice(this.selectedDeviceId, 'video', result => {
+          if (result !== null && result !== undefined) {
+            if (this.checkDigit(result.text) && this.checkISBN(result.text)) {
+              this.$emit('changeCode', result.text)
+              this.$emit('search')
+            }
+          }
+        })
+        .then(result => {
+          if (result !== null && result !== undefined) {
+            document.getElementById('result').textContent = result.text
+          }
+        })
+        .catch(err => {
+          this.setAlert(err)
+          document.getElementById('result').textContent = 'err'
+        })
+    },
+    stop () {
+      this.codeReader.reset()
+    },
+    setDialog (closeText, target) {
+      this.dialog = {
+        isOpen: true,
+        closeText: closeText,
+        target: target
       }
+    },
+    setAlert (errmsg) {
+      this.errorMessage = errmsg
+      this.setDialog('close', 'alert')
     }
   },
+  mounted () {
+    this.codeReader = new BrowserBarcodeReader()
+    this.codeReader
+      .getVideoInputDevices()
+      .then(videoInputDevices => {
+        const sourceSelect = document.getElementById('sourceSelect')
+        this.selectedDeviceId = videoInputDevices[0].deviceId
+        if (videoInputDevices.length > 1) {
+          videoInputDevices.forEach(element => {
+            const sourceOption = document.createElement('option')
+            sourceOption.text = element.label
+            sourceOption.value = element.deviceId
+            sourceSelect.appendChild(sourceOption)
+          })
+          sourceSelect.onchange = () => {
+            this.selectedDeviceId = sourceSelect.value
+            this.stop()
+            this.start()
+          }
+          const sourceSelectPanel = document.getElementById(
+            'sourceSelectPanel'
+          )
+          sourceSelectPanel.style.display = 'block'
+        }
+      })
+      .catch(err => {
+        this.setAlert(err)
+      })
+    this.start()
+  },
   destroyed () {
-    Quagga.stop()
+    this.codeReader.reset()
   }
 }
 </script>
-
-<style scoped>
-.viewport {
-  position: relative;
-}
-.viewport canvas,
-.viewport video {
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-.quagga-wrapper {
-  margin: 0 auto;
-}
-.quagga {
-  display: inline-block;
-  left: 0;
-  right:0;
-  margin: auto;
-}
-</style>
