@@ -22,3 +22,6 @@ booQ
 /tmp/
 .DS_Store
 /.env
+
+!/uploads/.gitkeep
+/uploads/*
