@@ -59,7 +59,7 @@
             :size="25"
           />
           {{ owner.user.name }} {{ checkRentalable(owner) }}
-          <EditOwner @reload="reload" :propOwner="owner"/>
+          <EditOwner @reload="reload" :propOwner="owner" :propLatestLogs="data.latest_logs"/>
           <!-- <v-btn class="ma-2" tile outlined color="success" v-if="owner.user.name === $store.state.me.name || owner.user.ID === 1">
             <v-icon left>mdi-pencil</v-icon>編集
           </v-btn> -->

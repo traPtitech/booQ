@@ -38,7 +38,8 @@ import axios from 'axios'
 export default {
   name: 'EditOwner',
   props: {
-    propOwner: Object
+    propOwner: Object,
+    propLatestLogs: Array
   },
   data () {
     return {
@@ -54,7 +55,7 @@ export default {
   },
   methods: {
     async updateOwner () {
-      this.error = null      
+      this.error = null
       if (!Number.isInteger(this.count) || this.count < 0) {
         alert('個数を正常にしてください')
         return false
@@ -63,11 +64,24 @@ export default {
         alert('変更されていません')
         return false
       }
-      await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count - this.propOwner.count })
+      const latestLog = this.propLatestLogs.find(element => {
+        return element.owner_id === this.propOwner.owner_id
+      })
+      if (latestLog) {
+        if (this.count - this.propOwner.count + latestLog.count < 0) {
+          alert('現在貸し出し中でこの数にはできません')
+          return
+        }
+      }
+      await axios.put(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e
         })
+      if (this.error) {
+        alert('何らかの原因で処理が完了しませんでした')
+        return
+      }
       if (this.count - this.propOwner.count > 0) {
         this.message = this.count - this.propOwner.count + '個追加しました'
       } else if (this.count - this.propOwner.count < 0) {
@@ -76,7 +90,6 @@ export default {
       if (this.rentalable !== this.propOwner.rentalable) {
         this.message = this.rentalable === true ? '貸し出し可' : '貸し出し不可' + 'な物品を' + this.count + '個登録しました'
       }
-      if (this.error) { alert('何らかの原因で処理が完了しませんでした') }
       if (!this.error) { alert(this.message) }
       this.isOpenEditOwner = !this.isOpenEditOwner
       this.$emit('reload')
