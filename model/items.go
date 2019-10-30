@@ -46,13 +46,6 @@ type RequestPostOwnersBody struct {
 	Count      int  `json:"count"`
 }
 
-type RequestPutItemBody struct {
-	Name        string        `json:"name"`
-	Code        string        `json:"code"`
-	Description string        `json:"description"`
-	ImgURL      string        `json:"img_url"`
-}
-
 // TableName dbのテーブル名を指定する
 func (item *Item) TableName() string {
 	return "items"
@@ -303,7 +296,22 @@ func DestroyItem(item Item) (Item, error) {
 }
 
 // UpdateItem itemを変更する
-func UpdateItem(item *Item, body *RequestPutItemBody) (Item, error) {
-	db.Model(item).Updates(body)
-	return *item, nil
+func UpdateItem(item *Item, body *map[string]interface{}, isAdmin bool) Item {
+	fields := []string{"name", "code", "description", "img_url"}
+	if isAdmin {
+		fields = append(fields, "type")
+	}
+	db.Model(item).Updates(filterMap(body, fields))
+
+	return *item
+}
+
+func filterMap(input *map[string]interface{}, keys []string) map[string]interface{} {
+	output := make(map[string]interface{})
+	for _, key := range keys {
+		if val, ok := (*input)[key]; ok {
+			output[key] = val
+		}
+	}
+	return output
 }

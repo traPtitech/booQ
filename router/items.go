@@ -95,7 +95,7 @@ func GetItem(c echo.Context) error {
 func PutItem(c echo.Context) error {
 	ID := c.Param("id")
 	user := c.Get("user").(model.User)
-	body := model.RequestPutItemBody{}
+	body := map[string]interface{}{}
 	if err := c.Bind(&body); err != nil {
 		return err
 	}
@@ -112,10 +112,7 @@ func PutItem(c echo.Context) error {
 		return c.JSON(http.StatusForbidden, err)
 	}
 
-	item, err = model.UpdateItem(&item, &body)
-	if err != nil {
-		return c.JSON(http.StatusNotFound, err)
-	}
+	item = model.UpdateItem(&item, &body, user.Admin)
 
 	return c.JSON(http.StatusOK, item)
 }
