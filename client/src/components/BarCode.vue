@@ -11,7 +11,7 @@
     <div>
       <video id="video" width="100%" height="100%" style="border: 1px solid gray" @play="updatePaused"></video>
     </div>
-    <div id="sourceSelectPanel" style="display:block" v-show="isSelectPanel">
+    <div v-show="isSelectPanel" id="sourceSelectPanel" style="display:block">
       <label for="sourceSelect">Change video source:</label>
       <select id="sourceSelect" style="max-width:400px"></select>
     </div>
