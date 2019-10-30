@@ -9,9 +9,9 @@
       </template>
     </Dialog>
     <div>
-      <video id="video" width="100%" height="100%" style="border: 1px solid gray"></video>
+      <video id="video" width="100%" height="100%" style="border: 1px solid gray" @play="updatePaused"></video>
     </div>
-    <div id="sourceSelectPanel" style="display:none">
+    <div v-show="isSelectPanel" id="sourceSelectPanel" style="display:block">
       <label for="sourceSelect">Change video source:</label>
       <select id="sourceSelect" style="max-width:400px"></select>
     </div>
@@ -28,13 +28,14 @@ export default {
   },
   data () {
     return {
-      selectedDeviceId: null,
       dialog: {
         isOpen: false,
         closeText: 'close',
         target: ''
       },
-      errorMessage: 'エラー'
+      errorMessage: 'エラー',
+      isSelectPanel: false,
+      initializeCount: 0
     }
   },
   methods: {
@@ -90,37 +91,44 @@ export default {
     setAlert (errmsg) {
       this.errorMessage = errmsg
       this.setDialog('close', 'alert')
+    },
+    initializeCamera () {
+      if (this.initializeCount > 5) {
+        this.setAlert('initialize failed')
+      }
+      this.initializeCount++
+      this.codeReader = new BrowserBarcodeReader()
+      this.codeReader
+        .getVideoInputDevices()
+        .then(videoInputDevices => {
+          const sourceSelect = document.getElementById('sourceSelect')
+          this.selectedDeviceId = videoInputDevices[0].deviceId
+          if (videoInputDevices.length > 1) {
+            videoInputDevices.forEach(element => {
+              const sourceOption = new Option(element.label, element.deviceId, true, true)
+              sourceSelect.appendChild(sourceOption)
+            })
+            sourceSelect.onchange = () => {
+              this.selectedDeviceId = sourceSelect.value
+              this.stop()
+              this.start()
+            }
+            this.isSelectPanel = true
+          }
+        })
+        .catch(err => {
+          this.setAlert(err)
+        })
+      this.start()
+    },
+    updatePaused (event) {
+      if (!event.target.paused && this.selectedDeviceId === undefined) {
+        this.initializeCamera()
+      }
     }
   },
   mounted () {
-    this.codeReader = new BrowserBarcodeReader()
-    this.codeReader
-      .getVideoInputDevices()
-      .then(videoInputDevices => {
-        const sourceSelect = document.getElementById('sourceSelect')
-        this.selectedDeviceId = videoInputDevices[0].deviceId
-        if (videoInputDevices.length > 1) {
-          videoInputDevices.forEach(element => {
-            const sourceOption = document.createElement('option')
-            sourceOption.text = element.label
-            sourceOption.value = element.deviceId
-            sourceSelect.appendChild(sourceOption)
-          })
-          sourceSelect.onchange = () => {
-            this.selectedDeviceId = sourceSelect.value
-            this.stop()
-            this.start()
-          }
-          const sourceSelectPanel = document.getElementById(
-            'sourceSelectPanel'
-          )
-          sourceSelectPanel.style.display = 'block'
-        }
-      })
-      .catch(err => {
-        this.setAlert(err)
-      })
-    this.start()
+    this.initializeCamera()
   },
   destroyed () {
     this.codeReader.reset()
