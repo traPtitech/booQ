@@ -155,9 +155,7 @@ export default {
       if (!data) {
         this.setAlert('close', '画像の投稿に失敗しました')
       }
-      console.log(data.data)
       this.img_url = data.data.url
-      // this.img_url = `/api/files/${data.data.url}/thumbnail`
       this.loading = false
     },
     remove () {
