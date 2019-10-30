@@ -2,7 +2,6 @@ package model
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/jinzhu/gorm"
 )
@@ -145,7 +144,7 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 	return item, nil
 }
 
-// AddOwner 新しい所有者を登録する
+// AddOwner すでに指定したuserが該当のitemを持っているときに所有数を増減させる
 func AddOwner(owner Owner, item Item) (Item, error) {
 	var existed bool
 	db.Preload("Owners").Preload("Logs").Find(&item)
@@ -161,11 +160,8 @@ func AddOwner(owner Owner, item Item) (Item, error) {
 			continue
 		}
 		nowOwner.Rentalable = owner.Rentalable
-		if !nowOwner.Rentalable {
-			fmt.Print("\n\n\n\n\nfalse\n\n\n\n\n")
-		}
 		if owner.Count-nowOwner.Count+rentalableCount < 0 {
-			return Item{}, errors.New("現在貸し出し中でこの数にはできません")
+			return Item{}, errors.New("現在貸し出し中の物品が存在するのでそれよりも少ない数にはできません")
 		}
 		if owner.Count-nowOwner.Count < 0 {
 			log.Type = 3
@@ -178,9 +174,6 @@ func AddOwner(owner Owner, item Item) (Item, error) {
 		nowOwner.User = owner.User
 		db.Save(&nowOwner)
 		db.Set("gorm:auto_preload", true).First(&item)
-		// =======
-		// 		item.Owners[i] = nowOwner
-		// >>>>>>> 16c92a4629f7580d388e09050d72db3e88ac12af
 		latestLog, err := GetLatestLog(item.Logs, owner.UserID)
 		if err != nil {
 			return Item{}, err

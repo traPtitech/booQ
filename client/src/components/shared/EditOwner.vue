@@ -1,9 +1,11 @@
 <template>
   <nobr>
-    <nobr style="color: #66CC33; border: solid 2px #66CC33; margin: 2px;" v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1" @click.stop="open"><v-icon style="color: #66CC33;" left>mdi-pencil</v-icon>編集 </nobr>
-    <!-- <v-btn class="ma-2" tile outlined color="success" v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1" @click.stop="open">
-      <v-icon left>mdi-pencil</v-icon>編集
-    </v-btn> -->
+    <nobr
+      style="color: #66CC33; border: solid 2px #66CC33; margin: 2px;"
+      v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1" @click.stop="open"
+    >
+      <v-icon style="color: #66CC33;" left>mdi-pencil</v-icon>編集 
+    </nobr>
     <div class="text-center">
       <v-dialog light v-model="isOpenEditOwner" max-width="290">
         <v-card width="290">
@@ -69,11 +71,11 @@ export default {
       })
       if (latestLog) {
         if (this.count - this.propOwner.count + latestLog.count < 0) {
-          alert('現在貸し出し中でこの数にはできません')
+          alert('現在貸し出し中の物品が存在するのでそれよりも少ない数にはできません')
           return
         }
       }
-      await axios.put(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.$store.state.me.ID, rentalable: this.rentalable, count: this.count })
+      await axios.put(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.propOwner.user_id, rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e
