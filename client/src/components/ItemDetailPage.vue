@@ -1,9 +1,9 @@
 <template>
-  <div
+    <div
     v-if="data"
     class="d-flex flex-wrap"
   >
-    <div>
+    <v-container>
       <v-row>
         <v-col
           :cols="12"
@@ -65,6 +65,7 @@
                 :size="25"
               />
               {{ owner.user.name }} {{ checkRentalable(owner) }}
+              <EditOwner @reload="reload" :itemID="data.ID" :propOwner="owner" :propLatestLogs="data.latest_logs"/>
             </div>
           </div>
           <div class="mb-4">
@@ -105,61 +106,7 @@
           </div>
         </v-col>
       </v-row>
-    </div>
-    <div :style="`width: ${contentWidth}px;`">
-      <h1>{{data.name}}</h1>
-      <div class="content">
-        {{ data.description }}
-      </div>
-      <div class="content">
-        <h2>
-          所有者
-          <RegisterOwnerForm @reload="reload"/>
-        </h2>
-        <div v-for="owner in data.owners" :key="owner.id">
-          <Icon
-            :user="owner.user"
-            :size="25"
-          />
-          {{ owner.user.name }} {{ checkRentalable(owner) }}
-          <EditOwner @reload="reload" :propOwner="owner" :propLatestLogs="data.latest_logs"/>
-        </div>
-      </div>
-      <div class="content">
-        <h2>
-          コメント
-          <CommentDialog />
-        </h2>
-        <div v-if="data.comments.length">
-          <div v-for="comment in data.comments" :key="comment.id">
-            <v-flex>
-              <Icon :user="comment.user" />
-              {{ comment.text }}
-            </v-flex>
-          </div>
-        </div>
-        <div v-else>
-          コメントがありません
-        </div>
-      </div>
-      <div class="content">
-        <div>
-          <h2>ログ</h2>
-          <div v-if="data.logs.length">
-            <div v-for="log in reverseLogs" :key="log.id">
-              <Icon
-                :user="log.user"
-                :size="25"
-              />
-              {{ createLogMessage(log) }}
-            </div>
-          </div>
-          <div v-else>
-            ログがありません
-          </div>
-        </div>
-      </div>
-    </div>
+    </v-container>
   </div>
 </template>
 

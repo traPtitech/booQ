@@ -4,7 +4,7 @@
       style="color: #66CC33; border: solid 2px #66CC33; margin: 2px;"
       v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1" @click.stop="open"
     >
-      <v-icon style="color: #66CC33;" left>mdi-pencil</v-icon>編集 
+      <v-icon style="color: #66CC33;" left>mdi-pencil</v-icon>編集
     </nobr>
     <div class="text-center">
       <v-dialog light v-model="isOpenEditOwner" max-width="290">
@@ -41,7 +41,8 @@ export default {
   name: 'EditOwner',
   props: {
     propOwner: Object,
-    propLatestLogs: Array
+    propLatestLogs: Array,
+    itemID: Number
   },
   data () {
     return {
@@ -75,7 +76,7 @@ export default {
           return
         }
       }
-      await axios.put(`/api/items/` + this.$route.params.id + `/owners`, { user_id: this.propOwner.user_id, rentalable: this.rentalable, count: this.count })
+      await axios.put(`/api/items/` + this.itemID + `/owners`, { user_id: this.propOwner.owner_id, rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e
