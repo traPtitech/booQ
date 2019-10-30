@@ -91,12 +91,42 @@ func GetItem(c echo.Context) error {
 	return c.JSON(http.StatusOK, item)
 }
 
-// DeleteItem DELETE /items/:id
-func DeleteItem(c echo.Context) error {
+// PutItem PUT /items/:id
+func PutItem(c echo.Context) error {
 	ID := c.Param("id")
+	user := c.Get("user").(model.User)
+	body := map[string]interface{}{}
+	if err := c.Bind(&body); err != nil {
+		return err
+	}
 	itemID, err := strconv.Atoi(ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, err := model.GetItemByID(uint(itemID))
+	if err != nil {
+		return c.JSON(http.StatusNotFound, err)
+	}
+	err = model.CheckOwnsOrAdmin(&user, &item)
+	if err != nil {
+		return c.JSON(http.StatusForbidden, err)
+	}
+
+	item = model.UpdateItem(&item, &body, user.Admin)
+
+	return c.JSON(http.StatusOK, item)
+}
+
+// DeleteItem DELETE /items/:id
+func DeleteItem(c echo.Context) error {
+	ID := c.Param("id")
+	user := c.Get("user").(model.User)
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	if !user.Admin {
+		return c.NoContent(http.StatusForbidden)
 	}
 	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {

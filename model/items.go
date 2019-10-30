@@ -294,3 +294,24 @@ func DestroyItem(item Item) (Item, error) {
 	db.Delete(&item)
 	return item, nil
 }
+
+// UpdateItem itemを変更する
+func UpdateItem(item *Item, body *map[string]interface{}, isAdmin bool) Item {
+	fields := []string{"name", "code", "description", "img_url"}
+	if isAdmin {
+		fields = append(fields, "type")
+	}
+	db.Model(item).Updates(filterMap(body, fields))
+
+	return *item
+}
+
+func filterMap(input *map[string]interface{}, keys []string) map[string]interface{} {
+	output := make(map[string]interface{})
+	for _, key := range keys {
+		if val, ok := (*input)[key]; ok {
+			output[key] = val
+		}
+	}
+	return output
+}

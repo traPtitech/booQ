@@ -725,7 +725,7 @@ definitions:
         type: "string"
         format: "date-time"
         example: "2019/07/30 23:30:00"
-      count: 
+      count:
         type: "integer"
         example: 1
       created_at:
