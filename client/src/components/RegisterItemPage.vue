@@ -49,11 +49,17 @@
       </label>
       <div class="preview-item">
         <v-img
+          v-if="!loading"
           :src="img_url.length ? img_url : '/img/no-image.svg'"
           aspect-ratio="1"
           position="left"
           contain
           max-height="400px"
+        />
+        <v-progress-circular
+          v-else
+          :size="70"
+          :width="7"
         />
         <div>
           <p>{{ img_name }}</p>
@@ -107,7 +113,8 @@ export default {
         closeText: 'close',
         target: ''
       },
-      errorMessage: 'エラー'
+      errorMessage: 'エラー',
+      loading: false
     }
   },
   watch: {
@@ -140,14 +147,18 @@ export default {
       this.img_name = files[0].name
     },
     async createImage (file) {
+      this.loading = true
       let form = new FormData()
       form.enctype = 'multipart/form-data'
       form.append('file', file)
-      const data = await axios.post(`${traQBaseURL}/files`, form).catch(e => alert(e))
+      const data = await axios.post(`/api/files`, form).catch(e => alert(e))
       if (!data) {
         this.setAlert('close', '画像の投稿に失敗しました')
       }
-      this.img_url = `${traQBaseURL}/files/${data.data.fileId}/thumbnail`
+      console.log(data.data)
+      this.img_url = data.data.url
+      // this.img_url = `/api/files/${data.data.url}/thumbnail`
+      this.loading = false
     },
     remove () {
       this.img_url = ''
