@@ -88,6 +88,7 @@ export default {
     this.mount()
   },
   beforeDestroy () {
+    this.$store.commit('resetNavBarTitle')
     window.removeEventListener('resize', this.conputeWidth)
   },
   methods: {
@@ -101,6 +102,7 @@ export default {
       }
     },
     async mount () {
+      this.$store.commit('setNavBarTitle', `${this.$route.params.name}'s User Page`)
       const resItems = await axios.get('api/items?user=' + this.$route.params.name)
         .catch(e => {
           alert(e)

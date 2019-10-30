@@ -57,11 +57,17 @@ export default {
         break
     }
   },
+  beforeDestroy () {
+    this.$store.commit('resetNavBarTitle')
+  },
   methods: {
     async search () {
       let searchParam = this.$route.query.search
       if (this.$route.query.search === undefined) {
         searchParam = ''
+      }
+      if (searchParam) {
+        this.$store.commit('setNavBarTitle', `Search: ${searchParam}`)
       }
       const res = await axios.get(`/api/items?search=` + searchParam)
         .catch(e => {

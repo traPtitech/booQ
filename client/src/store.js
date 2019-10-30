@@ -14,7 +14,8 @@ export default new Vuex.Store({
     loginDialog: false,
     aboutDialog: false,
     authToken: null,
-    cart: []
+    cart: [],
+    navBarTitle: ''
   },
   mutations: {
     setMe (state, data) {
@@ -54,6 +55,12 @@ export default new Vuex.Store({
     },
     resetCart (state) {
       state.cart = []
+    },
+    setNavBarTitle (state, data) {
+      state.navBarTitle = data
+    },
+    resetNavBarTitle (state) {
+      state.navBarTitle = ''
     }
   },
   actions: {

@@ -129,6 +129,11 @@ export default {
   watch: {
     '$route' (val) {
       this.title = val.name
+    },
+    '$store.state.navBarTitle' (val) {
+      if (this.$store.state.navBarTitle) {
+        this.title = val
+      }
     }
   },
   async created () {
