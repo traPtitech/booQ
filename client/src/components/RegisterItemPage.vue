@@ -48,8 +48,16 @@
         <input type="file" @change="onFileChange" />
       </label>
       <div class="preview-item">
+        <v-img
+          v-if="!loading && img_url.length"
+          :src="img_url.length ? img_url : ''"
+          aspect-ratio="1"
+          position="left"
+          contain
+          max-height="400px"
+        />
         <v-progress-circular
-          v-if="loading"
+          v-else-if="loading"
           :size="70"
           :width="7"
         />
