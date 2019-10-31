@@ -20,7 +20,7 @@
             <WannaRental v-if="data.type === 0" @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
             <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
             <ReturnForm @reload="reload" :propItem="data"/>
-            <v-btn color="error" block v-if="$store.state.me.admin" @click="destroyItem" error>削除</v-btn>
+            <v-btn color="error" block v-if="checkOwnOrAdmin()" @click="destroyItem" error>削除</v-btn>
           </div>
           <div>
             <v-btn v-if="isLiked" block @click="removeLike" class="my-1">
@@ -167,6 +167,17 @@ export default {
     }
   },
   methods: {
+    checkOwnOrAdmin () {
+      if (this.data.owners) {
+        const owner = this.data.owners.find(element => {
+          return element.owner_id === this.$store.state.me.ID
+        })
+        if (owner || this.$store.state.me.admin) {
+          return true
+        }
+      }
+      return false
+    },
     conputeWidth () {
       if (window.innerWidth > 991) {
         this.contentWidth = window.innerWidth - 600 // sideBar((window.innerWidth > 991で表示される)と物品のimgがともに260px
