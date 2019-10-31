@@ -175,7 +175,7 @@ export default {
         }
       }
       return false
-    },
+    }
   },
   methods: {
     conputeWidth () {
