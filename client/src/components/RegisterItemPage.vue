@@ -48,23 +48,21 @@
         <input type="file" @change="onFileChange" />
       </label>
       <div class="preview-item">
-        <v-img
-          v-if="!loading"
-          :src="img_url.length ? img_url : '/img/no-image.svg'"
-          aspect-ratio="1"
-          position="left"
-          contain
-          max-height="400px"
-        />
         <v-progress-circular
-          v-else
+          v-if="loading"
           :size="70"
           :width="7"
         />
         <div>
           <p>{{ img_name }}</p>
         </div>
-        <v-btn class="error" @click="remove">画像削除</v-btn>
+        <v-btn
+          v-if="img_url.length"
+          class="error"
+          @click="remove"
+        >
+          画像削除
+        </v-btn>
       </div>
     </div>
     <div>
