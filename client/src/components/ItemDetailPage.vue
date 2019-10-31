@@ -20,7 +20,7 @@
             <WannaRental v-if="data.type === 0" @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
             <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
             <ReturnForm @reload="reload" :propItem="data"/>
-            <v-btn color="error" block v-if="checkOwnOrAdmin()" @click="destroyItem" error>削除</v-btn>
+            <v-btn color="error" block v-if="checkOwnOrAdmin" @click="destroyItem" error>削除</v-btn>
           </div>
           <div>
             <v-btn v-if="isLiked" block @click="removeLike" class="my-1">
