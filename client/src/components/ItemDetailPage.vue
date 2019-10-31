@@ -164,9 +164,7 @@ export default {
         return false
       }
       return this.data.likes.find(user => user.name === this.$store.state.me.name)
-    }
-  },
-  methods: {
+    },
     checkOwnOrAdmin () {
       if (this.data.owners) {
         const owner = this.data.owners.find(element => {
@@ -178,6 +176,8 @@ export default {
       }
       return false
     },
+  },
+  methods: {
     conputeWidth () {
       if (window.innerWidth > 991) {
         this.contentWidth = window.innerWidth - 600 // sideBar((window.innerWidth > 991で表示される)と物品のimgがともに260px
