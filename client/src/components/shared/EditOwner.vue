@@ -1,10 +1,7 @@
 <template>
   <nobr>
     <nobr
-      style=
-        "color: #66CC33;
-        border: solid 2px #66CC33;
-        margin: 2px;"
+      class="buttonform"
       v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1"
       @click.stop="open"
     >
@@ -104,3 +101,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.buttonform {
+  color: #66CC33;
+  border: solid 2px #66CC33;
+  margin: 2px;
+}
+</style>
