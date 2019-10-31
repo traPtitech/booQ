@@ -1,5 +1,5 @@
 <template>
-    <div
+  <div
     v-if="data"
     class="d-flex flex-wrap"
   >
@@ -65,7 +65,12 @@
                 :size="25"
               />
               {{ owner.user.name }} {{ checkRentalable(owner) }}
-              <EditOwner @reload="reload" :itemID="data.ID" :propOwner="owner" :propLatestLogs="data.latest_logs"/>
+              <EditOwner
+                :itemID="data.ID"
+                :propOwner="owner"
+                :propLatestLogs="data.latest_logs"
+                @reload="reload"
+              />
             </div>
           </div>
           <div class="mb-4">

@@ -1,8 +1,12 @@
 <template>
   <nobr>
     <nobr
-      style="color: #66CC33; border: solid 2px #66CC33; margin: 2px;"
-      v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1" @click.stop="open"
+      style=
+        "color: #66CC33;
+        border: solid 2px #66CC33;
+        margin: 2px;"
+      v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1"
+      @click.stop="open"
     >
       <v-icon style="color: #66CC33;" left>mdi-pencil</v-icon>編集
     </nobr>
@@ -11,10 +15,7 @@
         <v-card width="290">
           <v-card-title class="headline">所有者の情報を更新する</v-card-title>
           <v-card-actions>
-            <div>
-              <input type="checkbox" id="checkbox" v-model="rentalable">
-              <label for="checkbox">貸し出し可</label>
-            </div>
+            <v-checkbox v-model="rentalable" label="貸し出し可"/>
           </v-card-actions>
           <v-card-actions>
             <div>
@@ -23,7 +24,7 @@
               </v-form>
             </div>
           </v-card-actions>
-          <v-divider></v-divider>
+          <v-divider/>
           <v-card-actions>
             <div class="flex-grow-1"></div>
             <v-btn @click="updateOwner()">更新</v-btn>
