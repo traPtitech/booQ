@@ -50,7 +50,7 @@
       <div class="preview-item">
         <v-img
           v-if="!loading && img_url.length"
-          :src="img_url.length ? img_url : ''"
+          :src="img_url"
           aspect-ratio="1"
           position="left"
           contain
