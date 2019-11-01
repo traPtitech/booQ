@@ -124,7 +124,7 @@ func CreateItem(item Item) (Item, error) {
 // RegisterOwner 新しい所有者を登録する
 func RegisterOwner(owner Owner, item Item) (Item, error) {
 	var existed bool
-	db.Set("gorm:auto_preload", true).Find(&item).Related(&item.Owners, "Owners")
+	db.Set("gorm:auto_preload", true).Find(&item)
 	owner.User, _ = GetUserByID(int(owner.UserID))
 	for _, nowOwner := range item.Owners {
 		if nowOwner.UserID != owner.UserID {
