@@ -65,12 +65,6 @@
                 :size="25"
               />
               {{ owner.user.name }} {{ checkRentalable(owner) }}
-              <EditOwner
-                :itemID="data.ID"
-                :propOwner="owner"
-                :propLatestLogs="data.latest_logs"
-                @reload="reload"
-              />
             </div>
           </div>
           <div class="mb-4">
@@ -122,7 +116,6 @@ import RegisterOwnerForm from './shared/RegisterOwnerForm'
 import RentalForm from './shared/RentalForm'
 import CommentDialog from './shared/CommentDialog'
 import ReturnForm from './shared/ReturnForm'
-import EditOwner from './shared/EditOwner'
 import WannaRental from './shared/WannaRental'
 
 export default {
@@ -133,7 +126,6 @@ export default {
     RentalForm,
     CommentDialog,
     ReturnForm,
-    EditOwner,
     WannaRental
   },
   data () {
@@ -224,10 +216,6 @@ export default {
       if (log.type === 2) {
         ownerWord = ''
         logComment = '追加しました'
-      }
-      if (log.type === 3) {
-        ownerWord = ''
-        logComment = '減らしました'
       }
       const logTime = log.CreatedAt.replace('T', ' ').replace('+09:00', '')
       return `${userName}さんが${ownerWord}物品を${logComment} - ${logTime}`

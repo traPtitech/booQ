@@ -25,9 +25,9 @@ type Item struct {
 
 type Owner struct {
 	gorm.Model
-	UserID     uint `gorm:"type:int;not null;primary_key" json:"owner_id"`
+	UserID     uint `gorm:"type:int;not null" json:"owner_id"`
 	User       User `json:"user"`
-	Rentalable bool `gorm:"type:bool;not null" json:"rentalable"`
+	Rentalable bool `gorm:"type:bool;not null;primary_key;default:true" json:"rentalable"`
 	Count      int  `gorm:"type:int;default:1" json:"count"`
 }
 
@@ -126,12 +126,29 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 	var existed bool
 	db.Set("gorm:auto_preload", true).Find(&item).Related(&item.Owners, "Owners")
 	owner.User, _ = GetUserByID(int(owner.UserID))
-	for _, nowOwner := range item.Owners {
+	for i, nowOwner := range item.Owners {
 		if nowOwner.UserID != owner.UserID {
 			continue
 		}
+		if owner.Rentalable == nowOwner.Rentalable {
+			nowOwner.Count += owner.Count
+		} else {
+			nowOwner.Count = owner.Count
+		}
 		existed = true
-		return Item{}, errors.New("該当の物品をすでに所有しています")
+		nowOwner.User = owner.User
+		db.Save(&nowOwner)
+		item.Owners[i] = nowOwner
+		latestLog, err := GetLatestLog(item.Logs, owner.UserID)
+		if err != nil {
+			return Item{}, err
+		}
+		if latestLog.ItemID != 0 {
+			_, err = CreateLog(Log{ItemID: latestLog.ItemID, UserID: owner.UserID, OwnerID: owner.UserID, Type: 2, Count: latestLog.Count + owner.Count})
+			if err != nil {
+				return Item{}, err
+			}
+		}
 	}
 	if !existed {
 		db.Create(&owner)
@@ -140,57 +157,6 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 		if err != nil {
 			return Item{}, err
 		}
-	}
-	return item, nil
-}
-
-// AddOwner すでに指定したuserが該当のitemを持っているときに所有数を増減させる
-func AddOwner(owner Owner, item Item) (Item, error) {
-	var existed bool
-	db.Preload("Owners").Preload("Logs").Find(&item)
-	latestLog, err := GetLatestLog(item.Logs, owner.UserID)
-	if err != nil {
-		return Item{}, err
-	}
-	log := Log{}
-	rentalableCount := latestLog.Count
-	owner.User, _ = GetUserByID(int(owner.UserID))
-	for _, nowOwner := range item.Owners {
-		if nowOwner.UserID != owner.UserID {
-			continue
-		}
-		nowOwner.Rentalable = owner.Rentalable
-		if owner.Count-nowOwner.Count+rentalableCount < 0 {
-			return Item{}, errors.New("現在貸し出し中の物品が存在するのでそれよりも少ない数にはできません")
-		}
-		if owner.Count-nowOwner.Count < 0 {
-			log.Type = 3
-		} else {
-			log.Type = 2
-		}
-		log.Count = owner.Count - nowOwner.Count
-		nowOwner.Count = owner.Count
-		existed = true
-		nowOwner.User = owner.User
-		db.Save(&nowOwner)
-		db.Set("gorm:auto_preload", true).First(&item)
-		latestLog, err := GetLatestLog(item.Logs, owner.UserID)
-		if err != nil {
-			return Item{}, err
-		}
-		log.ItemID = latestLog.ItemID
-		log.UserID = owner.UserID
-		log.OwnerID = owner.UserID
-		log.Count += latestLog.Count
-		if latestLog.ItemID != 0 {
-			_, err = CreateLog(log)
-			if err != nil {
-				return Item{}, err
-			}
-		}
-	}
-	if !existed {
-		return Item{}, errors.New("該当の物品を所有していないため変更できません")
 	}
 	return item, nil
 }
