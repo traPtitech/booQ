@@ -9,14 +9,9 @@
 <script>
 export default {
   name: 'Icon',
-  data () {
-    return {
-      sienka: './../../img/sienka-icon.jpg'
-    }
-  },
   computed: {
     navigateImagePath () {
-      return this.user.name !== 'sienka' ? `https://q.trap.jp/api/1.0/public/icon/${this.user.name}` : this.sienka
+      return this.user.name !== 'sienka' ? `https://q.trap.jp/api/1.0/public/icon/${this.user.name}` : `./../../img/sienka-icon.jpg`
     }
   },
   props: {

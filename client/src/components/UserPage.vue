@@ -74,8 +74,7 @@ export default {
     return {
       items: null,
       comments: null,
-      contentWidth: 600,
-      sienka: './../img/sienka-icon.jpg'
+      contentWidth: 600
     }
   },
   watch: {
@@ -85,7 +84,7 @@ export default {
   },
   computed: {
     navigateImagePath () {
-      return this.$route.params.name !== 'sienka' ? `https://q.trap.jp/api/1.0/public/icon/${this.$route.params.name}` : this.sienka
+      return this.$route.params.name !== 'sienka' ? `https://q.trap.jp/api/1.0/public/icon/${this.$route.params.name}` : `./../img/sienka-icon.jpg`
     }
   },
   mounted () {
