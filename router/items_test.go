@@ -261,7 +261,8 @@ func TestGetItems(t *testing.T) {
 
 }
 
-func TestPostOwners(t *testing.T) {
+func TestPutOwners(t *testing.T) {
+	assert := assert.New(t)
 	testBodyTrap := model.Item{
 		Name:        "testPostOwnersTrapItem",
 		Type:        1,
@@ -269,11 +270,151 @@ func TestPostOwners(t *testing.T) {
 		Description: "これは備品のテストです",
 		ImgURL:      "http://example.com/testTrap.jpg",
 	}
-
 	testBodyKojin := model.Item{
 		Name:        "testPostOwnersKojinItem",
 		Type:        0,
 		Code:        "9784049123945",
+		Description: "これは個人所有物のテストです",
+		ImgURL:      "http://example.com/testKojin.jpg",
+	}
+	trap, _ := model.GetUserByName("traP")
+	testOwnerTrap := model.RequestPostOwnersBody{
+		UserID:     int(trap.ID),
+		Rentalable: true,
+		Count:      1,
+	}
+
+	t.Run("admin user", func(t *testing.T) {
+		e := echoSetupWithAdminUser()
+
+		reqBody, _ := json.Marshal(testBodyTrap)
+		req := httptest.NewRequest(echo.POST, "/api/items", bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+		assert.Equal(http.StatusCreated, rec.Code)
+		item := model.Item{}
+		_ = json.NewDecoder(rec.Body).Decode(&item)
+		createdBihin, _ := model.GetItemByName(item.Name)
+		bihinID := int(createdBihin.ID)
+		reqBody, _ = json.Marshal(testOwnerTrap)
+		req = httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(bihinID)+"/owners", bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec = httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusCreated, rec.Code)
+
+		testOwnerTrap.Count = 4
+		testOwnerTrap.Rentalable = false
+		reqBody, _ = json.Marshal(testOwnerTrap)
+		req = httptest.NewRequest(echo.PUT, "/api/items/"+strconv.Itoa(bihinID)+"/owners", bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec = httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusOK, rec.Code)
+
+		item = model.Item{}
+		_ = json.NewDecoder(rec.Body).Decode(&item)
+
+		assert.Equal(testBodyTrap.Name, item.Name)
+		assert.Equal(trap.ID, item.Owners[0].UserID)
+		exist := false
+		for _, owner := range item.Owners {
+			if owner.User.Name == trap.Name {
+				assert.Equal(4, owner.Count)
+				assert.Equal(false, owner.Rentalable)
+				exist = true
+			}
+		}
+		assert.Equal(true, exist)
+	})
+
+	t.Run("not admin user", func(t *testing.T) {
+		e := echoSetupWithUser()
+
+		user := model.User{
+			Name:        "testUser",
+			DisplayName: "テストユーザー",
+			Admin:       false,
+		}
+		testUser, err := model.GetUserByName(user.Name)
+		assert.NotEmpty(testUser)
+		assert.NoError(err)
+
+		testPutOwnerKojin := model.RequestPostOwnersBody{
+			UserID:     int(testUser.ID),
+			Rentalable: true,
+			Count:      1,
+		}
+
+		bihin, _ := model.GetItemByName("testPostOwnersTrapItem")
+		reqBody, _ := json.Marshal(testPutOwnerKojin)
+		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(bihin.ID))+"/owners", bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusForbidden, rec.Code)
+
+		reqBody, _ = json.Marshal(testBodyKojin)
+		req = httptest.NewRequest(echo.POST, "/api/items", bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec = httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusCreated, rec.Code)
+
+		item := model.Item{}
+		_ = json.NewDecoder(rec.Body).Decode(&item)
+
+		paramID := strconv.Itoa(int(item.ID))
+		targetAPI := "/api/items/" + paramID + "/owners"
+
+		reqBody, _ = json.Marshal(testPutOwnerKojin)
+		req = httptest.NewRequest(echo.POST, targetAPI, bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec = httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusCreated, rec.Code)
+
+		testPutOwnerKojin.Count = 3
+		reqBody, _ = json.Marshal(testPutOwnerKojin)
+		req = httptest.NewRequest(echo.PUT, targetAPI, bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec = httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusOK, rec.Code)
+
+		_ = json.NewDecoder(rec.Body).Decode(&item)
+
+		exist := false
+		for _, owner := range item.Owners {
+			if owner.User.Name == testUser.Name {
+				assert.Equal(3, owner.Count)
+				exist = true
+			}
+		}
+		assert.Equal(true, exist)
+	})
+}
+
+func TestPostOwners(t *testing.T) {
+	testBodyTrap := model.Item{
+		Name:        "testPutOwnersTrapItem",
+		Type:        1,
+		Code:        "192009301341",
+		Description: "これは備品のテストです",
+		ImgURL:      "http://example.com/testTrap.jpg",
+	}
+
+	testBodyKojin := model.Item{
+		Name:        "testPutOwnersKojinItem",
+		Type:        0,
+		Code:        "9784049583945",
 		Description: "これは個人所有物のテストです",
 		ImgURL:      "http://example.com/testKojin.jpg",
 	}
@@ -309,7 +450,7 @@ func TestPostOwners(t *testing.T) {
 		rec = httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
 
-		assert.Equal(http.StatusOK, rec.Code)
+		assert.Equal(http.StatusCreated, rec.Code)
 
 		item = model.Item{}
 		_ = json.NewDecoder(rec.Body).Decode(&item)
@@ -317,11 +458,9 @@ func TestPostOwners(t *testing.T) {
 		assert.Equal(testBodyTrap.Name, item.Name)
 		assert.Equal(trap.ID, item.Owners[0].UserID)
 	})
-
 	t.Run("not admin user", func(t *testing.T) {
 		assert := assert.New(t)
 		e := echoSetupWithUser()
-
 		user := model.User{
 			Name:        "testUser",
 			DisplayName: "テストユーザー",
@@ -330,43 +469,35 @@ func TestPostOwners(t *testing.T) {
 		testUser, err := model.GetUserByName(user.Name)
 		assert.NotEmpty(testUser)
 		assert.NoError(err)
-
 		testOwnerKojin := model.RequestPostOwnersBody{
 			UserID:     int(testUser.ID),
 			Rentalable: true,
 			Count:      1,
 		}
-
 		bihin, _ := model.GetItemByName("testPostOwnersTrapItem")
 		reqBody, _ := json.Marshal(testOwnerKojin)
 		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(bihin.ID))+"/owners", bytes.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 		rec := httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
-
 		assert.Equal(http.StatusForbidden, rec.Code)
-
 		reqBody, _ = json.Marshal(testBodyKojin)
 		req = httptest.NewRequest(echo.POST, "/api/items", bytes.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 		rec = httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
-
 		assert.Equal(http.StatusCreated, rec.Code)
-
 		item := model.Item{}
 		_ = json.NewDecoder(rec.Body).Decode(&item)
-
 		paramID := strconv.Itoa(int(item.ID))
 		targetAPI := "/api/items/" + paramID + "/owners"
-
 		reqBody, _ = json.Marshal(testOwnerKojin)
 		req = httptest.NewRequest(echo.POST, targetAPI, bytes.NewReader(reqBody))
 		req.Header.Set("Content-Type", "application/json")
 		rec = httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
 
-		assert.Equal(http.StatusOK, rec.Code)
+		assert.Equal(http.StatusCreated, rec.Code)
 
 		_ = json.NewDecoder(rec.Body).Decode(&item)
 
