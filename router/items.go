@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"fmt"
+
 	"github.com/labstack/echo"
 
 	"github.com/traPtitech/booQ/model"
@@ -146,7 +148,65 @@ func PostOwners(c echo.Context) error {
 	me := c.Get("user").(model.User)
 	body := model.RequestPostOwnersBody{}
 	if err := c.Bind(&body); err != nil {
-		return err
+		fmt.Println("a")
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		fmt.Println("b")
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	user, err := model.GetUserByID(body.UserID)
+	if err != nil {
+		fmt.Println("c")
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	err = model.CheckTargetedOrAdmin(me, user)
+	if err != nil {
+		fmt.Println("d")
+		return c.JSON(http.StatusForbidden, err)
+	}
+	item, err := model.GetItemByID(uint(itemID))
+	if err != nil {
+		fmt.Println("e")
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	if body.UserID > 2 && item.Type > 0 {
+		return c.NoContent(http.StatusForbidden)
+	}
+	if item.Type == 1 {
+		user, _ = model.GetUserByName("traP")
+	}
+	if item.Type == 2 {
+		user, _ = model.GetUserByName("sienka")
+	}
+	// item.Type=0⇒個人、1⇒trap(id:1)所有、2⇒支援課(id:2)
+	if item.Type != 0 && !me.Admin {
+		return c.NoContent(http.StatusForbidden)
+	}
+	owner := model.Owner{
+		UserID:     user.ID,
+		Rentalable: body.Rentalable,
+		Count:      body.Count,
+	}
+	if owner.Count < 0 {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	res, err := model.RegisterOwner(owner, item)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusCreated, res)
+}
+
+// PutOwners PUT /items/:id/owners
+func PutOwners(c echo.Context) error {
+	ID := c.Param("id")
+	me := c.Get("user").(model.User)
+	body := model.RequestPostOwnersBody{}
+	if err := c.Bind(&body); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 	itemID, err := strconv.Atoi(ID)
 	if err != nil {
@@ -182,14 +242,10 @@ func PostOwners(c echo.Context) error {
 		Rentalable: body.Rentalable,
 		Count:      body.Count,
 	}
-	if owner.Count < 1 {
-		return c.NoContent(http.StatusBadRequest)
-	}
-	res, err := model.RegisterOwner(owner, item)
+	res, err := model.AddOwner(owner, item)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-
 	return c.JSON(http.StatusOK, res)
 }
 

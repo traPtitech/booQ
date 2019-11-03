@@ -1,8 +1,9 @@
 package router
 
 import (
-	"github.com/labstack/echo/middleware"
 	"net/http"
+
+	"github.com/labstack/echo/middleware"
 
 	"github.com/labstack/echo"
 )
@@ -30,6 +31,7 @@ func SetupRouting(e *echo.Echo, client Traq) {
 			apiItems.PUT("/:id", PutItem)
 			apiItems.DELETE("/:id", DeleteItem)
 			apiItems.POST("/:id/owners", PostOwners)
+			apiItems.PUT("/:id/owners", PutOwners)
 			apiItems.POST("/:id/logs", PostLogs)
 			apiItems.POST("/:id/comments", PostComments)
 			apiItems.POST("/:id/likes", PostLikes)
