@@ -62,7 +62,7 @@ func (rentalUser *RentalUser) TableName() string {
 // GetItemByID IDからitemを取得する
 func GetItemByID(id uint) (Item, error) {
 	res := Item{}
-	db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").First(&res, id)
+	db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").First(&res, id)
 	if res.Name == "" {
 		return Item{}, errors.New("該当するItemがありません")
 	}
@@ -77,7 +77,7 @@ func GetItemByID(id uint) (Item, error) {
 // GetItemByName Nameからitemを取得する
 func GetItemByName(name string) (Item, error) {
 	res := Item{}
-	db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").First(&res, "name = ?", name)
+	db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").First(&res, "name = ?", name)
 	if res.Name == "" {
 		return Item{}, errors.New("該当するNameがありません")
 	}
@@ -92,7 +92,7 @@ func GetItemByName(name string) (Item, error) {
 // GetItems 全itemを取得する
 func GetItems() ([]Item, error) {
 	res := []Item{}
-	db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&res)
+	db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").Find(&res)
 	for i, item := range res {
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
@@ -197,7 +197,7 @@ func AddOwner(owner Owner, item Item) (Item, error) {
 // RentalItem 物品を借りたりするときにRentalUserを作成する
 func RentalItem(rentalUser RentalUser, item Item) (Item, error) {
 	var existed bool
-	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&item)
+	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").Find(&item)
 	// owner.User, _ = GetUserByID(int(owner.UserID))
 	for i, nowRentalUser := range item.RentalUsers {
 		if nowRentalUser.UserID != rentalUser.UserID || nowRentalUser.OwnerID != rentalUser.OwnerID {
@@ -268,7 +268,7 @@ func SearchItemByOwner(ownerName string) ([]Item, error) {
 	if err != nil {
 		return []Item{}, err
 	}
-	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Preload("Owners.User").Find(&res)
+	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").Preload("Owners.User").Find(&res)
 	for _, item := range res {
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
@@ -288,7 +288,7 @@ func SearchItemByOwner(ownerName string) ([]Item, error) {
 func SearchItemByRental(rentalUserID uint) ([]Item, error) {
 	items := []Item{}
 	res := []Item{}
-	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&items)
+	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("Comments.User").Find(&items)
 	for _, item := range items {
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
@@ -307,7 +307,7 @@ func SearchItemByRental(rentalUserID uint) ([]Item, error) {
 // SearchItems itemsをNameの部分一致で取得する
 func SearchItems(searchString string) ([]Item, error) {
 	res := []Item{}
-	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("Owners.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Where("name LIKE ?", "%"+searchString+"%").Find(&res)
+	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("Owners.User").Preload("RentalUsers.User").Preload("Comments.User").Where("name LIKE ?", "%"+searchString+"%").Find(&res)
 	for i, item := range res {
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
