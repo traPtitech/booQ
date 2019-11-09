@@ -72,6 +72,10 @@ export default {
           alert('現在貸し出し中の物品が存在するのでそれよりも少ない数にはできません')
           return
         }
+        if (this.propOwner.count - latestLog.count > 0 && !this.rentalable) {
+          alert('現在貸し出し中の物品が存在するので貸し出し不可にはできません')
+          return
+        }
       }
       await axios.put(`/api/items/` + this.itemID + `/owners`, { user_id: this.propOwner.owner_id, rentalable: this.rentalable, count: this.count })
         .catch(e => {
