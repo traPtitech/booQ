@@ -92,7 +92,11 @@ export default {
         this.message = this.propOwner.count - this.count + '個減らしました'
       }
       if (this.rentalable !== this.propOwner.rentalable) {
-        this.message = this.rentalable === true ? '貸し出し可' : '貸し出し不可' + 'な物品を' + this.count + '個登録しました'
+        if (this.rentalable === true) {
+          this.message = '物品の登録を貸し出し可 × ' + this.count + '個に変更しました'
+        } else {
+          this.message = '物品の登録を貸し出し不可 × ' + this.count + '個に変更しました'
+        }
       }
       if (!this.error) { alert(this.message) }
       this.isOpenEditOwner = !this.isOpenEditOwner
