@@ -81,3 +81,16 @@ func CheckTargetedOrAdmin(user, reqUser User) error {
 	}
 	return nil
 }
+
+// CheckOwnsOrAdmin 管理者またはItemの所有者かどうかを判定する
+func CheckOwnsOrAdmin(user *User, item *Item) error {
+	if user.Admin {
+		return nil
+	}
+	for _, owner := range item.Owners {
+		if owner.UserID == user.ID {
+			return nil
+		}
+	}
+	return errors.New("あなたは管理者でもなければ対象のItemの所有者でもありません")
+}

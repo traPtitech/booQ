@@ -20,7 +20,7 @@
             <WannaRental v-if="data.type === 0" @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
             <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
             <ReturnForm @reload="reload" :propItem="data"/>
-            <v-btn color="error" block v-if="$store.state.me.admin" @click="destroyItem" error>削除</v-btn>
+            <v-btn color="error" block v-if="checkOwnOrAdmin" @click="destroyItem" error>削除</v-btn>
           </div>
           <div>
             <v-btn v-if="isLiked" block @click="removeLike" class="my-1">
@@ -65,6 +65,12 @@
                 :size="25"
               />
               {{ owner.user.name }} {{ checkRentalable(owner) }}
+              <EditOwner
+                :itemID="data.ID"
+                :propOwner="owner"
+                :propLatestLogs="data.latest_logs"
+                @reload="reload"
+              />
             </div>
           </div>
           <div class="mb-4">
@@ -116,6 +122,7 @@ import RegisterOwnerForm from './shared/RegisterOwnerForm'
 import RentalForm from './shared/RentalForm'
 import CommentDialog from './shared/CommentDialog'
 import ReturnForm from './shared/ReturnForm'
+import EditOwner from './shared/EditOwner'
 import WannaRental from './shared/WannaRental'
 
 export default {
@@ -126,6 +133,7 @@ export default {
     RentalForm,
     CommentDialog,
     ReturnForm,
+    EditOwner,
     WannaRental
   },
   data () {
@@ -138,7 +146,10 @@ export default {
   created () {
     axios
       .get(`/api/items/` + this.$route.params.id)
-      .then(res => (this.data = res.data))
+      .then(res => {
+        this.data = res.data
+        this.$store.commit('setNavBarTitle', res.data.name)
+      })
       .catch(e => { alert(e) })
   },
   mounted () {
@@ -146,6 +157,7 @@ export default {
     window.addEventListener('resize', this.conputeWidth)
   },
   beforeDestroy () {
+    this.$store.commit('resetNavBarTitle')
     window.removeEventListener('resize', this.conputeWidth)
   },
   computed: {
@@ -160,6 +172,17 @@ export default {
         return false
       }
       return this.data.likes.find(user => user.name === this.$store.state.me.name)
+    },
+    checkOwnOrAdmin () {
+      if (this.data.owners) {
+        const owner = this.data.owners.find(element => {
+          return element.owner_id === this.$store.state.me.ID
+        })
+        if (owner || this.$store.state.me.admin) {
+          return true
+        }
+      }
+      return false
     }
   },
   methods: {
@@ -191,7 +214,7 @@ export default {
       } else if (rentalableCount === 1) {
         return '貸し出し可能'
       }
-      return '貸し出し可能' + '×' + rentalableCount
+      return '貸し出し可能' + '×' + rentalableCount + ' /' + owner.count
     },
     createLogMessage (log) {
       const userName = log.user.name
@@ -201,6 +224,10 @@ export default {
       if (log.type === 2) {
         ownerWord = ''
         logComment = '追加しました'
+      }
+      if (log.type === 3) {
+        ownerWord = ''
+        logComment = '減らしました'
       }
       const logTime = log.CreatedAt.replace('T', ' ').replace('+09:00', '')
       return `${userName}さんが${ownerWord}物品を${logComment} - ${logTime}`

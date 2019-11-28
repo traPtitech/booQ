@@ -8,7 +8,7 @@
           </div>
           <div>
             <v-avatar size="200">
-              <img :src="`https://q.trap.jp/api/1.0/public/icon/${$route.params.name}`" />
+              <img :src="navigateImagePath" />
             </v-avatar>
           </div>
         </div>
@@ -82,12 +82,18 @@ export default {
       this.mount()
     }
   },
+  computed: {
+    navigateImagePath () {
+      return this.$route.params.name !== 'sienka' ? `https://q.trap.jp/api/1.0/public/icon/${this.$route.params.name}` : `./../img/sienka-icon.jpg`
+    }
+  },
   mounted () {
     this.conputeWidth()
     window.addEventListener('resize', this.conputeWidth)
     this.mount()
   },
   beforeDestroy () {
+    this.$store.commit('resetNavBarTitle')
     window.removeEventListener('resize', this.conputeWidth)
   },
   methods: {
@@ -101,6 +107,7 @@ export default {
       }
     },
     async mount () {
+      this.$store.commit('setNavBarTitle', `${this.$route.params.name}'s User Page`)
       const resItems = await axios.get('api/items?user=' + this.$route.params.name)
         .catch(e => {
           alert(e)

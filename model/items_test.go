@@ -50,25 +50,47 @@ func TestRegisterOwner(t *testing.T) {
 	owner.Count = 1
 	item, _ := CreateItem(Item{Name: "testRegisterOwnerItem"})
 	item2, err := RegisterOwner(owner, item)
-
 	t.Run("make success", func(t *testing.T) {
 		assert := assert.New(t)
-
 		assert.Equal(user.ID, item2.Owners[0].UserID)
 		assert.Equal(user.Name, item2.Owners[0].User.Name)
 		assert.NoError(err)
 		assert.NotEmpty(item2)
 	})
+}
 
-	t.Run("add success", func(t *testing.T) {
+func TestAddOwner(t *testing.T) {
+	user, _ := CreateUser(User{Name: "testAddOwnerUser"})
+	var owner Owner
+	owner.UserID = user.ID
+	owner.Rentalable = true
+	owner.Count = 5
+	item, _ := CreateItem(Item{Name: "testAddOwnerItem"})
+	t.Run("decreace fail", func(t *testing.T) {
+		assert := assert.New(t)
+		item1, err := AddOwner(owner, item)
+
+		assert.Error(err)
+		assert.Empty(item1)
+	})
+	t.Run("add & decreace success", func(t *testing.T) {
 		assert := assert.New(t)
 
-		owner.Count = 5
 		item, err := RegisterOwner(owner, item)
+		assert.NoError(err)
+		assert.NotEmpty(item)
 
-		assert.Equal(6, item.Owners[0].Count)
-		assert.Equal(item.Owners[0].User.Name, user.Name)
-
+		owner.Count = 2
+		item, err = AddOwner(owner, item)
+		exist := false
+		for _, owner := range item.Owners {
+			if owner.UserID == user.ID {
+				exist = true
+				assert.Equal(2, owner.Count)
+				assert.Equal(owner.User.Name, user.Name)
+			}
+		}
+		assert.Equal(true, exist)
 		assert.NoError(err)
 		assert.NotEmpty(item)
 	})
