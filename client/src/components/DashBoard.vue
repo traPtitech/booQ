@@ -33,7 +33,6 @@
                   <v-toolbar-title>あなたが借りている物品</v-toolbar-title>
                   <v-spacer />
                   <v-btn @click="returnItems" :disabled="!returnCart.length">まとめて返却</v-btn>
-                  <v-btn @click="type='month'">Month</v-btn>
                 </v-toolbar>
               </v-sheet>
               <v-sheet height="600">
@@ -70,13 +69,14 @@
                     </v-toolbar>
                     <br>
                     <div class="text-center">
-                      <v-img v-if="selectedItem.img_url" contain :src="selectedItem.img_url.length ? selectedItem.img_url : '/img/no-image.svg'" height="194" />
+                      <v-img contain :src="selectedItem.img_url ? selectedItem.img_url : '/img/no-image.svg'" height="194" />
                     </div>
                     <v-card-text>
                       <span>{{ selectedItem.description }}</span>
                     </v-card-text>
                     <v-card-actions>
                       <v-btn
+                        block
                         text
                         color="secondary"
                         @click="click2Cart(selectedItem)"
@@ -84,6 +84,16 @@
                         v-if="selectedItem.type != 0"
                       >
                         返却するものにまとめる
+                      </v-btn>
+                      <v-btn
+                        block
+                        text
+                        color="secondary"
+                        @click.stop="$router.push({path: `/items/${selectedItem.ID}`})"
+                        outlined
+                        v-else
+                      >
+                        詳細
                       </v-btn>
                     </v-card-actions>
                   </v-card>
