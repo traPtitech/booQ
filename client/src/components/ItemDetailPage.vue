@@ -214,7 +214,7 @@ export default {
       } else if (rentalableCount === 1) {
         return '貸し出し可能'
       }
-      return '貸し出し可能' + '×' + rentalableCount
+      return '貸し出し可能' + '×' + rentalableCount + ' /' + owner.count
     },
     createLogMessage (log) {
       const userName = log.user.name

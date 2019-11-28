@@ -158,7 +158,13 @@ func AddOwner(owner Owner, item Item) (Item, error) {
 		if nowOwner.UserID != owner.UserID {
 			continue
 		}
-		nowOwner.Rentalable = owner.Rentalable
+		if nowOwner.Rentalable != owner.Rentalable {
+			if nowOwner.Count != rentalableCount {
+				return Item{}, errors.New("現在貸し出し中の物品が存在するので貸し出し不可にはできません")
+			} else {
+				nowOwner.Rentalable = owner.Rentalable
+			}
+		}
 		if owner.Count-nowOwner.Count+rentalableCount < 0 {
 			return Item{}, errors.New("現在貸し出し中の物品が存在するのでそれよりも少ない数にはできません")
 		}
