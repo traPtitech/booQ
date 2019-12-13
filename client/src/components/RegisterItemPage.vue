@@ -185,8 +185,29 @@ export default {
     },
     async getBookInformation () {
       if (this.code.length === 10 || this.code.length === 13) {
-        const resp = await axios.get(`https://api.openbd.jp/v1/get?isbn=${this.code}`)
-        if (resp.data[0]) {
+        this.data = ''
+        this.name = ''
+        this.description = ''
+        this.img_url = ''
+        let timeout
+        const sleep = () => new Promise(resolve => {
+          timeout = setTimeout(resolve, 10000)
+          return timeout
+        })
+        let runnings = []
+        const openbd = () => axios.get(`https://api.openbd.jp/v1/get?isbn=${this.code}`).then(async resp => {
+          if (resp.data[0]) {
+            return ['opendb', resp]
+          } else if (runnings.length === 1) {
+            this.setAlert('close', '本が見つかりませんでした')
+            return ['not found', '']
+          } else {
+            runnings.splice(0, 1)
+            await sleep()
+            return ['not found', '']
+          }
+        })
+        const openbdThen = resp => {
           this.data = resp.data[0]['onix']
           this.name = this.data['DescriptiveDetail']['TitleDetail']['TitleElement']['TitleText']['content']
           if (this.data['CollateralDetail']['TextContent']) {
@@ -195,9 +216,45 @@ export default {
           if (this.data['CollateralDetail']['SupportingResource']) {
             this.img_url = this.data['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
           }
-        } else {
-          this.setAlert('close', '本が見つかりませんでした')
         }
+        const googleBooksAPI = () => axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${this.code}&maxResults=1`).then(async resp => {
+          if (resp.data['totalItems'] !== 0) {
+            return ['googleBooksAPI', resp]
+          } else if (runnings.length === 1) {
+            this.setAlert('close', '本が見つかりませんでした')
+            return ['not found', '']
+          } else {
+            runnings.splice(1, 1)
+            await sleep()
+            return ['not found', '']
+          }
+        })
+        const googleBooksAPIThen = resp => {
+          this.data = resp.data['items'][0]['volumeInfo']
+          this.name = this.data['title']
+          if (this.data['description']) {
+            this.description = this.data['description']
+          }
+          if (this.data['imageLinks']['thumbnail']) {
+            this.img_url = this.data['imageLinks']['thumbnail']
+          }
+        }
+        runnings = [openbd(), googleBooksAPI()]
+        await Promise.race(runnings).then(values => {
+          if (timeout) {
+            clearTimeout(timeout)
+          }
+          switch (values[0]) {
+            case 'opendb':
+              openbdThen(values[1])
+              break
+            case 'googleBooksAPI':
+              googleBooksAPIThen(values[1])
+              break
+            default:
+              break
+          }
+        })
       } else {
         this.setAlert('close', '不正な値です')
       }
