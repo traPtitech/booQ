@@ -1,3 +1,4 @@
+/* eslint-disable standard/computed-property-even-spacing */
 <template>
   <div>
     <Dialog :dialog="dialog" target="alert">
@@ -9,28 +10,35 @@
       </template>
     </Dialog>
     <h1>物品登録ページ</h1>
-    <div
-      v-if="$store.state.me && $store.state.me.admin"
-      class="contents"
-    >
+    <div v-if="$store.state.me && $store.state.me.admin" class="contents">
       <span>登録する物品の所有者: {{ ownerOptions[ownerID].name }}</span>
-      <br>
+      <br />
       <label v-for="owner in ownerOptions" :key="owner.id">
-        <div><input type="radio" name="owner" :value="owner.id" v-model="ownerID">{{ owner.name }}</div>
+        <div>
+          <input
+            type="radio"
+            name="owner"
+            :value="owner.id"
+            v-model="ownerID"
+          />{{ owner.name }}
+        </div>
       </label>
     </div>
     <div class="contents">
       <div>物品コードもしくはISBNコード</div>
-      <v-text-field v-model="code" placeholder="ISBN-13 or ASIN"/>
+      <v-text-field v-model="code" placeholder="ISBN-13 or ASIN" />
       <v-btn class="green green-text" @click="getBookInformation">
         自動入力
       </v-btn>
-      <v-btn class="green green-text" @click.stop="setDialog('close','barcodeDialog')">
+      <v-btn
+        class="green green-text"
+        @click.stop="setDialog('close', 'barcodeDialog')"
+      >
         バーコード読み取り
       </v-btn>
       <Dialog :dialog="dialog" target="barcodeDialog">
         <template v-slot:content>
-          <BarCode  @search="getBookInformation" @changeCode="changeCode"/>
+          <BarCode @search="getBookInformation" @changeCode="changeCode" />
         </template>
       </Dialog>
     </div>
@@ -40,7 +48,13 @@
     </div>
     <div>
       <div>物品詳細</div>
-      <v-textarea class="mt-0" rows="1" auto-grow v-model="description" placeholder="Description" />
+      <v-textarea
+        class="mt-0"
+        rows="1"
+        auto-grow
+        v-model="description"
+        placeholder="Description"
+      />
     </div>
     <div class="contents">
       <div>物品イメージ</div>
@@ -56,29 +70,26 @@
           contain
           max-height="400px"
         />
-        <v-progress-circular
-          v-else-if="loading"
-          :size="70"
-          :width="7"
-        />
+        <v-progress-circular v-else-if="loading" :size="70" :width="7" />
         <div>
           <p>{{ img_name }}</p>
         </div>
-        <v-btn
-          v-if="img_url.length"
-          class="error"
-          @click="remove"
-        >
+        <v-btn v-if="img_url.length" class="error" @click="remove">
           画像削除
         </v-btn>
       </div>
     </div>
     <div>
       個数
-      <v-text-field class="mt-0" required v-model.number="count" type="number"/>
+      <v-text-field
+        class="mt-0"
+        required
+        v-model.number="count"
+        type="number"
+      />
     </div>
     <div class="contents">
-      <input type="checkbox" id="checkbox" v-model="rentalable">
+      <input type="checkbox" id="checkbox" v-model="rentalable" />
       <label for="checkbox">貸し出し可</label>
     </div>
     <div>
@@ -130,21 +141,65 @@ export default {
   },
   methods: {
     async register () {
-      const res = await axios.post(`/api/items`, { name: this.name, code: this.code, type: Number(this.ownerID), description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
+      const res = await axios
+        .post(`/api/items`, {
+          name: this.name,
+          code: this.code,
+          type: Number(this.ownerID),
+          description: this.description,
+          img_url: this.img_url
+        })
+        .catch(e => {
+          alert(e)
+        })
       if (!res) {
-        this.setAlert('close', 'エラーが発生したため物品の登録が行われませんでした。')
+        this.setAlert(
+          'close',
+          'エラーが発生したため物品の登録が行われませんでした。'
+        )
         return
       }
       const itemID = res.data.ID
-      const userID = Number(this.ownerID) === 0 ? Number(this.$store.state.me.ID) : Number(this.ownerID)
-      const res2 = await axios.post(`/api/items/` + itemID + `/owners`, { user_id: userID, rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
+      const userID =
+        Number(this.ownerID) === 0
+          ? Number(this.$store.state.me.ID)
+          : Number(this.ownerID)
+      const res2 = await axios
+        .post(`/api/items/` + itemID + `/owners`, {
+          user_id: userID,
+          rentalable: this.rentalable,
+          count: Number(this.count)
+        })
+        .catch(e => {
+          alert(e)
+        })
       if (!res2) {
-        this.setAlert('close', 'エラーが発生したため所有者の登録が行われませんでした。')
+        this.setAlert(
+          'close',
+          'エラーが発生したため所有者の登録が行われませんでした。'
+        )
         return
       }
-      await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=1`, {
-        text: '@' + this.$store.state.me.name + ' が「' + this.name + '」を登録しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + itemID
-      }).catch(e => { alert(e) })
+      await axios
+        .post(
+          `${traQBaseURL}/channels/` +
+            process.env.VUE_APP_ACTIVITY_CHANNEL_ID +
+            `/messages?embed=1`,
+          {
+            text:
+              '@' +
+              this.$store.state.me.name +
+              ' が「' +
+              this.name +
+              '」を登録しました。\n' +
+              process.env.VUE_APP_API_ENDPOINT +
+              '/items/' +
+              itemID
+          }
+        )
+        .catch(e => {
+          alert(e)
+        })
       this.$router.push({ path: `/items/${itemID}` })
     },
     onFileChange (e) {
@@ -173,7 +228,18 @@ export default {
       for (let i = 0; i < isbn13.length; i++) {
         isbn13Array.push(parseInt(isbn13.charAt(i), 10))
       }
-      let checkDegit = 11 - ((isbn13Array[3] * 10 + isbn13Array[4] * 9 + isbn13Array[5] * 8 + isbn13Array[6] * 7 + isbn13Array[7] * 6 + isbn13Array[8] * 5 + isbn13Array[9] * 4 + isbn13Array[10] * 3 + isbn13Array[11] * 2) % 11)
+      let checkDegit =
+        11 -
+        ((isbn13Array[3] * 10 +
+          isbn13Array[4] * 9 +
+          isbn13Array[5] * 8 +
+          isbn13Array[6] * 7 +
+          isbn13Array[7] * 6 +
+          isbn13Array[8] * 5 +
+          isbn13Array[9] * 4 +
+          isbn13Array[10] * 3 +
+          isbn13Array[11] * 2) %
+          11)
       if (checkDegit === 10) {
         checkDegit = 'X'
       } else if (checkDegit === 11) {
@@ -189,7 +255,8 @@ export default {
         this.name = ''
         this.description = ''
         this.img_url = ''
-        const openbd = axios.get(`https://api.openbd.jp/v1/get?isbn=${this.code}`)
+        const openbd = axios
+          .get(`https://api.openbd.jp/v1/get?isbn=${this.code}`)
           .then(async resp => {
             if (resp.data[0]) {
               this.data = resp.data[0]['onix']
@@ -201,9 +268,14 @@ export default {
                 this.img_url = this.data['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
               }
             }
+            const index = runnings.findIndex(v => v === openbd)
+            runnings.splice(index, 1)
             return resp.data[0]
           })
-        const googleBooksAPI = axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${this.code}&maxResults=1`)
+        const googleBooksAPI = axios
+          .get(
+            `https://www.googleapis.com/books/v1/volumes?q=isbn:${this.code}&maxResults=1`
+          )
           .then(async resp => {
             if (resp.data['totalItems'] !== 0) {
               this.data = resp.data['items'][0]['volumeInfo']
@@ -215,16 +287,17 @@ export default {
                 this.img_url = this.data['imageLinks']['thumbnail']
               }
             }
+            const index = runnings.findIndex(v => v === googleBooksAPI)
+            runnings.splice(index, 1)
             return resp.data['totalItems'] !== 0
           })
-        let result = await Promise.race([openbd, googleBooksAPI])
+        let runnings = [openbd, googleBooksAPI]
+        let result = await Promise.race(runnings)
+        while (runnings.length > 0 && !result) {
+          result = await Promise.race(runnings)
+        }
         if (!result) {
-          await Promise.all([openbd, googleBooksAPI])
-            .then(values => {
-              if (!(values[0] || values[1])) {
-                this.setAlert('close', '本が見つかりませんでした')
-              }
-            })
+          this.setAlert('close', '本が見つかりませんでした')
         }
       } else {
         this.setAlert('close', '不正な値です')
