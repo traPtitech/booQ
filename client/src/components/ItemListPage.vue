@@ -69,7 +69,7 @@ export default {
       if (searchParam) {
         this.$store.commit('setNavBarTitle', `Search: ${searchParam}`)
       }
-      const res = await axios.get(`/api/items?search=` + searchParam)
+      const res = await axios.get('/api/items?search=' + searchParam)
         .catch(e => {
           alert(e)
         })

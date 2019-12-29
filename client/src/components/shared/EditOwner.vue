@@ -77,7 +77,7 @@ export default {
           return
         }
       }
-      await axios.put(`/api/items/` + this.itemID + `/owners`, { user_id: this.propOwner.owner_id, rentalable: this.rentalable, count: this.count })
+      await axios.put('/api/items/' + this.itemID + '/owners', { user_id: this.propOwner.owner_id, rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e

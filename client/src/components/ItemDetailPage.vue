@@ -145,7 +145,7 @@ export default {
   },
   created () {
     axios
-      .get(`/api/items/` + this.$route.params.id)
+      .get('/api/items/' + this.$route.params.id)
       .then(res => {
         this.data = res.data
         this.$store.commit('setNavBarTitle', res.data.name)
@@ -234,7 +234,7 @@ export default {
     },
     async like () {
       var postLikeError = null
-      await axios.post(`/api/items/` + this.$route.params.id + `/likes`, null)
+      await axios.post('/api/items/' + this.$route.params.id + '/likes', null)
         .catch(e => {
           alert(e)
           postLikeError = e
@@ -245,7 +245,7 @@ export default {
     },
     async removeLike () {
       var removeLikeError = null
-      await axios.delete(`/api/items/` + this.$route.params.id + `/likes`, null)
+      await axios.delete('/api/items/' + this.$route.params.id + '/likes', null)
         .catch(e => {
           alert(e)
           removeLikeError = e
@@ -255,14 +255,14 @@ export default {
       }
     },
     async reload () {
-      const res = await axios.get(`/api/items/` + this.$route.params.id).catch(e => { alert(e) })
+      const res = await axios.get('/api/items/' + this.$route.params.id).catch(e => { alert(e) })
       this.data = res.data
     },
     async destroyItem () {
       const result = window.confirm('本当に削除しますか？')
       if (result === true) {
-        await axios.delete(`/api/items/` + this.$route.params.id).catch(e => { alert(e) })
-        this.$router.push({ path: `/items` })
+        await axios.delete('/api/items/' + this.$route.params.id).catch(e => { alert(e) })
+        this.$router.push({ path: '/items' })
       }
     }
   }
