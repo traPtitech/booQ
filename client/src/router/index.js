@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from './store'
-import About from './components/About.vue'
-import DashBoard from './components/DashBoard.vue'
-import UserPage from './components/UserPage.vue'
-import RegisterItemPage from './components/RegisterItemPage'
-import ItemDetailPage from './components/ItemDetailPage'
-import AdminPage from './components/AdminPage'
-import ItemListPage from './components/ItemListPage'
-import { fetchAuthToken, setAuthToken, getMe } from './utils/api'
+import store from '../store'
+import About from '../components/About.vue'
+import DashBoard from '../components/DashBoard.vue'
+import UserPage from '../components/UserPage.vue'
+import RegisterItemPage from '../components/RegisterItemPage'
+import ItemDetailPage from '../components/ItemDetailPage'
+import AdminPage from '../components/AdminPage'
+import ItemListPage from '../components/ItemListPage'
+import { fetchAuthToken, setAuthToken, getMe } from '../utils/api'
 
 setAuthToken(store.state.authToken)
 
@@ -78,7 +78,7 @@ export default new Router({
     {
       path: '/callback',
       name: 'callback',
-      component: () => import('./components/Home.vue'),
+      component: () => import('../components/Home.vue'),
       beforeEnter: async (to, from, next) => {
         const code = to.query.code
         const state = to.query.state
