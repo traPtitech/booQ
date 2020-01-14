@@ -202,6 +202,9 @@ export default {
               }
             }
             const index = runnings.findIndex(v => v === openbd)
+            if (index === -1) {
+              return false
+            }
             runnings.splice(index, 1)
             return resp.data[0]
           })
@@ -221,6 +224,9 @@ export default {
               }
             }
             const index = runnings.findIndex(v => v === googleBooksAPI)
+            if (index === -1) {
+              return false
+            }
             runnings.splice(index, 1)
             return resp.data['totalItems'] !== 0
           })
