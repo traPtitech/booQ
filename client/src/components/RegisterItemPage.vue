@@ -92,7 +92,6 @@ import axios from 'axios'
 import { traQBaseURL } from '../utils/api.js'
 import BarCode from './BarCode'
 import Dialog from './shared/Dialog'
-
 export default {
   name: 'RegisterItemPage',
   components: {
@@ -185,17 +184,58 @@ export default {
     },
     async getBookInformation () {
       if (this.code.length === 10 || this.code.length === 13) {
-        const resp = await axios.get(`https://api.openbd.jp/v1/get?isbn=${this.code}`)
-        if (resp.data[0]) {
-          this.data = resp.data[0]['onix']
-          this.name = this.data['DescriptiveDetail']['TitleDetail']['TitleElement']['TitleText']['content']
-          if (this.data['CollateralDetail']['TextContent']) {
-            this.description = this.data['CollateralDetail']['TextContent'][0]['Text']
-          }
-          if (this.data['CollateralDetail']['SupportingResource']) {
-            this.img_url = this.data['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
-          }
-        } else {
+        this.data = ''
+        this.name = ''
+        this.description = ''
+        this.img_url = ''
+        const openbd = axios
+          .get(`https://api.openbd.jp/v1/get?isbn=${this.code}`)
+          .then(async resp => {
+            if (resp.data[0]) {
+              this.data = resp.data[0]['onix']
+              this.name = this.data['DescriptiveDetail']['TitleDetail']['TitleElement']['TitleText']['content']
+              if (this.data['CollateralDetail']['TextContent']) {
+                this.description = this.data['CollateralDetail']['TextContent'][0]['Text']
+              }
+              if (this.data['CollateralDetail']['SupportingResource']) {
+                this.img_url = this.data['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
+              }
+            }
+            const index = runnings.findIndex(v => v === openbd)
+            if (index === -1) {
+              return false
+            }
+            runnings.splice(index, 1)
+            return resp.data[0]
+          })
+        const googleBooksAPI = axios
+          .get(
+            `https://www.googleapis.com/books/v1/volumes?q=isbn:${this.code}&maxResults=1`
+          )
+          .then(async resp => {
+            if (resp.data['totalItems'] !== 0) {
+              this.data = resp.data['items'][0]['volumeInfo']
+              this.name = this.data['title']
+              if (this.data['description']) {
+                this.description = this.data['description']
+              }
+              if (this.data['imageLinks']['thumbnail']) {
+                this.img_url = this.data['imageLinks']['thumbnail']
+              }
+            }
+            const index = runnings.findIndex(v => v === googleBooksAPI)
+            if (index === -1) {
+              return false
+            }
+            runnings.splice(index, 1)
+            return resp.data['totalItems'] !== 0
+          })
+        let runnings = [openbd, googleBooksAPI]
+        let result = await Promise.race(runnings)
+        while (runnings.length > 0 && !result) {
+          result = await Promise.race(runnings)
+        }
+        if (!result) {
           this.setAlert('close', '本が見つかりませんでした')
         }
       } else {
