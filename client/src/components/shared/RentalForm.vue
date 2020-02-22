@@ -55,16 +55,17 @@
             <v-dialog light v-model="isOpenConfirm" max-width="320">
               <v-card width="320">
                 <v-card-title class="headline">注意</v-card-title>
-                <div>
+                <div style="margin-left: 10px">
                   役員には確認しましたか？
-                  <br>
+                </div>
+                <div style="margin-left: 10px">
                   <a href="https://wiki.trapti.tech/general/%E5%80%89%E5%BA%AB">
                     倉庫について
                   </a>
                 </div>
                 <v-card-actions>
-                  <v-btn class="green green-text" v-on:click="rental()">Confirm</v-btn>
-                  <v-btn v-on:click="cancel()">Cancel</v-btn>
+                  <v-btn @click="cancel()">Cancel</v-btn>
+                  <v-btn class="green green-text" @click="rental()">Confirm</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -133,9 +134,6 @@ export default {
         this.isOpenConfirm = true
         return
       }
-      if (this.isOpenConfirm) {
-        this.isOpenConfirm = false
-      }
       await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
         .catch(e => {
           alert(e)
@@ -160,6 +158,9 @@ export default {
             alert(e)
             return false
           })
+      }
+      if (this.isOpenConfirm) {
+        this.isOpenConfirm = false
       }
     },
     cancel () {
