@@ -46,7 +46,8 @@ func SetupRouting(e *echo.Echo, client Traq) {
 		apiFiles := api.Group("/files")
 		{
 			apiFiles.POST("", PostFile, middleware.BodyLimit("3MB"))
-			apiFiles.GET("/:id", GetFile)
 		}
+
 	}
+	e.GET("/api/files/:id", GetFile)
 }

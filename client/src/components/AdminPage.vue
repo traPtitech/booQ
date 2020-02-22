@@ -43,17 +43,17 @@ export default {
     }
   },
   async mounted () {
-    const res = await axios.get(`/api/users`).catch(e => alert(e))
+    const res = await axios.get('/api/users').catch(e => alert(e))
     this.users = res.data
   },
   methods: {
     async changeUserInfo () {
       // いまのUserの情報と比較して変更があるやつだけapiを飛ばす
-      const res = await axios.get(`/api/users`).catch(e => alert(e))
+      const res = await axios.get('/api/users').catch(e => alert(e))
       const latestUsers = res.data
-      let changeUsers = []
+      const changeUsers = []
       latestUsers.forEach(latestUser => {
-        let targetUser = this.users.find(user => {
+        const targetUser = this.users.find(user => {
           return user.name === latestUser.name
         })
         if (targetUser.admin !== latestUser.admin) {

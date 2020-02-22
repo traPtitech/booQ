@@ -204,7 +204,7 @@ export default {
         alert('対象itemがありません')
         return 0
       }
-      let targetRentalUser = item.rental_users.find(rentalUser => {
+      const targetRentalUser = item.rental_users.find(rentalUser => {
         return rentalUser.count < 0
       })
       if (!targetRentalUser) {
@@ -256,7 +256,7 @@ export default {
         const dueDate = myLatest.due_date
         names = names.push(this.returnCart[i].name)
         const ownerID = this.returnCart[i].rental_users.length === 1 ? this.returnCart[i].rental_users[0].owner_id : 1
-        await axios.post(`/api/items/` + this.returnCart[i].ID + `/logs`, { owner_id: ownerID, type: 1, count: this.returnCart[i].returnCount, purpose: '', due_date: dueDate.substr(0, 10) })
+        await axios.post('/api/items/' + this.returnCart[i].ID + '/logs', { owner_id: ownerID, type: 1, count: this.returnCart[i].returnCount, purpose: '', due_date: dueDate.substr(0, 10) })
           .catch(e => {
             this.error = e
             alert(e)
@@ -269,14 +269,14 @@ export default {
         for (let i = 0; i < this.returnCart.length; i++) {
           message = message + '\n[' + this.returnCart[i].name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.returnCart[i].ID + ') × ' + this.returnCart[i].returnCount
         }
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + `/messages?embed=1`, { text: message }).catch(e => { alert(e) })
+        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + '/messages?embed=1', { text: message }).catch(e => { alert(e) })
         this.returnCart = []
         this.mount()
       }
     },
     async mount () {
       const me = await getMe()
-      const res = await axios.get(`/api/items?rental=` + me.data.name)
+      const res = await axios.get('/api/items?rental=' + me.data.name)
         .catch(e => {
           alert(e)
         })
