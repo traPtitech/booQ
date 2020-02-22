@@ -129,19 +129,19 @@ export default {
   },
   methods: {
     async register () {
-      const res = await axios.post(`/api/items`, { name: this.name, code: this.code, type: Number(this.ownerID), description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
+      const res = await axios.post('/api/items', { name: this.name, code: this.code, type: Number(this.ownerID), description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
       if (!res) {
         this.setAlert('close', 'エラーが発生したため物品の登録が行われませんでした。')
         return
       }
       const itemID = res.data.ID
       const userID = Number(this.ownerID) === 0 ? Number(this.$store.state.me.ID) : Number(this.ownerID)
-      const res2 = await axios.post(`/api/items/` + itemID + `/owners`, { user_id: userID, rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
+      const res2 = await axios.post('/api/items/' + itemID + '/owners', { user_id: userID, rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
       if (!res2) {
         this.setAlert('close', 'エラーが発生したため所有者の登録が行われませんでした。')
         return
       }
-      await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=1`, {
+      await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + '/messages?embed=1', {
         text: '@' + this.$store.state.me.name + ' が「' + this.name + '」を登録しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + itemID
       }).catch(e => { alert(e) })
       this.$router.push({ path: `/items/${itemID}` })
@@ -153,10 +153,10 @@ export default {
     },
     async createImage (file) {
       this.loading = true
-      let form = new FormData()
+      const form = new FormData()
       form.enctype = 'multipart/form-data'
       form.append('file', file)
-      const data = await axios.post(`/api/files`, form).catch(e => alert(e))
+      const data = await axios.post('/api/files', form).catch(e => alert(e))
       if (!data) {
         this.setAlert('close', '画像の投稿に失敗しました')
       }
@@ -168,7 +168,7 @@ export default {
       this.img_name = ''
     },
     isbn13Toisbn10 (isbn13) {
-      let isbn13Array = []
+      const isbn13Array = []
       for (let i = 0; i < isbn13.length; i++) {
         isbn13Array.push(parseInt(isbn13.charAt(i), 10))
       }
@@ -178,7 +178,7 @@ export default {
       } else if (checkDegit === 11) {
         checkDegit = 0
       }
-      let res = isbn13Array.slice(3, 12)
+      const res = isbn13Array.slice(3, 12)
       res.push(checkDegit)
       return res.join('')
     },
@@ -192,13 +192,13 @@ export default {
           .get(`https://api.openbd.jp/v1/get?isbn=${this.code}`)
           .then(async resp => {
             if (resp.data[0]) {
-              this.data = resp.data[0]['onix']
-              this.name = this.data['DescriptiveDetail']['TitleDetail']['TitleElement']['TitleText']['content']
-              if (this.data['CollateralDetail']['TextContent']) {
-                this.description = this.data['CollateralDetail']['TextContent'][0]['Text']
+              this.data = resp.data[0].onix
+              this.name = this.data.DescriptiveDetail.TitleDetail.TitleElement.TitleText.content
+              if (this.data.CollateralDetail.TextContent) {
+                this.description = this.data.CollateralDetail.TextContent[0].Text
               }
-              if (this.data['CollateralDetail']['SupportingResource']) {
-                this.img_url = this.data['CollateralDetail']['SupportingResource'][0]['ResourceVersion'][0]['ResourceLink']
+              if (this.data.CollateralDetail.SupportingResource) {
+                this.img_url = this.data.CollateralDetail.SupportingResource[0].ResourceVersion[0].ResourceLink
               }
             }
             const index = runnings.findIndex(v => v === openbd)
@@ -213,14 +213,14 @@ export default {
             `https://www.googleapis.com/books/v1/volumes?q=isbn:${this.code}&maxResults=1`
           )
           .then(async resp => {
-            if (resp.data['totalItems'] !== 0) {
-              this.data = resp.data['items'][0]['volumeInfo']
-              this.name = this.data['title']
-              if (this.data['description']) {
-                this.description = this.data['description']
+            if (resp.data.totalItems !== 0) {
+              this.data = resp.data.items[0].volumeInfo
+              this.name = this.data.title
+              if (this.data.description) {
+                this.description = this.data.description
               }
-              if (this.data['imageLinks']['thumbnail']) {
-                this.img_url = this.data['imageLinks']['thumbnail']
+              if (this.data.imageLinks.thumbnail) {
+                this.img_url = this.data.imageLinks.thumbnail
               }
             }
             const index = runnings.findIndex(v => v === googleBooksAPI)
@@ -228,9 +228,9 @@ export default {
               return false
             }
             runnings.splice(index, 1)
-            return resp.data['totalItems'] !== 0
+            return resp.data.totalItems !== 0
           })
-        let runnings = [openbd, googleBooksAPI]
+        const runnings = [openbd, googleBooksAPI]
         let result = await Promise.race(runnings)
         while (runnings.length > 0 && !result) {
           result = await Promise.race(runnings)

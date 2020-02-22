@@ -72,7 +72,7 @@ export default {
         this.message = '所有者に' + this.ownerOptions.find(element => element.id === this.ownerID).name + 'を追加しました。'
         newOwnerID = this.ownerID
       }
-      await axios.post(`/api/items/` + this.$route.params.id + `/owners`, { user_id: newOwnerID, rentalable: this.rentalable, count: this.count })
+      await axios.post('/api/items/' + this.$route.params.id + '/owners', { user_id: newOwnerID, rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e

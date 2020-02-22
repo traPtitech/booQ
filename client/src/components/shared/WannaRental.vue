@@ -73,7 +73,7 @@ export default {
   methods: {
     getBihinLatestCount (itemID) {
       const item = this.propItem
-      let targetLog = item.latest_logs.find(log => {
+      const targetLog = item.latest_logs.find(log => {
         return log.owner.name === 'traP' || log.owner.name === 'sienka'
       })
       if (!targetLog) {
@@ -112,7 +112,7 @@ export default {
       }
       this.isOpenWannaRentalForm = !this.isOpenWannaRentalForm
       this.$emit('reload')
-      await axios.post(`${traQBaseURL}/users/` + targetUser.userId + `/messages?embed=1`, { text: this.message })
+      await axios.post(`${traQBaseURL}/users/` + targetUser.userId + '/messages?embed=1', { text: this.message })
         .catch(e => {
           alert(e)
           this.error = e

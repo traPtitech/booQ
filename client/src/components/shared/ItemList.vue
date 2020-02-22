@@ -87,7 +87,7 @@ export default {
         alert('対象itemがありません')
         return 0
       }
-      let targetLog = item.latest_logs.find(log => {
+      const targetLog = item.latest_logs.find(log => {
         return log.owner.name === 'traP' || log.owner.name === 'sienka'
       })
       if (!targetLog) {
