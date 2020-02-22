@@ -8,9 +8,9 @@ axios.defaults.baseURL = process.env.NODE_ENV === 'development' ? 'http://localh
 
 export function setAuthToken (token) {
   if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    axios.defaults.headers.common.Authorization = `Bearer ${token}`
   } else {
-    delete axios.defaults.headers.common['Authorization']
+    delete axios.defaults.headers.common.Authorization
   }
 }
 
@@ -46,5 +46,5 @@ export function revokeAuthToken (token) {
 }
 
 export function getMe () {
-  return axios.get(`/api/users/me`)
+  return axios.get('/api/users/me')
 }

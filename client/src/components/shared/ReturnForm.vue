@@ -60,7 +60,7 @@ export default {
       if (this.propItem.rental_users.length === 0) {
         return 0
       }
-      let rentalUsers = this.propItem.rental_users.filter(element => {
+      const rentalUsers = this.propItem.rental_users.filter(element => {
         return element.user.ID === this.$store.state.me.ID
       })
       const rentalUser = rentalUsers.find(element => {
@@ -77,11 +77,8 @@ export default {
         alert('所有者を選択してください')
         return
       }
-      const myLatest = this.propItem.latest_logs.find(element => {
-        return element.user_id === this.$store.state.me.ID
-      })
-      const dueDate = myLatest.due_date
-      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', due_date: dueDate.substr(0, 10) })
+      const today = new Date()
+      await axios.post('/api/items/' + this.$route.params.id + '/logs', { owner_id: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', due_date: today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2) })
         .catch(e => {
           alert(e)
           this.error = e
@@ -93,14 +90,14 @@ export default {
       this.$emit('reload')
       if (this.propItem.type === 0) {
         const traQmessage = '@' + this.returnOwnerName + ' の「' + this.propItem.name + '」を返しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=` + 1, { text: traQmessage })
+        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + '/messages?embed=' + 1, { text: traQmessage })
           .catch(e => {
             alert(e)
             return false
           })
       } else {
         const traQmessage = '入\n[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')×' + this.returnCount
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + `/messages?embed=` + 1, { text: traQmessage })
+        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + '/messages?embed=' + 1, { text: traQmessage })
           .catch(e => {
             alert(e)
             return false

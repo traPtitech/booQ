@@ -55,16 +55,17 @@
             <v-dialog light v-model="isOpenConfirm" max-width="320">
               <v-card width="320">
                 <v-card-title class="headline">注意</v-card-title>
-                <div>
+                <div style="margin-left: 10px">
                   役員には確認しましたか？
-                  <br>
+                </div>
+                <div style="margin-left: 10px">
                   <a href="https://wiki.trapti.tech/general/%E5%80%89%E5%BA%AB">
                     倉庫について
                   </a>
                 </div>
                 <v-card-actions>
-                  <v-btn class="green green-text" v-on:click="rental()">Confirm</v-btn>
-                  <v-btn v-on:click="cancel()">Cancel</v-btn>
+                  <v-btn @click="cancel()">Cancel</v-btn>
+                  <v-btn class="green green-text" @click="rental()">Confirm</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -99,7 +100,7 @@ export default {
   methods: {
     getBihinLatestCount (itemID) {
       const item = this.propItem
-      let targetLog = item.latest_logs.find(log => {
+      const targetLog = item.latest_logs.find(log => {
         return log.owner.name === 'traP' || log.owner.name === 'sienka'
       })
       if (!targetLog) {
@@ -133,9 +134,6 @@ export default {
         this.isOpenConfirm = true
         return
       }
-      if (this.isOpenConfirm) {
-        this.isOpenConfirm = false
-      }
       await axios.post('/api/items/' + this.$route.params.id + '/logs', { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
         .catch(e => {
           alert(e)
@@ -148,18 +146,21 @@ export default {
       this.$emit('reload')
       if (this.propItem.type === 0) {
         const traQmessage = '@' + this.rentOwnerName + ' の「' + this.propItem.name + '」を借りました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + `/messages?embed=1`, { text: traQmessage })
+        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + '/messages?embed=1', { text: traQmessage })
           .catch(e => {
             alert(e)
             return false
           })
       } else {
         const traQmessage = '出\n[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')×' + this.rentalCount + '\n目的：' + this.purpose
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + `/messages?embed=1`, { text: traQmessage })
+        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + '/messages?embed=1', { text: traQmessage })
           .catch(e => {
             alert(e)
             return false
           })
+      }
+      if (this.isOpenConfirm) {
+        this.isOpenConfirm = false
       }
     },
     cancel () {

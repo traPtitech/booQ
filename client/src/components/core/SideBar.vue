@@ -136,7 +136,7 @@ export default {
         //   text: 'User List'
         // },
         {
-          to: `/items/new`,
+          to: '/items/new',
           icon: 'add_box',
           text: 'Register Item'
         }

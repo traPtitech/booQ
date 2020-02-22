@@ -72,8 +72,12 @@ export default {
           alert('現在貸し出し中の物品が存在するのでそれよりも少ない数にはできません')
           return
         }
+        if (this.propOwner.count - latestLog.count > 0 && !this.rentalable) {
+          alert('現在貸し出し中の物品が存在するので貸し出し不可にはできません')
+          return
+        }
       }
-      await axios.put(`/api/items/` + this.itemID + `/owners`, { user_id: this.propOwner.owner_id, rentalable: this.rentalable, count: this.count })
+      await axios.put('/api/items/' + this.itemID + '/owners', { user_id: this.propOwner.owner_id, rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e
@@ -88,7 +92,11 @@ export default {
         this.message = this.propOwner.count - this.count + '個減らしました'
       }
       if (this.rentalable !== this.propOwner.rentalable) {
-        this.message = this.rentalable === true ? '貸し出し可' : '貸し出し不可' + 'な物品を' + this.count + '個登録しました'
+        if (this.rentalable === true) {
+          this.message = '物品の登録を貸し出し可 × ' + this.count + '個に変更しました'
+        } else {
+          this.message = '物品の登録を貸し出し不可 × ' + this.count + '個に変更しました'
+        }
       }
       if (!this.error) { alert(this.message) }
       this.isOpenEditOwner = !this.isOpenEditOwner

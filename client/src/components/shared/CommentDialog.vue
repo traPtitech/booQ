@@ -44,7 +44,7 @@ export default {
         alert('コメントを入力してください')
         return false
       }
-      await axios.post(`/api/items/` + this.$route.params.id + `/comments`, { text: this.text })
+      await axios.post('/api/items/' + this.$route.params.id + '/comments', { text: this.text })
         .catch(e => {
           alert(e)
           this.error = e

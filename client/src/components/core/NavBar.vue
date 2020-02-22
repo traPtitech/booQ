@@ -184,7 +184,7 @@ export default {
       for (let i = 0; i < this.$store.state.cart.length; i++) {
         let names = []
         names = names.push(this.$store.state.cart[i].name)
-        await axios.post(`/api/items/` + this.$store.state.cart[i].ID + `/logs`, { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
+        await axios.post('/api/items/' + this.$store.state.cart[i].ID + '/logs', { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
           .catch(e => {
             this.error = e
             alert(e)
@@ -198,7 +198,7 @@ export default {
           message = message + '\n[' + this.$store.state.cart[i].name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.$store.state.cart[i].ID + ') × ' + this.$store.state.cart[i].rentalCount
         }
         message = message + '\n目的：' + this.cartPurpose
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + `/messages?embed=1`, { text: message }).catch(e => { alert(e) })
+        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + '/messages?embed=1', { text: message }).catch(e => { alert(e) })
         this.$store.commit('resetCart')
       }
     }
