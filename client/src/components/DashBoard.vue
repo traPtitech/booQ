@@ -85,6 +85,16 @@
                       >
                         返却するものにまとめる
                       </v-btn>
+                      <v-btn
+                        block
+                        text
+                        color="secondary"
+                        @click.stop="$router.push({path: `/items/${selectedItem.ID}`})"
+                        outlined
+                        v-else
+                      >
+                        詳細
+                      </v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-menu>

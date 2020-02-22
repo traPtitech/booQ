@@ -136,7 +136,7 @@ export default {
       if (this.isOpenConfirm) {
         this.isOpenConfirm = false
       }
-      await axios.post(`/api/items/` + this.$route.params.id + `/logs`, { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
+      await axios.post('/api/items/' + this.$route.params.id + '/logs', { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
         .catch(e => {
           alert(e)
           this.error = e
