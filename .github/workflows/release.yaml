@@ -1,0 +1,24 @@
+name: Push Docker Image
+
+on:
+  push:
+    tags:
+      - v*
+
+env:
+  IMAGE_NAME: booq
+
+jobs:
+  image:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set IMAGE_TAG env
+        run: echo ::set-env name=IMAGE_TAG::$(echo ${GITHUB_REF:10})
+      - uses: actions/checkout@v2
+      - name: Login GitHub Registry
+        run: docker login docker.pkg.github.com -u traPtitech -p ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Image
+        run: docker build -t docker.pkg.github.com/traptitech/booq/${IMAGE_NAME}:${IMAGE_TAG} -f docker/production/Dockerfile .
+      - name: Push image to GitHub Registry
+        run: docker push docker.pkg.github.com/traptitech/booq/${IMAGE_NAME}:${IMAGE_TAG}
