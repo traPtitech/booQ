@@ -27,9 +27,9 @@
     <v-list nav>
       <v-list-item>
         <v-text-field
-          class="purple-input search-input"
+          class="search-input"
           label="Search..."
-          color="purple"
+          color="success"
           v-model="searchString"
           v-on:keyup.enter="searchSideBar()"
         />
