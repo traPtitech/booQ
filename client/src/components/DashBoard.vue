@@ -69,14 +69,13 @@
                     </v-toolbar>
                     <br>
                     <div class="text-center">
-                      <v-img contain :src="selectedItem.img_url ? selectedItem.img_url : '/img/no-image.svg'" height="194" />
+                      <v-img v-if="selectedItem.img_url" contain :src="selectedItem.img_url !== '' ? selectedItem.img_url : '/img/no-image.svg'" height="194" />
                     </div>
                     <v-card-text>
                       <span>{{ selectedItem.description }}</span>
                     </v-card-text>
                     <v-card-actions>
                       <v-btn
-                        block
                         text
                         color="secondary"
                         @click="click2Cart(selectedItem)"

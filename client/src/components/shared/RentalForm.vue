@@ -51,7 +51,24 @@
           <v-divider></v-divider>
           <v-card-actions>
             <div class="flex-grow-1"></div>
-            <v-btn v-on:click="rental()">借りる</v-btn>
+            <v-btn v-on:click.stop="rental()">借りる</v-btn>
+            <v-dialog light v-model="isOpenConfirm" max-width="320">
+              <v-card width="320">
+                <v-card-title class="headline">注意</v-card-title>
+                <div style="margin-left: 10px">
+                  役員には確認しましたか？
+                </div>
+                <div style="margin-left: 10px">
+                  <a href="https://wiki.trapti.tech/general/%E5%80%89%E5%BA%AB">
+                    倉庫について
+                  </a>
+                </div>
+                <v-card-actions>
+                  <v-btn @click="cancel()">Cancel</v-btn>
+                  <v-btn class="green green-text" @click="rental()">Confirm</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -70,6 +87,7 @@ export default {
   },
   data () {
     return {
+      isOpenConfirm: false,
       purpose: null,
       rentalCount: 1,
       dueDate: null,
@@ -112,6 +130,10 @@ export default {
         alert('返却日を入力してください')
         return false
       }
+      if (!this.isOpenConfirm && !this.$store.state.me.admin) {
+        this.isOpenConfirm = true
+        return
+      }
       await axios.post('/api/items/' + this.$route.params.id + '/logs', { owner_id: this.rentOwnerID, type: 0, purpose: this.purpose, due_date: this.dueDate, count: this.rentalCount })
         .catch(e => {
           alert(e)
@@ -137,6 +159,13 @@ export default {
             return false
           })
       }
+      if (this.isOpenConfirm) {
+        this.isOpenConfirm = false
+      }
+    },
+    cancel () {
+      this.isOpenConfirm = false
+      this.isOpenRentalForm = false
     },
     open () {
       this.isOpenRentalForm = !this.isOpenRentalForm
