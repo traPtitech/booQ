@@ -33,7 +33,6 @@
                   <v-toolbar-title>あなたが借りている物品</v-toolbar-title>
                   <v-spacer />
                   <v-btn @click="returnItems" :disabled="!returnCart.length">まとめて返却</v-btn>
-                  <v-btn @click="type='month'">Month</v-btn>
                 </v-toolbar>
               </v-sheet>
               <v-sheet height="600">
