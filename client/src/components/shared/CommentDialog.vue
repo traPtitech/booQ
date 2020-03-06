@@ -56,7 +56,7 @@ export default {
       if (!this.error) {
         this.$parent.data.comments.push({ user: this.$store.state.me, text: this.text })
       }
-      const traQmessage = 'コメントを投稿しました\n[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')\n' + this.text
+      const traQmessage = '### コメントを投稿しました\n[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')\n' + this.text
       await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + '/messages?embed=1', { text: traQmessage })
         .catch(e => {
           alert(e)
