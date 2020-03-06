@@ -45,7 +45,7 @@ export default {
   methods: {
     async comment () {
       if (this.text === null) {
-        alert(`コメントを入力してください`)
+        alert('コメントを入力してください')
         return false
       }
       await axios.post(`/api/items/${this.$route.params.id}/comments`, { text: this.text })
