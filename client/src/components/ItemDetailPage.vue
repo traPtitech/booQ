@@ -76,7 +76,7 @@
           <div class="mb-4">
             <h2>
               コメント
-              <CommentDialog />
+              <CommentDialog :propItem="data"/>
             </h2>
             <v-list v-if="data.comments.length" color="transparent">
               <v-list-item v-for="comment in data.comments" :key="comment.id" class="pl-0">
