@@ -185,25 +185,18 @@ export default {
       return false
     },
     checkRental () {
-      const least = (owner) => {
+      return this.data.owners.some(owner => {
         if (!owner.rentalable) {
           return false
         }
-        var latestLog = this.data.latest_logs.find(log => {
+        let latestLog = this.data.latest_logs.find(log => {
           return log.owner.ID === owner.owner_id
         })
-        var rentalableCount = 0
-        if (latestLog) {
-          rentalableCount = latestLog.count
-        } else {
-          rentalableCount = owner.count
+        let rentalableCount = latestLog ? latestLog.count : owner.count
+        if (rentalableCount !== 0) {
+          return true
         }
-        if (rentalableCount === 0) {
-          return false
-        }
-        return true
-      }
-      return this.data.owners.some(least)
+      })
     }
   },
   methods: {
@@ -221,10 +214,10 @@ export default {
       if (!owner.rentalable) {
         return '貸し出しできません'
       }
-      var latestLog = this.data.latest_logs.find(log => {
+      let latestLog = this.data.latest_logs.find(log => {
         return log.owner.ID === owner.owner_id
       })
-      var rentalableCount = 0
+      let rentalableCount = 0
       if (latestLog) {
         rentalableCount = latestLog.count
       } else {
@@ -254,7 +247,7 @@ export default {
       return `${userName}さんが${ownerWord}物品を${logComment} - ${logTime}`
     },
     async like () {
-      var postLikeError = null
+      let postLikeError = null
       await axios.post('/api/items/' + this.$route.params.id + '/likes', null)
         .catch(e => {
           alert(e)
@@ -265,7 +258,7 @@ export default {
       }
     },
     async removeLike () {
-      var removeLikeError = null
+      let removeLikeError = null
       await axios.delete('/api/items/' + this.$route.params.id + '/likes', null)
         .catch(e => {
           alert(e)
