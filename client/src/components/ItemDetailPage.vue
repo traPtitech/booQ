@@ -18,7 +18,7 @@
           </div>
           <div>
             <WannaRental v-if="data.type === 0" @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
-            <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
+            <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable" :disable="!checkRental"/>
             <ReturnForm @reload="reload" :propItem="data"/>
             <v-btn color="error" block v-if="checkOwnOrAdmin" @click="destroyItem" error>削除</v-btn>
           </div>
@@ -183,6 +183,18 @@ export default {
         }
       }
       return false
+    },
+    checkRental () {
+      return this.data.owners.some(owner => {
+        if (!owner.rentalable) {
+          return false
+        }
+        const latestLog = this.data.latest_logs.find(log => {
+          return log.owner.ID === owner.owner_id
+        })
+        const rentalableCount = latestLog ? latestLog.count : owner.count
+        return rentalableCount !== 0
+      })
     }
   },
   methods: {
@@ -200,10 +212,10 @@ export default {
       if (!owner.rentalable) {
         return '貸し出しできません'
       }
-      var latestLog = this.data.latest_logs.find(log => {
+      const latestLog = this.data.latest_logs.find(log => {
         return log.owner.ID === owner.owner_id
       })
-      var rentalableCount = 0
+      let rentalableCount = 0
       if (latestLog) {
         rentalableCount = latestLog.count
       } else {
@@ -233,7 +245,7 @@ export default {
       return `${userName}さんが${ownerWord}物品を${logComment} - ${logTime}`
     },
     async like () {
-      var postLikeError = null
+      let postLikeError = null
       await axios.post('/api/items/' + this.$route.params.id + '/likes', null)
         .catch(e => {
           alert(e)
@@ -244,7 +256,7 @@ export default {
       }
     },
     async removeLike () {
-      var removeLikeError = null
+      let removeLikeError = null
       await axios.delete('/api/items/' + this.$route.params.id + '/likes', null)
         .catch(e => {
           alert(e)

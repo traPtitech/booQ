@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn block color="primary" @click.stop="open">借りる</v-btn>
+    <v-btn block color="primary" @click.stop="open" :disabled="disable">借りる</v-btn>
     <div class="text-center">
       <v-dialog light v-model="isOpenRentalForm" max-width="320">
         <v-card width="320">
@@ -83,7 +83,8 @@ import { traQBaseURL } from '../../utils/api.js'
 export default {
   name: 'RentalForm',
   props: {
-    propItem: Object
+    propItem: Object,
+    disable: Boolean
   },
   data () {
     return {
