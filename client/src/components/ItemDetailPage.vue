@@ -18,7 +18,7 @@
           </div>
           <div>
             <WannaRental v-if="data.type === 0" @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
-            <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable"/>
+            <RentalForm @reload="reload" :propItem="data" @checkRentalable="checkRentalable" :disable="!checkRental"/>
             <ReturnForm @reload="reload" :propItem="data"/>
             <v-btn color="error" block v-if="checkOwnOrAdmin" @click="destroyItem" error>削除</v-btn>
           </div>
@@ -76,7 +76,7 @@
           <div class="mb-4">
             <h2>
               コメント
-              <CommentDialog :propItem="data"/>
+              <CommentDialog />
             </h2>
             <v-list v-if="data.comments.length" color="transparent">
               <v-list-item v-for="comment in data.comments" :key="comment.id" class="pl-0">
@@ -181,6 +181,27 @@ export default {
         if (owner || this.$store.state.me.admin) {
           return true
         }
+      }
+      return false
+    },
+    checkRental () {
+      for (const owner of this.data.owners) {
+        if (!owner.rentalable) {
+          continue
+        }
+        var latestLog = this.data.latest_logs.find(log => {
+          return log.owner.ID === owner.owner_id
+        })
+        var rentalableCount = 0
+        if (latestLog) {
+          rentalableCount = latestLog.count
+        } else {
+          rentalableCount = owner.count
+        }
+        if (rentalableCount === 0) {
+          continue
+        }
+        return true
       }
       return false
     }
