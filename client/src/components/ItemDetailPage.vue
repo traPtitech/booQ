@@ -189,13 +189,11 @@ export default {
         if (!owner.rentalable) {
           return false
         }
-        let latestLog = this.data.latest_logs.find(log => {
+        const latestLog = this.data.latest_logs.find(log => {
           return log.owner.ID === owner.owner_id
         })
-        let rentalableCount = latestLog ? latestLog.count : owner.count
-        if (rentalableCount !== 0) {
-          return true
-        }
+        const rentalableCount = latestLog ? latestLog.count : owner.count
+        return rentalableCount !== 0
       })
     }
   },
@@ -214,7 +212,7 @@ export default {
       if (!owner.rentalable) {
         return '貸し出しできません'
       }
-      let latestLog = this.data.latest_logs.find(log => {
+      const latestLog = this.data.latest_logs.find(log => {
         return log.owner.ID === owner.owner_id
       })
       let rentalableCount = 0
