@@ -76,7 +76,7 @@
           <div class="mb-4">
             <h2>
               コメント
-              <CommentDialog />
+              <CommentDialog :propItem="data"/>
             </h2>
             <v-list v-if="data.comments.length" color="transparent">
               <v-list-item v-for="comment in data.comments" :key="comment.id" class="pl-0">
@@ -185,9 +185,9 @@ export default {
       return false
     },
     checkRental () {
-      for (const owner of this.data.owners) {
+      const least = (owner) => {
         if (!owner.rentalable) {
-          continue
+          return false
         }
         var latestLog = this.data.latest_logs.find(log => {
           return log.owner.ID === owner.owner_id
@@ -199,11 +199,11 @@ export default {
           rentalableCount = owner.count
         }
         if (rentalableCount === 0) {
-          continue
+          return false
         }
         return true
       }
-      return false
+      return this.data.owners.some(least)
     }
   },
   methods: {
