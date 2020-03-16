@@ -21,7 +21,7 @@
     </div>
     <div class="contents">
       <div>物品コードもしくはISBNコード</div>
-      <v-text-field v-model="code" placeholder="ISBN-13"/>
+      <v-text-field v-model="code" placeholder="ISBN-13" />
       <v-btn class="green green-text" @click="getBookInformation">
         自動入力
       </v-btn>
