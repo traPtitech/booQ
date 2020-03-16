@@ -125,6 +125,7 @@ export default {
   watch: {
     code (val) {
       this.code = this.code.replace('-', '')
+      this.code = this.code.replace(/\s+/g, "")
     }
   },
   methods: {
