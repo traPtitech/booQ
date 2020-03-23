@@ -21,7 +21,7 @@
     </div>
     <div class="contents">
       <div>物品コードもしくはISBNコード</div>
-      <v-text-field v-model="code" placeholder="ISBN-13 or ASIN"/>
+      <v-text-field v-model="code" placeholder="ISBN-13" />
       <v-btn class="green green-text" @click="getBookInformation">
         自動入力
       </v-btn>
@@ -124,7 +124,7 @@ export default {
   },
   watch: {
     code (val) {
-      this.code = this.code.replace('-', '')
+      this.code = this.code.replace(/\s+|[-]/g, '')
     }
   },
   methods: {
