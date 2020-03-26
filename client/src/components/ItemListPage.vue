@@ -1,6 +1,15 @@
 <template>
   <div>
     <div v-if="data !== null">
+      <div>
+        <v-text-field
+          class="search-input"
+          label="Search..."
+          color="success"
+          v-model="searchString"
+          v-on:keyup.enter="searchItem()"
+        />
+      </div>
       <div v-if="data.length !== 0">
         <ItemList :items="data" />
       </div>
@@ -25,6 +34,7 @@ export default {
   },
   data () {
     return {
+      searchString: '',
       data: null,
       error: null
     }
@@ -84,6 +94,9 @@ export default {
         return item.type === type
       })
       this.data = items
+    },
+    searchItem () {
+      this.$router.push({ path: '/items', query: { search: this.searchString } })
     }
   }
 }
