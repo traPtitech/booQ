@@ -84,6 +84,7 @@ export default {
           alert(e)
         })
       this.data = res.data
+      this.searchString = searchParam
     },
     async getItemsByType (type) {
       const res = await axios.get('/api/items')
