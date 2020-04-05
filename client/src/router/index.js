@@ -1,18 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store'
-import About from '../components/About.vue'
-import DashBoard from '../components/DashBoard.vue'
-import UserPage from '../components/UserPage.vue'
-import RegisterItemPage from '../components/RegisterItemPage'
-import ItemDetailPage from '../components/ItemDetailPage'
-import AdminPage from '../components/AdminPage'
-import ItemListPage from '../components/ItemListPage'
 import { fetchAuthToken, setAuthToken, getMe } from '../utils/api'
 
 setAuthToken(store.state.authToken)
 
 Vue.use(Router)
+
+const UserPage = () => import('../components/UserPage.vue')
+const ItemListPage = () => import('../components/ItemListPage')
 
 export default new Router({
   mode: 'history',
@@ -28,7 +24,7 @@ export default new Router({
     {
       path: '/',
       name: 'Dashboard',
-      component: DashBoard
+      component: () => import('../components/DashBoard.vue')
     },
     {
       path: '/users',
@@ -43,7 +39,7 @@ export default new Router({
     {
       path: '/items/new',
       name: 'Register Item Page',
-      component: RegisterItemPage
+      component: () => import('../components/RegisterItemPage')
     },
     {
       path: '/items/equipment',
@@ -58,7 +54,7 @@ export default new Router({
     {
       path: '/items/:id',
       name: 'Item',
-      component: ItemDetailPage
+      component: () => import('../components/ItemDetailPage')
     },
     {
       path: '/items',
@@ -68,12 +64,12 @@ export default new Router({
     {
       path: '/admin',
       name: 'Admin Page',
-      component: AdminPage
+      component: () => import('../components/AdminPage')
     },
     {
       path: '/about',
       name: 'About',
-      component: About
+      component: () => import('../components/About.vue')
     },
     {
       path: '/callback',
