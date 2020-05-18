@@ -139,7 +139,7 @@ jobs:
           command: ssh-keyscan ${STAGING_DEPLOY_HOST} >> ~/.ssh/known_hosts 2>/dev/null
       - run:
           name: deploy staging environment
-          command: ssh -o LogLevel=QUIET -t ${STAGING_DEPLOY_USER}@${STAGING_DEPLOY_HOST} "~/deploy.sh"
+          command: ssh -o LogLevel=QUIET -t ${STAGING_DEPLOY_USER}@${STAGING_DEPLOY_HOST} "~/booq/deploy.sh"
 
 workflows:
   version: 2
