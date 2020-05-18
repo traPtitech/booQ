@@ -123,24 +123,22 @@ func CreateItem(item Item) (Item, error) {
 
 // RegisterOwner 新しい所有者を登録する
 func RegisterOwner(owner Owner, item Item) (Item, error) {
-	var existed bool
 	db.Set("gorm:auto_preload", true).Find(&item).Related(&item.Owners, "Owners")
 	owner.User, _ = GetUserByID(int(owner.UserID))
 	for _, nowOwner := range item.Owners {
 		if nowOwner.UserID != owner.UserID {
 			continue
 		}
-		existed = true
 		return Item{}, errors.New("該当の物品をすでに所有しています")
 	}
-	if !existed {
-		db.Create(&owner)
-		db.Model(&item).Association("Owners").Append(&owner)
-		_, err := CreateLog(Log{ItemID: item.ID, UserID: owner.UserID, OwnerID: owner.UserID, Type: 2, Count: owner.Count})
-		if err != nil {
-			return Item{}, err
-		}
+
+	db.Create(&owner)
+	db.Model(&item).Association("Owners").Append(&owner)
+	_, err := CreateLog(Log{ItemID: item.ID, UserID: owner.UserID, OwnerID: owner.UserID, Type: 2, Count: owner.Count})
+	if err != nil {
+		return Item{}, err
 	}
+
 	return item, nil
 }
 
