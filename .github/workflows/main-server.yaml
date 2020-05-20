@@ -7,7 +7,7 @@ on:
 
 jobs:
   mod:
-    name: Mod
+    name: Server Modules
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v2
@@ -20,7 +20,7 @@ jobs:
           key: ${{ runner.os }}-gomod-${{ hashFiles('**/go.sum') }}
       - run: go mod download
   build:
-    name: Build
+    name: Server Build
     runs-on: ubuntu-latest
     needs: [mod]
     env:
@@ -50,7 +50,7 @@ jobs:
           name: booQ
           path: booQ
   lint:
-    name: Lint
+    name: Server Lint
     runs-on: ubuntu-latest
     needs: [mod]
     steps:
@@ -73,7 +73,7 @@ jobs:
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   test:
-    name: Test
+    name: Server Test
     runs-on: ubuntu-latest
     needs: [build]
     env:
@@ -115,7 +115,7 @@ jobs:
       - name: Run router tests
         run: go test . ./router -v -covermode=atomic -vet=off
   spectral:
-    name: Spectral
+    name: OpenApi Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
