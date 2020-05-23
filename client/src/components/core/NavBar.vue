@@ -144,7 +144,7 @@ export default {
         await this.$store.commit('setMe', resp.data)
       }
     } catch (e) {
-      
+
     }
   },
   mounted () {
@@ -190,10 +190,10 @@ export default {
             due_date: this.cartDueDate,
             count: this.$store.state.cart[i].rentalCount
           }
-          ).catch(e => {
-            this.error = e
-            alert(e)
-          })
+        ).catch(e => {
+          this.error = e
+          alert(e)
+        })
       }
       if (!this.error) {
         this.cartDialog = !this.cartDialog
