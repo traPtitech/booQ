@@ -89,7 +89,6 @@
 
 <script>
 import axios from 'axios'
-import { traQBaseURL } from '../utils/api.js'
 import BarCode from './BarCode'
 import Dialog from './shared/Dialog'
 export default {
@@ -141,9 +140,6 @@ export default {
         this.setAlert('close', 'エラーが発生したため所有者の登録が行われませんでした。')
         return
       }
-      await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + '/messages?embed=1', {
-        text: '@' + this.$store.state.me.name + ' が「' + this.name + '」を登録しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + itemID
-      }).catch(e => { alert(e) })
       this.$router.push({ path: `/items/${itemID}` })
     },
     onFileChange (e) {

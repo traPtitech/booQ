@@ -142,7 +142,7 @@
 
 <script>
 import axios from 'axios'
-import { traQBaseURL, getMe } from '../utils/api.js'
+import { getMe } from '../utils/api.js'
 
 export default {
   name: 'DashBoard',
@@ -274,11 +274,6 @@ export default {
       if (!this.error) {
         this.cartDialog = !this.cartDialog
         alert('まとめて返すことに成功しました。')
-        let message = '入'
-        for (let i = 0; i < this.returnCart.length; i++) {
-          message = message + '\n[' + this.returnCart[i].name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.returnCart[i].ID + ') × ' + this.returnCart[i].returnCount
-        }
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + '/messages?embed=1', { text: message }).catch(e => { alert(e) })
         this.returnCart = []
         this.mount()
       }

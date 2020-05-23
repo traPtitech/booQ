@@ -3,6 +3,7 @@ package router
 import (
 	"errors"
 	"net/http"
+	"os"
 	"strconv"
 
 	"fmt"
@@ -74,7 +75,9 @@ func PostItems(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-
+	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", res.Name, os.Getenv("HOST"), res.ID)
+	message := fmt.Sprintf("@%v が[%v]()を%vました", user.Name, itemInfo, "登録")
+	_ = PostMessage(c, message)
 	return c.JSON(http.StatusCreated, res)
 }
 

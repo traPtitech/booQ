@@ -43,7 +43,7 @@
         <v-menu min-width="250" max-width="400">
           <template v-slot:activator="{ on }">
             <v-btn :disabled="$store.state.cart.length == 0" icon v-on="on">
-             <v-icon dark>mdi-cart</v-icon>
+              <v-icon dark>mdi-cart</v-icon>
             </v-btn>
           </template>
           <v-list>
@@ -109,7 +109,7 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import { getMe, traQBaseURL } from '@/utils/api'
+import { getMe } from '@/utils/api'
 import axios from 'axios'
 
 export default {
@@ -160,9 +160,6 @@ export default {
     onClickBtn () {
       this.setDrawer(!this.$store.state.drawer)
     },
-    onClick () {
-      //
-    },
     onResponsiveInverted () {
       if (window.innerWidth < 991) {
         this.responsive = true
@@ -193,12 +190,6 @@ export default {
       if (!this.error) {
         this.cartDialog = !this.cartDialog
         alert('まとめて借りることに成功しました。')
-        let message = '出'
-        for (let i = 0; i < this.$store.state.cart.length; i++) {
-          message = message + '\n[' + this.$store.state.cart[i].name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.$store.state.cart[i].ID + ') × ' + this.$store.state.cart[i].rentalCount
-        }
-        message = message + '\n目的：' + this.cartPurpose
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + '/messages?embed=1', { text: message }).catch(e => { alert(e) })
         this.$store.commit('resetCart')
       }
     }

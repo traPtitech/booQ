@@ -3,7 +3,9 @@ package router
 import (
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -118,6 +120,31 @@ func PostLogs(c echo.Context) error {
 	if res.ItemID == 0 {
 		return c.NoContent(http.StatusBadRequest)
 	}
-
+	message := createMessage(log, item, user)
+	_ = PostMessage(c, message)
 	return c.JSON(http.StatusCreated, res)
+}
+
+func createMessage(log model.Log, item model.Item, user model.User) string {
+	action := ""
+	message := ""
+	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", item.Name, os.Getenv("HOST"), item.ID)
+	if item.Type == 0 {
+		purpose := ""
+		if log.Type == 0 {
+			action = "出"
+			purpose = fmt.Sprintf("目的: %v", log.Purpose)
+		} else {
+			action = "入"
+		}
+		message = fmt.Sprintf("@%v \n%v\n%v × %v\n%v", user.Name, action, itemInfo, math.Abs(float64(log.Count)), purpose)
+	} else {
+		if log.Type == 0 {
+			action = "借り"
+		} else {
+			action = "返し"
+		}
+		message = fmt.Sprintf("@%v が%vを%vました", user.Name, itemInfo, action)
+	}
+	return message
 }
