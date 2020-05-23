@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/labstack/echo"
@@ -40,7 +41,8 @@ func PostComments(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	message := fmt.Sprintf("### コメントを投稿しました\n[%v]()\n%v", item.Name, comment.Text)
+	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", item.Name, os.Getenv("HOST"), item.ID)
+	message := fmt.Sprintf("### コメントを投稿しました\n[%v]()\n%v", itemInfo, comment.Text)
 	err = PostMessage(c, message); if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

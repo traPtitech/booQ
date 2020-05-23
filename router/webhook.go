@@ -14,7 +14,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func CalcHMACSHA1(message string) string {
+func calcHMACSHA1(message string) string {
 	mac := hmac.New(sha1.New, []byte(os.Getenv("TRAQ_WEBHOOK_SECRET")))
 	_, _ = mac.Write([]byte(message))
 	return hex.EncodeToString(mac.Sum(nil))
@@ -30,7 +30,7 @@ func PostMessage(c echo.Context, message string) error {
 	}
 
 	req.Header.Set(echo.HeaderContentType, echo.MIMETextPlainCharsetUTF8)
-	req.Header.Set("X-TRAQ-Signature", CalcHMACSHA1(message))
+	req.Header.Set("X-TRAQ-Signature", calcHMACSHA1(message))
 
 	query := netUrl.Values{}
 	query.Add("embed", "1")
@@ -41,7 +41,9 @@ func PostMessage(c echo.Context, message string) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	response := make([]byte, 512)
 	resp.Body.Read(response)
