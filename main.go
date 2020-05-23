@@ -69,18 +69,7 @@ func main() {
 	}))
 
 	// Routing
-	if os.Getenv("BOOQ_ENV") == "development" {
-		mockClient := &router.MockTraqClient{
-			MockGetUsersMe: func(c echo.Context) (echo.Context, error) {
-				user, _ := model.GetUserByName("sienka")
-				c.Set("user", user)
-				return c, nil
-			},
-		}
-		router.SetupRouting(e, mockClient)
-	} else {
-		router.SetupRouting(e, &router.TraqClient{})
-	}
+	router.SetupRouting(e, router.CreateUserProvider())
 
 	// Start server
 	e.Logger.Fatal(e.Start(":3001"))

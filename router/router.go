@@ -9,7 +9,7 @@ import (
 )
 
 // SetupRouting APIのルーティングを行います
-func SetupRouting(e *echo.Echo, client Traq) {
+func SetupRouting(e *echo.Echo, client *UserProvider) {
 	e.GET("/api/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
 	})

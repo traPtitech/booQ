@@ -43,36 +43,22 @@ func dbSetup() {
 
 func echoSetupWithUser() *echo.Echo {
 	e := echo.New()
-	client := &MockTraqClient{
-		MockGetUsersMe: func(c echo.Context) (echo.Context, error) {
-			user := model.User{
-				Name:        "testUser",
-				DisplayName: "テストユーザー",
-				Admin:       false,
-			}
-			user, _ = model.GetUserByName(user.Name)
-			c.Set("user", user)
-			return c, nil
-		},
-	}
+	client := createMockUserProvider(model.User{
+		Name:        "testUser",
+		DisplayName: "テストユーザー",
+		Admin:       false,
+	})
 	SetupRouting(e, client)
 	return e
 }
 
 func echoSetupWithAdminUser() *echo.Echo {
 	e := echo.New()
-	client := &MockTraqClient{
-		MockGetUsersMe: func(c echo.Context) (echo.Context, error) {
-			adminUser := model.User{
-				Name:        "traP",
-				DisplayName: "traP",
-				Admin:       true,
-			}
-			adminUser, _ = model.GetUserByName(adminUser.Name)
-			c.Set("user", adminUser)
-			return c, nil
-		},
-	}
+	client := createMockUserProvider(model.User{
+		Name:        "traP",
+		DisplayName: "traP",
+		Admin:       true,
+	})
 	SetupRouting(e, client)
 	return e
 }
