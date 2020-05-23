@@ -6,13 +6,7 @@ WORKDIR /go/src/github.com/traPtitech/booQ/client
 COPY ./client .
 RUN npm ci
 ARG api_endpoint
-ARG api_client_id
-ARG activity_channel_id
-ARG equipment_channel_id
-ENV VUE_APP_API_ENDPOINT=$api_endpoint \
-  VUE_APP_API_CLIENT_ID=$api_client_id \
-  VUE_APP_ACTIVITY_CHANNEL_ID=$activity_channel_id \
-  VUE_APP_EQUIPMENT_CHANNEL_ID=$equipment_channel_id
+ENV VUE_APP_API_ENDPOINT=$api_endpoint
 RUN npm run build
 
 WORKDIR /go/src/github.com/traPtitech/booQ
