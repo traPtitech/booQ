@@ -1,0 +1,18 @@
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+    - structcheck
+    - varcheck
+    - ineffassign
+    - deadcode
+    - typecheck
+    - golint
+    - gofmt
+
+linters-settings:
+  errcheck:
+    exclude: dev/errcheck-exclude.txt
