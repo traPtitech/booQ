@@ -91,12 +91,6 @@
           バグ報告・フィードバックは<a href="https://q.trap.jp/channels/team/SysAd/booq/feedback">#team/SysAd/booq/feedback</a>までお願いします。<br>
           GitHubリポジトリ: <a href="https://github.com/traPtitech/booQ">traPtitech/booQ</a><br>
         </v-card-text>
-        <v-btn
-          v-if="version === 'dev'"
-          @click="$store.commit('toggleLoginDialog')"
-        >
-          traQ login
-        </v-btn>
       </v-card>
     </v-dialog>
   </v-navigation-drawer>

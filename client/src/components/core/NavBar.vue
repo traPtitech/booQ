@@ -144,7 +144,7 @@ export default {
         await this.$store.commit('setMe', resp.data)
       }
     } catch (e) {
-      this.toggleLoginDialog()
+      
     }
   },
   mounted () {
@@ -156,7 +156,7 @@ export default {
     window.removeEventListener('resize', this.onResponsiveInverted)
   },
   methods: {
-    ...mapMutations(['setDrawer', 'toggleDrawer', 'toggleLoginDialog']),
+    ...mapMutations(['setDrawer', 'toggleDrawer']),
     onClickBtn () {
       this.setDrawer(!this.$store.state.drawer)
     },
@@ -181,8 +181,16 @@ export default {
       for (let i = 0; i < this.$store.state.cart.length; i++) {
         let names = []
         names = names.push(this.$store.state.cart[i].name)
-        await axios.post('/api/items/' + this.$store.state.cart[i].ID + '/logs', { owner_id: 1, type: 0, purpose: this.cartPurpose, due_date: this.cartDueDate, count: this.$store.state.cart[i].rentalCount })
-          .catch(e => {
+        await axios.post(
+          '/api/items/' + this.$store.state.cart[i].ID + '/logs',
+          {
+            owner_id: 1,
+            type: 0,
+            purpose: this.cartPurpose,
+            due_date: this.cartDueDate,
+            count: this.$store.state.cart[i].rentalCount
+          }
+          ).catch(e => {
             this.error = e
             alert(e)
           })

@@ -32,27 +32,13 @@ type MockTraqClient struct {
 
 // GetUsersMe 本番用のGetUsersMe
 func (client *TraqClient) GetUsersMe(c echo.Context) (echo.Context, error) {
-	token := c.Request().Header.Get("Authorization")
-	if token == "" {
+	res := c.Request().Header.Get("X-Showcase-User")
+	if res == "" {
 		return c, errors.New("認証に失敗しました(Headerに必要な情報が存在しません)")
 	}
-	req, _ := http.NewRequest("GET", baseURL+"/users/me", nil)
-	req.Header.Set("Authorization", token)
-	// FIXME: http.Clientの代わりにhttp.DefaultClientを使う
-	httpClient := new(http.Client)
-	res, err := httpClient.Do(req)
-	if err != nil {
-		return c, errors.New(err.Error())
-	}
-	if res.StatusCode != 200 {
-		return c, errors.New("認証に失敗しました")
-	}
-	body, _ := ioutil.ReadAll(res.Body)
-	traqUser := model.User{}
-	_ = json.Unmarshal(body, &traqUser)
-	user, _ := model.GetUserByName(traqUser.Name)
+	user, _ := model.GetUserByName(res)
 	if user.Name == "" {
-		user, _ = model.CreateUser(traqUser)
+		user, _ = model.CreateUser(model.User{Name: res})
 	}
 	c.Set("user", user)
 	return c, nil
