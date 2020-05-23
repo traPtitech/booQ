@@ -48,7 +48,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { traQBaseURL } from '../../utils/api.js'
 
 export default {
