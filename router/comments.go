@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -13,6 +14,10 @@ import (
 func PostComments(c echo.Context) error {
 	ID := c.Param("id")
 	itemID, err := strconv.Atoi(ID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -35,7 +40,10 @@ func PostComments(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-
+	message := fmt.Sprintf("### コメントを投稿しました\n[%v]()\n%v", item.Name, comment.Text)
+	err = PostMessage(c, message); if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 	return c.JSON(http.StatusCreated, res)
 }
 

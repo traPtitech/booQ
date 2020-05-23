@@ -43,7 +43,7 @@
         <v-menu min-width="250" max-width="400">
           <template v-slot:activator="{ on }">
             <v-btn :disabled="$store.state.cart.length == 0" icon v-on="on">
-             <v-icon dark>mdi-cart</v-icon>
+              <v-icon dark>mdi-cart</v-icon>
             </v-btn>
           </template>
           <v-list>
@@ -159,9 +159,6 @@ export default {
     ...mapMutations(['setDrawer', 'toggleDrawer', 'toggleLoginDialog']),
     onClickBtn () {
       this.setDrawer(!this.$store.state.drawer)
-    },
-    onClick () {
-      //
     },
     onResponsiveInverted () {
       if (window.innerWidth < 991) {

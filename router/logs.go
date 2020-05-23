@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"math"
 
 	"github.com/labstack/echo"
 
@@ -118,6 +119,27 @@ func PostLogs(c echo.Context) error {
 	if res.ItemID == 0 {
 		return c.NoContent(http.StatusBadRequest)
 	}
-
+	action := ""
+	message := ""
+	if item.Type == 0 {
+		purpose := ""
+		if body.Type == 0 {
+			action = "出"
+			purpose = fmt.Sprintf("目的: %v", log.Purpose)
+		} else {
+			action = "入"
+		}
+		message = fmt.Sprintf("@%v \n%v\n[%v]() × %v\n%v", user.Name, action, item.Name, math.Abs(float64(body.Count)), purpose)
+	} else {
+		if body.Type == 0 {
+			action = "借り"
+		} else {
+			action = "返し"
+		}
+		message = fmt.Sprintf("@%v が[%v]()を%vました", user.Name, item.Name, action)
+	}
+	err = PostMessage(c, message); if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 	return c.JSON(http.StatusCreated, res)
 }

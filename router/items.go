@@ -74,7 +74,10 @@ func PostItems(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-
+	message := fmt.Sprintf("@%v が[%v]()を%vました", user.Name, item.Name, "登録")
+	err = PostMessage(c, message); if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 	return c.JSON(http.StatusCreated, res)
 }
 
