@@ -41,9 +41,7 @@ func PostMessage(c echo.Context, message string) error {
 	if err != nil {
 		return err
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
+	defer resp.Body.Close()
 
 	response := make([]byte, 512)
 	resp.Body.Read(response)

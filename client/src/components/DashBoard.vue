@@ -271,7 +271,12 @@ export default {
             alert(e)
           })
       }
-      this.mount()
+      if (!this.error) {
+        this.cartDialog = !this.cartDialog
+        alert('まとめて返すことに成功しました。')
+        this.returnCart = []
+        this.mount()
+      }
     },
     async mount () {
       const me = await getMe()
