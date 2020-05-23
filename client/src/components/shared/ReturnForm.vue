@@ -39,7 +39,6 @@
 
 <script>
 import axios from 'axios'
-import { traQBaseURL } from '../../utils/api.js'
 
 export default {
   name: 'ReturnForm',
@@ -88,21 +87,6 @@ export default {
       if (!this.error) { alert('あなたは”' + this.propItem.name + '”を返しました。') }
       this.isOpenReturnForm = !this.isOpenReturnForm
       this.$emit('reload')
-      if (this.propItem.type === 0) {
-        const traQmessage = '@' + this.returnOwnerName + ' の「' + this.propItem.name + '」を返しました。\n' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_ACTIVITY_CHANNEL_ID + '/messages?embed=' + 1, { text: traQmessage })
-          .catch(e => {
-            alert(e)
-            return false
-          })
-      } else {
-        const traQmessage = '入\n[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')×' + this.returnCount
-        await axios.post(`${traQBaseURL}/channels/` + process.env.VUE_APP_EQUIPMENT_CHANNEL_ID + '/messages?embed=' + 1, { text: traQmessage })
-          .catch(e => {
-            alert(e)
-            return false
-          })
-      }
     },
     open () {
       this.isOpenReturnForm = !this.isOpenReturnForm

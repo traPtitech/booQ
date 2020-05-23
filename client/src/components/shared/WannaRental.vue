@@ -21,7 +21,7 @@
               </v-list>
             </v-menu>
               <div>
-                 {{rentOwnerName}}
+                {{rentOwnerName}}
               </div>
           </v-card-actions>
           <v-card-actions>
@@ -95,29 +95,7 @@ export default {
         alert('所有者を選択してください')
         return false
       }
-      if (this.message === null) {
-        alert('文面を入力してください')
-        return false
-      }
-      const users = await axios.get(`${traQBaseURL}/users`)
-        .catch(e => {
-          alert(e)
-          this.error = e
-        })
-      if (this.error) { return false }
-      const targetUser = users.data.find(element => { return element.name === this.rentOwnerName })
-      if (!targetUser) {
-        alert('所有者の名前が不正です')
-        return false
-      }
-      this.isOpenWannaRentalForm = !this.isOpenWannaRentalForm
-      this.$emit('reload')
-      await axios.post(`${traQBaseURL}/users/` + targetUser.userId + '/messages?embed=1', { text: this.message })
-        .catch(e => {
-          alert(e)
-          this.error = e
-        })
-      if (this.error) { return false }
+      window.location.href = `https://${traQBaseURL}/users/${this.rentOwnerName}`
     },
     open () {
       this.isOpenWannaRentalForm = !this.isOpenWannaRentalForm

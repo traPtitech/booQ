@@ -43,9 +43,7 @@ func PostComments(c echo.Context) error {
 	}
 	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", item.Name, os.Getenv("HOST"), item.ID)
 	message := fmt.Sprintf("### コメントを投稿しました\n[%v]()\n%v", itemInfo, comment.Text)
-	err = PostMessage(c, message); if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
+	_ = PostMessage(c, message)
 	return c.JSON(http.StatusCreated, res)
 }
 
