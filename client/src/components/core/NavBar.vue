@@ -43,7 +43,7 @@
         <v-menu min-width="250" max-width="400">
           <template v-slot:activator="{ on }">
             <v-btn :disabled="$store.state.cart.length == 0" icon v-on="on">
-              <v-icon dark>mdi-cart</v-icon>
+              <mdi-icon name="mdi-cart" dark />
             </v-btn>
           </template>
           <v-list>
@@ -53,7 +53,7 @@
               </v-list-item-title>
               <v-list-item-action>
                 <v-btn icon @click="$store.commit('removeItemFromCart', i)">
-                  <v-icon dark>mdi-minus-circle</v-icon>
+                  <mdi-icon name="mdi-minus-circle" dark />
                 </v-btn>
               </v-list-item-action>
             </v-list-item>
@@ -92,7 +92,7 @@
           :to="`/users/${$store.state.me.name}`"
         >
           <v-avatar size="40">
-            <img :src="`https://q.trap.jp/api/1.0/public/icon/${$store.state.me.name}`">
+            <img :src="`https://q.trap.jp/api/v3/public/icon/${$store.state.me.name}`">
           </v-avatar>
         </v-btn>
         <router-link
@@ -100,7 +100,7 @@
           v-ripple
           to="/about"
         >
-          <v-icon color="tertiary">mdi-account</v-icon>
+          <mdi-icon color="tertiary" name="mdi-account" />
         </router-link>
       </v-flex>
     </v-toolbar-items>
@@ -111,8 +111,12 @@
 import { mapMutations } from 'vuex'
 import { getMe } from '@/utils/api'
 import axios from 'axios'
+import MdiIcon from '../shared/MdiIcon.vue'
 
 export default {
+  components: {
+    MdiIcon
+  },
   data () {
     return {
       logo: '/img/logo-main.svg',

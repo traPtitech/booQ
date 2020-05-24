@@ -25,10 +25,10 @@
               <v-sheet height="64">
                 <v-toolbar flat color="white">
                   <v-btn fab text small @click="prev">
-                    <v-icon small>mdi-chevron-left</v-icon>
+                    <mdi-icon small name="mdi-chevron-left" />
                   </v-btn>
                   <v-btn fab text small @click="next">
-                    <v-icon small>mdi-chevron-right</v-icon>
+                    <mdi-icon small name="mdi-chevron-right" />
                   </v-btn>
                   <v-toolbar-title>あなたが借りている物品</v-toolbar-title>
                   <v-spacer />
@@ -143,9 +143,13 @@
 <script>
 import axios from 'axios'
 import { getMe } from '../utils/api.js'
+import MdiIcon from './shared/MdiIcon.vue'
 
 export default {
   name: 'DashBoard',
+  components: {
+    MdiIcon
+  },
   data () {
     return {
       isOpen2Cart: false,

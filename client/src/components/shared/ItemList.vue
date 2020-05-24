@@ -28,11 +28,11 @@
             </v-list-item-content>
             <v-list-item-action class="item-list-icons">
               <div v-if="item.like_counts > 0">
-                <v-icon>thumb_up_alt</v-icon>
+                <mdi-icon name="mdi-thumb-up" />
                 {{ item.like_counts }}
               </div>
               <v-btn :disabled="getBihinLatestCount(item.ID) < 1" icon v-if="item.type !== 0" @click.stop="click2Cart(item)">
-                <v-icon>mdi-cart-arrow-down</v-icon>
+                <mdi-icon name="mdi-cart-arrow-down" />
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -65,8 +65,13 @@
 </template>
 
 <script>
+import MdiIcon from '../shared/MdiIcon.vue'
+
 export default {
   name: 'ItemList',
+  components: {
+    MdiIcon
+  },
   props: [
     'items'
   ],
