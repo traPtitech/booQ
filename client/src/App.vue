@@ -6,7 +6,6 @@
 
     <core-view />
 
-    <core-login-dialog />
   </v-app>
 </template>
 
@@ -14,15 +13,13 @@
 import CoreNavBar from './components/core/NavBar'
 import CoreSideBar from './components/core/SideBar'
 import CoreView from './components/core/View'
-import CoreLoginDialog from './components/core/LoginDialog'
 
 export default {
   name: 'App',
   components: {
     CoreNavBar,
     CoreSideBar,
-    CoreView,
-    CoreLoginDialog
+    CoreView
   },
   data () {
     return {

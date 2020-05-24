@@ -1,9 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store'
-import { fetchAuthToken, setAuthToken, getMe } from '../utils/api'
-
-setAuthToken(store.state.authToken)
+import { getMe } from '../utils/api'
 
 Vue.use(Router)
 
@@ -76,16 +74,7 @@ export default new Router({
       name: 'callback',
       component: () => import('../components/Home.vue'),
       beforeEnter: async (to, from, next) => {
-        const code = to.query.code
-        const state = to.query.state
-        const codeVerifier = sessionStorage.getItem(`login-code-verifier-${state}`)
-        if (!code || !codeVerifier) {
-          next('/')
-        }
         try {
-          const res = await fetchAuthToken(code, codeVerifier)
-          await store.commit('setToken', res.data.access_token)
-          await setAuthToken(res.data.access_token)
           const resp = await getMe()
           await store.commit('setMe', resp.data)
           next('/')

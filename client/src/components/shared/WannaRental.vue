@@ -48,8 +48,6 @@
 </template>
 
 <script>
-import { traQBaseURL } from '../../utils/api.js'
-
 export default {
   name: 'WannaRental',
   props: {
@@ -94,7 +92,7 @@ export default {
         alert('所有者を選択してください')
         return false
       }
-      window.location.href = `https://${traQBaseURL}/users/${this.rentOwnerName}`
+      window.location.href = `https://q.trap.jp/users/${this.rentOwnerName}`
     },
     open () {
       this.isOpenWannaRentalForm = !this.isOpenWannaRentalForm
