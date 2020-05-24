@@ -84,7 +84,7 @@ export default {
   },
   computed: {
     navigateImagePath () {
-      return this.$route.params.name !== 'sienka' ? `https://q.trap.jp/api/1.0/public/icon/${this.$route.params.name}` : './../img/sienka-icon.jpg'
+      return this.$route.params.name !== 'sienka' ? `https://q.trap.jp/api/v3/public/icon/${this.$route.params.name}` : './../img/sienka-icon.jpg'
     }
   },
   mounted () {

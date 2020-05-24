@@ -92,7 +92,7 @@
           :to="`/users/${$store.state.me.name}`"
         >
           <v-avatar size="40">
-            <img :src="`https://q.trap.jp/api/1.0/public/icon/${$store.state.me.name}`">
+            <img :src="`https://q.trap.jp/api/v3/public/icon/${$store.state.me.name}`">
           </v-avatar>
         </v-btn>
         <router-link

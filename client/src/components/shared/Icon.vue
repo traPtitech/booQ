@@ -11,7 +11,7 @@ export default {
   name: 'Icon',
   computed: {
     navigateImagePath () {
-      return this.user.name !== 'sienka' ? `https://q.trap.jp/api/1.0/public/icon/${this.user.name}` : './../../img/sienka-icon.jpg'
+      return this.user.name !== 'sienka' ? `https://q.trap.jp/api/v3/public/icon/${this.user.name}` : './../../img/sienka-icon.jpg'
     }
   },
   props: {
