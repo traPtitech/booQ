@@ -5,7 +5,7 @@
       v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1"
       @click.stop="open"
     >
-      <v-icon style="color: #66CC33;" left>mdi-pencil</v-icon>編集
+      <mdi-icon style="color: #66CC33;" left name="mdi-pencil" />編集
     </nobr>
     <div class="text-center">
       <v-dialog light v-model="isOpenEditOwner" max-width="290">
@@ -34,8 +34,13 @@
 
 <script>
 import axios from 'axios'
+import MdiIcon from '../shared/MdiIcon.vue'
+
 export default {
   name: 'EditOwner',
+  components: {
+    MdiIcon
+  },
   props: {
     propOwner: Object,
     propLatestLogs: Array,

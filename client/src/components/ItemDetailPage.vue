@@ -24,11 +24,11 @@
           </div>
           <div>
             <v-btn v-if="isLiked" block @click="removeLike" class="my-1">
-              <v-icon left color="indigo">mdi-thumb-up</v-icon>
+              <mdi-icon left color="indigo" name="mdi-thumb-up" />
               いいね {{ likeCount }}
             </v-btn>
             <v-btn v-else block @click="like" class="my-1">
-              <v-icon left disabled>mdi-thumb-up</v-icon>
+              <mdi-icon left disabled name="mdi-thumb-up" />
               いいね {{ likeCount }}
             </v-btn>
           </div>
@@ -124,6 +124,7 @@ import CommentDialog from './shared/CommentDialog'
 import ReturnForm from './shared/ReturnForm'
 import EditOwner from './shared/EditOwner'
 import WannaRental from './shared/WannaRental'
+import MdiIcon from './shared/MdiIcon.vue'
 
 export default {
   name: 'ItemDetailPage',
@@ -134,7 +135,8 @@ export default {
     CommentDialog,
     ReturnForm,
     EditOwner,
-    WannaRental
+    WannaRental,
+    MdiIcon
   },
   data () {
     return {

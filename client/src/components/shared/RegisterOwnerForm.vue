@@ -1,7 +1,7 @@
 <template>
   <nobr>
     <v-btn x-small outlined fab dark color="primary" @click.stop="open">
-      <v-icon dark>mdi-plus</v-icon>
+      <mdi-icon dark name="mdi-plus" />
     </v-btn>
     <div class="text-center">
       <v-dialog light v-model="isOpenAddOwner" max-width="290">
@@ -40,9 +40,13 @@
 
 <script>
 import axios from 'axios'
+import MdiIcon from '../shared/MdiIcon.vue'
 
 export default {
   name: 'RegisterOwnerForm',
+  components: {
+    MdiIcon
+  },
   data () {
     return {
       ownerID: 0,

@@ -42,7 +42,7 @@
         exact
       >
         <v-list-item-action>
-          <v-icon>{{ link.icon }}</v-icon>
+          <mdi-icon :name="link.icon" />
         </v-list-item-action>
         <v-list-item-title
           v-text="link.text"
@@ -67,7 +67,7 @@
             :active-class="color"
           >
             <v-list-item-action>
-              <v-icon>mdi-help</v-icon>
+              <mdi-icon name="mdi-help" />
             </v-list-item-action>
             <v-list-item-title>
               about
@@ -100,9 +100,13 @@
 // Utilities
 import { mapMutations, mapState } from 'vuex'
 import version from '@/version'
+import MdiIcon from '../shared/MdiIcon.vue'
 
 export default {
   name: 'SideBar',
+  components: {
+    MdiIcon
+  },
   data () {
     return {
       logo: '/img/logo-main.svg',
@@ -116,12 +120,12 @@ export default {
         },
         {
           to: '/items/equipment',
-          icon: 'home_work',
+          icon: 'mdi-home-city',
           text: 'Equipment List'
         },
         {
           to: '/items/property',
-          icon: 'menu_book',
+          icon: 'mdi-book-open-page-variant',
           text: 'Personal Property List'
         },
         // {
@@ -131,7 +135,7 @@ export default {
         // },
         {
           to: '/items/new',
-          icon: 'add_box',
+          icon: 'mdi-plus-box',
           text: 'Register Item'
         }
       ],
