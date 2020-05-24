@@ -1,4 +1,4 @@
 extends: spectral:oas
 rules:
-  operation-operationId-unique: false
-  info-description: false
+  operation-operationId: false
+  operation-description: false
