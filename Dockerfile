@@ -14,6 +14,6 @@ WORKDIR /go/src/github.com/traPtitech/booQ
 COPY ./go.* ./
 RUN go mod download && \
   go get github.com/pilu/fresh && \
-  go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.13.2
+  go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.27.0
 
 COPY . .
