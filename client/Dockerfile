@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS build
+FROM node:lts-alpine
 WORKDIR /app
 RUN apk add --no-cache git && \
   apk --update add tzdata && \

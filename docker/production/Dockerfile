@@ -1,5 +1,4 @@
-FROM golang:1.12.5-alpine AS build
-ENV GO111MODULE=on
+FROM golang:1.14-alpine AS build
 RUN apk add --update --no-cache git nodejs-npm
 
 WORKDIR /go/src/github.com/traPtitech/booQ/client
