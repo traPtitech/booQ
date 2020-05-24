@@ -5,8 +5,6 @@ RUN apk add --update --no-cache git nodejs-npm
 WORKDIR /go/src/github.com/traPtitech/booQ/client
 COPY ./client .
 RUN npm ci
-ARG api_endpoint
-ENV VUE_APP_API_ENDPOINT=$api_endpoint
 RUN npm run build
 
 WORKDIR /go/src/github.com/traPtitech/booQ
