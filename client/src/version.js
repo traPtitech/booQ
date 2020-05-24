@@ -1,15 +1,2 @@
-const production = 'v1.2.0' // バージョンアップの時はここを書き換えてください
-
-let version = ''
-switch (process.env.VUE_APP_API_ENDPOINT) {
-  case 'http://localhost:3000':
-    version = 'dev'
-    break
-  case 'https://booq-dev.trapti.tech':
-    version = 'staging'
-    break
-  default:
-    version = production
-    break
-}
-export default version
+// eslint-disable-next-line no-undef
+export default __VERSION__
