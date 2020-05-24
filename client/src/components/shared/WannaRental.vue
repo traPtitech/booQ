@@ -65,7 +65,7 @@ export default {
     }
   },
   mounted () {
-    this.message = '[' + this.propItem.name + '](' + process.env.VUE_APP_API_ENDPOINT + '/items/' + this.propItem.ID + ')を借りたいです。'
+    this.message = '[' + this.propItem.name + '](https://' + location.host + '/items/' + this.propItem.ID + ')を借りたいです。'
   },
   methods: {
     getBihinLatestCount (itemID) {
