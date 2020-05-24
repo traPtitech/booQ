@@ -595,11 +595,11 @@ definitions:
       created_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
       updated_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
   comment:
     type: "object"
     properties:
@@ -618,11 +618,11 @@ definitions:
       created_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
       updated_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
   user:
     type: "object"
     properties:
@@ -670,11 +670,11 @@ definitions:
       created_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
       updated_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
   ownership:
     type: "object"
     properties:
@@ -731,11 +731,11 @@ definitions:
       created_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
       updated_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
   get_ownerships:
     type: "object"
     properties:
@@ -764,11 +764,11 @@ definitions:
       created_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
       updated_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
   get_items:
     type: "object"
     properties:
@@ -805,11 +805,11 @@ definitions:
       created_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
       updated_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
   get_items_id:
     type: "object"
     properties:
@@ -854,8 +854,8 @@ definitions:
       created_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
       updated_at:
         type: "string"
         format: "date-time"
-        example: "2019/07/28T22:00:00Z"
+        example: "2019-07-28T22:00:00Z"
