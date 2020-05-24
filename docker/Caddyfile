@@ -1,0 +1,11 @@
+{
+    admin off
+}
+
+:80
+
+reverse_proxy /* booq-client:8080
+
+reverse_proxy /api/* booq-server:3001 {
+    header_up X-Showcase-User "sienka"
+}

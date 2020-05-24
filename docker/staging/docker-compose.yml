@@ -1,12 +1,12 @@
 version: "3"
 services:
   proxy:
-    image: nginx
+    image: caddy:2.0.0-alpine
     restart: always
     ports:
       - "3000:80"
     volumes:
-      - ../nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
 
   booq-server:
     build:
