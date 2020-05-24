@@ -3,7 +3,7 @@ info:
   version: "2.0.0"
   title: "booQ"
   description: "booQサーバーのAPIです。"
-host: "booq-dev.tokyotech.org"
+host: "booq-dev.trapti.tech"
 basePath: /api/
 schemes:
  - https
