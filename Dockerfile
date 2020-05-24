@@ -1,5 +1,4 @@
-FROM golang:1.12.5-alpine AS build
-ENV GO111MODULE=on
+FROM golang:1.14-alpine AS build
 ENV CGO_ENABLED=0
 ENV DOCKERIZE_VERSION v0.6.1
 RUN apk add --update --no-cache git && \
