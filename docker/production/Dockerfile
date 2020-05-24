@@ -12,7 +12,7 @@ RUN go mod download
 COPY . .
 RUN go build
 
-FROM alpine:3.9
+FROM alpine:3.11
 WORKDIR /app
 RUN apk --update add tzdata ca-certificates && \
   cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
