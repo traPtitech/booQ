@@ -69,11 +69,10 @@ func PostLogs(c echo.Context) error {
 			fmt.Print(itemCount - body.Count)
 			fmt.Println("Rental超過1")
 			return c.NoContent(http.StatusBadRequest)
-		} else {
-			if (latestLog.ItemID != 0) && latestLog.Count-body.Count < 0 {
-				fmt.Println("Rental超過2")
-				return c.NoContent(http.StatusBadRequest)
-			}
+		}
+		if (latestLog.ItemID != 0) && latestLog.Count-body.Count < 0 {
+			fmt.Println("Rental超過2")
+			return c.NoContent(http.StatusBadRequest)
 		}
 		if (latestLog == model.Log{}) {
 			log.Count = itemCount - body.Count
@@ -120,24 +119,26 @@ func PostLogs(c echo.Context) error {
 	if res.ItemID == 0 {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	message := createMessage(log, item, user)
+	message := createMessage(log, body.Count, item, user)
 	_ = PostMessage(c, message, item.Type != 1)
 	return c.JSON(http.StatusCreated, res)
 }
 
-func createMessage(log model.Log, item model.Item, user model.User) string {
+func createMessage(log model.Log, bodyCount int, item model.Item, user model.User) string {
 	action := ""
 	message := ""
 	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", item.Name, os.Getenv("HOST"), item.ID)
 	if item.Type != 0 {
 		purpose := ""
+		count := math.Abs(float64(log.Count))
 		if log.Type == 0 {
 			action = "出"
+			count = math.Abs(float64(bodyCount))
 			purpose = fmt.Sprintf("目的: %v", log.Purpose)
 		} else {
 			action = "入"
 		}
-		message = fmt.Sprintf("@%v \n%v\n%v × %v\n%v", user.Name, action, itemInfo, math.Abs(float64(log.Count)), purpose)
+		message = fmt.Sprintf("@%v \n%v\n%v × %v\n%v", user.Name, action, itemInfo, count, purpose)
 	} else {
 		if log.Type == 0 {
 			action = "借り"
