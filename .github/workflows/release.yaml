@@ -22,3 +22,7 @@ jobs:
         run: docker build -t docker.pkg.github.com/traptitech/booq/${IMAGE_NAME}:${IMAGE_TAG} -f docker/production/Dockerfile .
       - name: Push image to GitHub Registry
         run: docker push docker.pkg.github.com/traptitech/booq/${IMAGE_NAME}:${IMAGE_TAG}
+      - name: Push image to GitHub Registry (latest)
+        run: |
+          docker tag docker.pkg.github.com/traptitech/booq/${IMAGE_NAME}:$IMAGE_TAG docker.pkg.github.com/traptitech/booq/${IMAGE_NAME}:latest
+          docker push docker.pkg.github.com/traptitech/booq/${IMAGE_NAME}:latest
