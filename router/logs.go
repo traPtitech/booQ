@@ -129,7 +129,7 @@ func createMessage(log model.Log, item model.Item, user model.User) string {
 	action := ""
 	message := ""
 	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", item.Name, os.Getenv("HOST"), item.ID)
-	if item.Type == 0 {
+	if item.Type != 0 {
 		purpose := ""
 		if log.Type == 0 {
 			action = "出"
