@@ -121,7 +121,7 @@ func PostLogs(c echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 	message := createMessage(log, item, user)
-	_ = PostMessage(c, message)
+	_ = PostMessage(c, message, item.Type != 1)
 	return c.JSON(http.StatusCreated, res)
 }
 

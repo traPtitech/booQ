@@ -20,8 +20,14 @@ func calcHMACSHA1(message string) string {
 	return hex.EncodeToString(mac.Sum(nil))
 }
 
-func PostMessage(c echo.Context, message string) error {
-	url := "https://q.trap.jp/api/v3/webhooks/" + os.Getenv("TRAQ_WEBHOOK_ID")
+// PostMessage Webhookでメッセージの投稿
+func PostMessage(c echo.Context, message string, isBihin bool) error {
+	url := ""
+	if isBihin {
+		url = "https://q.trap.jp/api/v3/webhooks/" + os.Getenv("TRAQ_BIHIN_WEBHOOK_ID")
+	} else {
+		url = "https://q.trap.jp/api/v3/webhooks/" + os.Getenv("TRAQ_ITEM_WEBHOOK_ID")
+	}
 	req, err := http.NewRequest("POST",
 		url,
 		strings.NewReader(message))
