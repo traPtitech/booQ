@@ -119,12 +119,12 @@ func PostLogs(c echo.Context) error {
 	if res.ItemID == 0 {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	message := createMessage(log, item, user, body)
+	message := createMessage(log, body.Count, item, user)
 	_ = PostMessage(c, message, item.Type != 1)
 	return c.JSON(http.StatusCreated, res)
 }
 
-func createMessage(log model.Log, item model.Item, user model.User, body model.RequestPostLogsBody) string {
+func createMessage(log model.Log, bodyCount int, item model.Item, user model.User) string {
 	action := ""
 	message := ""
 	count := math.Abs(float64(log.Count))
@@ -133,7 +133,7 @@ func createMessage(log model.Log, item model.Item, user model.User, body model.R
 		purpose := ""
 		if log.Type == 0 {
 			action = "出"
-			count = math.Abs(float64(body.Count))
+			count = math.Abs(float64(bodyCount))
 			purpose = fmt.Sprintf("目的: %v", log.Purpose)
 		} else {
 			action = "入"
