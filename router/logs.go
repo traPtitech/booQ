@@ -127,10 +127,10 @@ func PostLogs(c echo.Context) error {
 func createMessage(log model.Log, bodyCount int, item model.Item, user model.User) string {
 	action := ""
 	message := ""
-	count := math.Abs(float64(log.Count))
 	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", item.Name, os.Getenv("HOST"), item.ID)
 	if item.Type != 0 {
 		purpose := ""
+		count := math.Abs(float64(log.Count))
 		if log.Type == 0 {
 			action = "出"
 			count = math.Abs(float64(bodyCount))
