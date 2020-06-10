@@ -1,5 +1,10 @@
 # booQ
-[![CircleCI](https://circleci.com/gh/traPtitech/booQ/tree/master.svg?style=shield)](https://circleci.com/gh/traPtitech/booQ/tree/master)
+
+[![GitHub release](https://img.shields.io/github/release/traPtitech/booQ.svg)](https://GitHub.com/traPtitech/booQ/releases/)
+![CI (client)](https://github.com/traPtitech/booQ/workflows/CI%20(client)/badge.svg)
+![CI (server)](https://github.com/traPtitech/booQ/workflows/CI%20(server)/badge.svg)
+![master](https://github.com/traPtitech/booQ/workflows/master/badge.svg)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=traPtitech/booQ)](https://dependabot.com)
 
 management tool for equipment and book rental
 
