@@ -1,9 +1,6 @@
 name: CI (client)
 
-on:
-  push:
-    branches:
-      - '**'
+on: [push, pull_request]
 
 jobs:
   packages:
