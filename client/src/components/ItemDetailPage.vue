@@ -34,7 +34,7 @@
           </div>
           <v-container class="pa-0">
             <v-row row wrap no-gutters>
-              <v-col class="ma-1 flex-grow-0 flex-shrink-0" no-gutter v-for="like in data.likes" :key="like.id" >
+              <v-col class="ma-0 flex-grow-0 flex-shrink-0" no-gutter v-for="like in data.likes" :key="like.id" >
                 <Icon
                   :user="like"
                   :size="25"
