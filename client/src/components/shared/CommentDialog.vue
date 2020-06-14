@@ -1,47 +1,22 @@
-<script type="size">
-export default {
-  data: function () {
-    return {
-      width: window.innerWidth,
-      height: window.innerHeight
-    }
-  },
-  methods: {
-    handleResize: function () {
-      this.width = window.innerWidth
-      this.height = window.innerHeight
-    }
-  },
-  mounted: function () {
-    window.addEventListener('resize', this.handleResize)
-  },
-  beforeDestroy: function () {
-    window.removeEventListener('resize', this.handleResize)
-  }
-}
-</script>
-
 <template>
   <nobr>
     <v-btn x-small outlined fab dark color="primary" @click.stop="open">
       <mdi-icon dark name="mdi-plus" />
     </v-btn>
     <div class="text-center">
-      <v-dialog light max-width=size.width*0.8 max-elevation=size.height*0.8 v-model="isOpenCommentDialog" >
-        <v-card width=size.width*0.8 height=size.height*0.8>
+      <v-dialog light max-width=90% max-elevation=80% v-model="isOpenCommentDialog" >
+        <v-card width=100%>
           <v-card-title class="headline">コメントを追加する</v-card-title>
-          <v-card-actions width=size.width*0.8 elevation=size.height*0.8>
-            <div>
+          <v-card-actions width=100%>
               <v-form>
                 <v-textarea
                  outlined v-model="text" :rules="[() => !!text || 'This field is required']"
                  label="コメント"
                  cols="150"
-                 rows="12"
-                 style="width:(size.width*0.7); height:(size.height*0.6);"
+                 rows="10"
+                 style="width:100%; height:60%;"
                 ></v-textarea>
               </v-form>
-            </div>
           </v-card-actions>
           <v-divider></v-divider>
           <v-card-actions>
