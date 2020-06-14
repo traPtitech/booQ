@@ -1,4 +1,5 @@
 FROM node:lts-alpine AS client-build
+RUN apk add python make gcc g++
 WORKDIR /github.com/traPtitech/booQ/client
 COPY ./client/package*.json ./
 RUN npm ci
