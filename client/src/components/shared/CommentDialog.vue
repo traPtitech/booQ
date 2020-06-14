@@ -1,16 +1,44 @@
+<script type="size">
+export default {
+  data: function () {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight
+    }
+  },
+  methods: {
+    handleResize: function () {
+      this.width = window.innerWidth
+      this.height = window.innerHeight
+    }
+  },
+  mounted: function () {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeDestroy: function () {
+    window.removeEventListener('resize', this.handleResize)
+  }
+}
+</script>
+
 <template>
   <nobr>
     <v-btn x-small outlined fab dark color="primary" @click.stop="open">
       <mdi-icon dark name="mdi-plus" />
     </v-btn>
     <div class="text-center">
-      <v-dialog light v-model="isOpenCommentDialog" max-width="290">
-        <v-card width="290">
+      <v-dialog light max-width=size.width*0.8 max-elevation=size.height*0.9 v-model="isOpenCommentDialog" >
+        <v-card width=size.width*0.8 elevation=size.height*0.9>
           <v-card-title class="headline">コメントを追加する</v-card-title>
-          <v-card-actions>
+          <v-card-actions width=size.width*0.7 elevation=size.height*0.7>
             <div>
-              <v-form ref="form">
-                <v-textarea outlined v-model="text" :rules="[() => !!text || 'This field is required']" label="コメント"/>
+              <v-form>
+                <v-textarea
+                 outlined v-model="text" :rules="[() => !!text || 'This field is required']"
+                 label="コメント"
+                 width=size.width*0.7
+                 height=size.height*0.7
+                ></v-textarea>
               </v-form>
             </div>
           </v-card-actions>
