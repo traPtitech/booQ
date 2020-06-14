@@ -1,10 +1,11 @@
-FROM node:lts-alpine
-COPY package*.json ./
+FROM node:lts-alpine AS client-build
+WORKDIR /github.com/traPtitech/booQ/client
+COPY ./client/package*.json ./
 RUN npm ci
 COPY ./client .
 RUN npm run build
 
-FROM golang:1.14-alpine AS build
+FROM golang:1.14-alpine AS server-build
 RUN apk add --update --no-cache git
 WORKDIR /go/src/github.com/traPtitech/booQ
 COPY ./go.* ./
@@ -17,5 +18,6 @@ WORKDIR /app
 RUN apk --update add tzdata ca-certificates && \
   cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
   rm -rf /var/cache/apk/*
-COPY --from=build /go/src/github.com/traPtitech/booQ ./
+COPY --from=server-build /go/src/github.com/traPtitech/booQ ./
+COPY --from=client-build /github.com/traPtitech/booQ/client/dist ./client/dist
 ENTRYPOINT ./booQ
