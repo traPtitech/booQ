@@ -1,11 +1,11 @@
-FROM golang:1.14-alpine AS build
-RUN apk add --update --no-cache git nodejs-npm
-
-WORKDIR /go/src/github.com/traPtitech/booQ/client
-COPY ./client .
+FROM node:lts-alpine
+COPY package*.json ./
 RUN npm ci
+COPY ./client .
 RUN npm run build
 
+FROM golang:1.14-alpine AS build
+RUN apk add --update --no-cache git
 WORKDIR /go/src/github.com/traPtitech/booQ
 COPY ./go.* ./
 RUN go mod download
