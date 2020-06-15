@@ -10,11 +10,11 @@
           <v-card-actions width=100%>
               <v-form>
                 <v-textarea
-                 outlined v-model="text" :rules="[() => !!text || 'This field is required']"
-                 label="コメント"
-                 cols="150"
-                 rows="10"
-                 style="width:100%; height:60%;"
+                  outlined v-model="text" :rules="[() => !!text || 'This field is required']"
+                  label="コメント"
+                  cols="150"
+                  rows="10"
+                  style="width:100%; height:60%;"
                 ></v-textarea>
               </v-form>
           </v-card-actions>
