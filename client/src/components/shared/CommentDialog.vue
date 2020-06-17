@@ -4,8 +4,8 @@
       <mdi-icon dark name="mdi-plus" />
     </v-btn>
     <div class="text-center">
-      <v-dialog light max-width=90% max-elevation=80% v-model="isOpenCommentDialog" >
-        <v-card width=100%>
+      <v-dialog light max-width="600" width=80% v-model="isOpenCommentDialog" >
+        <v-card>
           <v-card-title class="headline">コメントを追加する</v-card-title>
           <v-card-actions width=100%>
               <v-form>
@@ -14,7 +14,7 @@
                   label="コメント"
                   cols="150"
                   rows="10"
-                  style="width:100%; height:60%;"
+                  style="width:100%;"
                 ></v-textarea>
               </v-form>
           </v-card-actions>
