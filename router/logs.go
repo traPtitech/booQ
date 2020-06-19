@@ -144,7 +144,7 @@ func createMessage(log model.Log, bodyCount int, item model.Item, user model.Use
 		} else {
 			action = "返し"
 		}
-		message = fmt.Sprintf("@%v が%vを%vました", user.Name, itemInfo, action)
+		message = fmt.Sprintf("@%v が @%v の %vを%vました", user.Name, log.Owner.Name, itemInfo, action)
 	}
 	return message
 }
