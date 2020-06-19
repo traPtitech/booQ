@@ -130,7 +130,7 @@ export default {
         alert('返却日を入力してください')
         return false
       }
-      if (!this.isOpenConfirm && !this.$store.state.me.admin && propItem.type !== 0) {
+      if (!this.isOpenConfirm && !this.$store.state.me.admin && this.propItem.type !== 0) {
         this.isOpenConfirm = true
         return
       }
