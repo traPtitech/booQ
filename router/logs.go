@@ -119,12 +119,15 @@ func PostLogs(c echo.Context) error {
 	if res.ItemID == 0 {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	message := createMessage(log, body.Count, item, user)
+	message, err := createMessage(log, body.Count, item, user)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 	_ = PostMessage(c, message, item.Type != 0)
 	return c.JSON(http.StatusCreated, res)
 }
 
-func createMessage(log model.Log, bodyCount int, item model.Item, user model.User) string {
+func createMessage(log model.Log, bodyCount int, item model.Item, user model.User) (string, error) {
 	action := ""
 	message := ""
 	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", item.Name, os.Getenv("HOST"), item.ID)
@@ -144,7 +147,11 @@ func createMessage(log model.Log, bodyCount int, item model.Item, user model.Use
 		} else {
 			action = "返し"
 		}
-		message = fmt.Sprintf("@%v が @%v の %vを%vました", user.Name, log.Owner.Name, itemInfo, action)
+		owner, err := model.GetUserByID(int(log.OwnerID))
+		if err != nil {
+			return "", err
+		}
+		message = fmt.Sprintf("@%v が @%v の %vを%vました", user.Name, owner.Name, itemInfo, action)
 	}
-	return message
+	return message, nil
 }
