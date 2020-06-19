@@ -76,7 +76,7 @@ func PostItems(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", res.Name, os.Getenv("HOST"), res.ID)
-	message := fmt.Sprintf("@%v が%vを%vました", user.Name, itemInfo, "登録")
+	message := fmt.Sprintf("@%v が%vを登録しました", user.Name, itemInfo)
 	_ = PostMessage(c, message, item.Type != 0)
 	return c.JSON(http.StatusCreated, res)
 }
