@@ -21,7 +21,7 @@
               </v-list>
             </v-menu>
               <div>
-                 {{rentOwnerName}}
+                  {{rentOwnerName}}
               </div>
           </v-card-actions>
           <v-card-actions>
@@ -130,7 +130,7 @@ export default {
         alert('返却日を入力してください')
         return false
       }
-      if (!this.isOpenConfirm && !this.$store.state.me.admin) {
+      if (!this.isOpenConfirm && !this.$store.state.me.admin && propItem.type !== 0) {
         this.isOpenConfirm = true
         return
       }
