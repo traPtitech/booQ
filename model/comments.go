@@ -2,15 +2,13 @@ package model
 
 import (
 	"errors"
-
-	"github.com/jinzhu/gorm"
 )
 
 // Comment commentの構造体
 type Comment struct {
-	gorm.Model
-	ItemID uint   `gorm:"type:int;not null" json:"item_id"`
-	UserID uint   `gorm:"type:int;not null" json:"user_id"`
+	GormModel
+	ItemID uint   `gorm:"type:int;not null" json:"itemId"`
+	UserID uint   `gorm:"type:int;not null" json:"userId"`
 	User   User   `json:"user"`
 	Text   string `gorm:"type:text;not null" json:"text"`
 }
@@ -43,6 +41,6 @@ func CreateComment(comment Comment) (Comment, error) {
 // GetCommentsByUserID UserIDからCommentsを取得する
 func GetCommentsByUserID(userID uint) ([]Comment, error) {
 	comments := []Comment{}
-	db.Preload("User").Find(&comments, "user_id = ?", userID)
+	db.Preload("User").Find(&comments, "userId = ?", userID)
 	return comments, nil
 }

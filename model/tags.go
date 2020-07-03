@@ -1,14 +1,8 @@
 package model
 
-import (
-	// "errors"
-
-	"github.com/jinzhu/gorm"
-)
-
 // Tag tagの構造体
 type Tag struct {
-	gorm.Model
+	GormModel
 	Name string `gorm:"type:varchar(32);not null" json:"name"`
 }
 

@@ -2,14 +2,14 @@ package model
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
+	
 	"github.com/traPtitech/booQ/storage"
 	"io"
 )
 
 // File アップロードファイルの構造体
 type File struct {
-	gorm.Model
+	GormModel
 	UploadUserID uint `gorm:"type:int;not null"`
 }
 

@@ -2,46 +2,44 @@ package model
 
 import (
 	"errors"
-
-	"github.com/jinzhu/gorm"
 )
 
 // Item itemの構造体
 type Item struct {
-	gorm.Model
+	GormModel
 	Name        string        `gorm:"type:varchar(64);not null" json:"name"`
 	Type        int           `gorm:"type:int;not null" json:"type"`
 	Code        string        `gorm:"type:varchar(13);" json:"code"`
 	Description string        `gorm:"type:text;" json:"description"`
-	ImgURL      string        `gorm:"type:text;" json:"img_url"`
+	ImgURL      string        `gorm:"type:text;" json:"imgUrl"`
 	Owners      []*Owner      `gorm:"many2many:ownership_maps;" json:"owners"`
-	RentalUsers []*RentalUser `gorm:"many2many:rental_user_maps;" json:"rental_users"`
+	RentalUsers []*RentalUser `gorm:"many2many:rental_user_maps;" json:"rentalUsers"`
 	Logs        []Log         `json:"logs"`
-	LatestLogs  []Log         `json:"latest_logs"`
+	LatestLogs  []Log         `json:"latestLogs"`
 	Comments    []Comment     `json:"comments"`
 	Likes       []User        `gorm:"many2many:like_maps;" json:"likes"`
 	LikeCounts  int           `gorm:"-" json:"like_counts"`
 }
 
 type Owner struct {
-	gorm.Model
-	UserID     uint `gorm:"type:int;not null" json:"owner_id"`
+	GormModel
+	UserID     uint `gorm:"type:int;not null" json:"ownerId"`
 	User       User `json:"user"`
 	Rentalable bool `gorm:"type:bool;not null;default:true" json:"rentalable"`
 	Count      int  `gorm:"type:int;default:1" json:"count"`
 }
 
 type RentalUser struct {
-	gorm.Model
-	UserID  uint `gorm:"type:int;not null" json:"user_id"`
+	GormModel
+	UserID  uint `gorm:"type:int;not null" json:"userId"`
 	User    User `json:"user"`
-	OwnerID uint `gorm:"type:int;not null" json:"owner_id"`
+	OwnerID uint `gorm:"type:int;not null" json:"ownerId"`
 	Owner   User `gorm:"foreignkey:OwnerID" json:"owner"`
 	Count   int  `gorm:"type:int;default:1" json:"count"`
 }
 
 type RequestPostOwnersBody struct {
-	UserID     int  `json:"user_id"`
+	UserID     int  `json:"userId"`
 	Rentalable bool `json:"rentalable"`
 	Count      int  `json:"count"`
 }

@@ -2,13 +2,11 @@ package model
 
 import (
 	"errors"
-
-	"github.com/jinzhu/gorm"
 )
 
 // User userの構造体
 type User struct {
-	gorm.Model
+	GormModel
 	Name        string `gorm:"type:varchar(32);unique;not null;size:50" json:"name"`
 	DisplayName string `gorm:"type:varchar(64);not null" json:"displayName"`
 	Admin       bool   `gorm:"default:false" json:"admin"`
