@@ -12,6 +12,11 @@ type User struct {
 	Admin       bool   `gorm:"default:false" json:"admin"`
 }
 
+type RequestPutUsersBody struct {
+	Name string `json:"name"`
+	Admin bool `json:"admin"`
+}
+
 // TableName dbのテーブル名を指定する
 func (user *User) TableName() string {
 	return "users"

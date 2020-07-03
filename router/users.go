@@ -27,24 +27,26 @@ func GetUsers(c echo.Context) error {
 
 // PutUsers PUT /users
 func PutUsers(c echo.Context) error {
-	req := model.User{}
+	req := model.RequestPutUsersBody{}
 	err := c.Bind(&req)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	user := c.Get("user").(model.User)
-	err = model.CheckTargetedOrAdmin(user, req)
+	prevUser, err := model.GetUserByName(req.Name)
 	if err != nil {
 		return c.JSON(http.StatusForbidden, err)
 	}
-	if user.Name != req.Name && !user.Admin {
+	if !user.Admin {
 		return c.NoContent(http.StatusForbidden)
 	}
-	if !user.Admin && req.Admin {
-		return c.NoContent(http.StatusForbidden)
+	if req.Admin == prevUser.Admin {
+		return c.NoContent(http.StatusBadRequest)
 	}
-	res, err := model.UpdateUser(req)
+
+	prevUser.Admin = req.Admin
+	res, err := model.UpdateUser(prevUser)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
 	}

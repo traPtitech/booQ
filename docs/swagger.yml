@@ -68,6 +68,8 @@ paths:
           description: "OK"
           schema:
             $ref: "#/definitions/user"
+        '400':
+          description: "変更がありません"
         '403':
           description: "権限がありません"
 
@@ -649,6 +651,7 @@ definitions:
       id:
         type: "integer"
         example: 1
+        readOnly: true
       name:
         type: "string"
         format: "traq_id"
@@ -656,6 +659,7 @@ definitions:
       displayName:
         type: "string"
         example: "ながてち"
+        readOnly: true
       admin:
         type: "boolean"
         example: true
