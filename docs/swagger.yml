@@ -600,7 +600,7 @@ definitions:
         readOnly: true
   item:
     allOf:
-      - $ref: "#/definitions/item"
+      - $ref: "#/definitions/itemPosted"
       - type: "object"
         properties:
           owners:
