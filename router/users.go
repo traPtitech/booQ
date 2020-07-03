@@ -49,7 +49,7 @@ func PutUsers(c echo.Context) error {
 	if !user.Admin {
 		return c.NoContent(http.StatusForbidden)
 	}
-	if user.Admin == prevUser.Admin {
+	if req.Admin == prevUser.Admin {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
