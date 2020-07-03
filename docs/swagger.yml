@@ -476,8 +476,6 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/get_logs"
-
-  /logs/:id:
     delete:
       operationId: deleteLog
       tags:
@@ -490,20 +488,6 @@ paths:
           description: "OK"
         '403':
           description: "権限がありません。"
-
-  /users/me:
-    get:
-      operationId: getMe
-      tags:
-      - "users"
-      summary: "自分の情報を取得します。存在しない場合はユーザーを作成します。"
-      produces:
-      - "application/json"
-      responses:
-        '200':
-          description: "OK"
-          schema:
-            $ref: "#/definitions/user"
 
   /users:
     get:
@@ -552,6 +536,20 @@ paths:
             $ref: "#/definitions/user"
         '403':
           description: "権限がありません"
+
+  /users/me:
+    get:
+      operationId: getMe
+      tags:
+      - "users"
+      summary: "自分の情報を取得します。存在しない場合はユーザーを作成します。"
+      produces:
+      - "application/json"
+      responses:
+        '200':
+          description: "OK"
+          schema:
+            $ref: "#/definitions/user"
 
   /files:
     post:
