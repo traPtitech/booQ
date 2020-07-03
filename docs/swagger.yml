@@ -36,11 +36,6 @@ paths:
       tags:
       - "users"
       summary: "ユーザー一覧を取得します。"
-      parameters:
-      - name: "name"
-        in: "query"
-        description: "取得したいユーザーのIDを指定します。"
-        type: "string"
       produces:
       - "application/json"
       responses:
@@ -50,8 +45,6 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/user"
-        '404':
-          description: "見つかりませんでした。"
     put:
       operationId: editUser
       tags:
