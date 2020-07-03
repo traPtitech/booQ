@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -17,6 +18,13 @@ var allTables = []interface{}{
 	Comment{},
 	RentalUser{},
 	File{},
+}
+
+type GormModel struct {
+	ID        uint       `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
+	DeletedAt *time.Time `json:"deletedAt"`
 }
 
 // EstablishConnection DBに接続する

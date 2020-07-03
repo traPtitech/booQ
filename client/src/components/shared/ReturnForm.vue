@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn block color="warning" @click.stop="open" :disabled="propItem.rental_users.filter(element => {return element.user_id === $store.state.me.ID}).length === 0">返却する</v-btn>
+    <v-btn block color="warning" @click.stop="open" :disabled="propItem.rentalUsers.filter(element => {return element.userId === $store.state.me.id}).length === 0">返却する</v-btn>
     <div class="text-center">
       <v-dialog light v-model="isOpenReturnForm" max-width="320">
         <v-card width="320">
@@ -12,15 +12,15 @@
               </template>
               <v-list>
                 <v-list-item
-                v-for="(rentalUser, i) in propItem.rental_users.filter(function (element) {return element.user_id === $store.state.me.ID})"
+                v-for="(rentalUser, i) in propItem.rentalUsers.filter(function (element) {return element.userId === $store.state.me.id})"
                 :key="i"
-                @click="returnOwnerID = rentalUser.owner.ID; returnOwnerName = rentalUser.owner.name">
+                @click="returnOwnerID = rentalUser.owner.id; returnOwnerName = rentalUser.owner.name">
                   <v-list-item-title>{{ rentalUser.owner.name }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
               <div>
-                 {{returnOwnerName}}
+                  {{returnOwnerName}}
               </div>
           </v-card-actions>
           <v-card-actions v-if="getRentalCount(returnOwnerID) > 1">
@@ -56,14 +56,14 @@ export default {
   },
   methods: {
     getRentalCount (ownerID) {
-      if (this.propItem.rental_users.length === 0) {
+      if (this.propItem.rentalUsers.length === 0) {
         return 0
       }
-      const rentalUsers = this.propItem.rental_users.filter(element => {
-        return element.user.ID === this.$store.state.me.ID
+      const rentalUsers = this.propItem.rentalUsers.filter(element => {
+        return element.user.id === this.$store.state.me.id
       })
       const rentalUser = rentalUsers.find(element => {
-        return element.owner_id === ownerID
+        return element.ownerId === ownerID
       })
       if (!rentalUser) {
         return 0
@@ -77,7 +77,7 @@ export default {
         return
       }
       const today = new Date()
-      await axios.post('/api/items/' + this.$route.params.id + '/logs', { owner_id: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', due_date: today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2) })
+      await axios.post('/api/items/' + this.$route.params.id + '/logs', { ownerId: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', dueDate: today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2) })
         .catch(e => {
           alert(e)
           this.error = e

@@ -2,15 +2,13 @@ package model
 
 import (
 	"errors"
-
-	"github.com/jinzhu/gorm"
 )
 
 // Comment commentの構造体
 type Comment struct {
-	gorm.Model
-	ItemID uint   `gorm:"type:int;not null" json:"item_id"`
-	UserID uint   `gorm:"type:int;not null" json:"user_id"`
+	GormModel
+	ItemID uint   `gorm:"type:int;not null" json:"itemId"`
+	UserID uint   `gorm:"type:int;not null" json:"userId"`
 	User   User   `json:"user"`
 	Text   string `gorm:"type:text;not null" json:"text"`
 }

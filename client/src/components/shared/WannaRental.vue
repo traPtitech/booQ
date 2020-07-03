@@ -14,7 +14,7 @@
                 <v-list-item
                 v-for="(owner, i) in propItem.owners"
                 :key="i"
-                @click="rentOwnerID = owner.user.ID; rentOwnerName = owner.user.name"
+                @click="rentOwnerID = owner.user.id; rentOwnerName = owner.user.name"
                 :disabled="$emit('checkRentalable', owner) === '貸し出しできません' || $emit('checkRentalable', owner) === '現在すべて貸しだし中'">
                   <v-list-item-title>{{ owner.user.name }}</v-list-item-title>
                 </v-list-item>
@@ -65,12 +65,12 @@ export default {
     }
   },
   mounted () {
-    this.message = '[' + this.propItem.name + '](https://' + location.host + '/items/' + this.propItem.ID + ')を借りたいです。'
+    this.message = '[' + this.propItem.name + '](https://' + location.host + '/items/' + this.propItem.id + ')を借りたいです。'
   },
   methods: {
     getBihinLatestCount (itemID) {
       const item = this.propItem
-      const targetLog = item.latest_logs.find(log => {
+      const targetLog = item.latestLogs.find(log => {
         return log.owner.name === 'traP' || log.owner.name === 'sienka'
       })
       if (!targetLog) {

@@ -3,29 +3,27 @@ package model
 import (
 	"errors"
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
 // Log logの構造体
 type Log struct {
-	gorm.Model
-	ItemID  uint      `gorm:"type:int;not null" json:"item_id"`
-	UserID  uint      `gorm:"type:int;not null" json:"user_id"`
+	GormModel
+	ItemID  uint      `gorm:"type:int;not null" json:"itemId"`
+	UserID  uint      `gorm:"type:int;not null" json:"userId"`
 	User    User      `json:"user"`
-	OwnerID uint      `gorm:"type:int;not null" json:"owner_id"`
+	OwnerID uint      `gorm:"type:int;not null" json:"ownerId"`
 	Owner   User      `json:"owner"`
 	Type    int       `gorm:"type:int;not null" json:"type"`
 	Purpose string    `json:"purpose"`
-	DueDate time.Time `gorm:"type:datetime;" json:"due_date"`
+	DueDate time.Time `gorm:"type:datetime;" json:"dueDate"`
 	Count   int       `gorm:"type:int;not null" json:"count"`
 }
 
 type RequestPostLogsBody struct {
-	OwnerID uint   `json:"owner_id"`
+	OwnerID uint   `json:"ownerId"`
 	Type    int    `json:"type"`
 	Purpose string `json:"purpose"`
-	DueDate string `json:"due_date"`
+	DueDate string `json:"dueDate"`
 	Count   int    `json:"count"`
 }
 

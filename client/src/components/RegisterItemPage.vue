@@ -49,8 +49,8 @@
       </label>
       <div class="preview-item">
         <v-img
-          v-if="!loading && img_url.length"
-          :src="img_url"
+          v-if="!loading && imgUrl.length"
+          :src="imgUrl"
           aspect-ratio="1"
           position="left"
           contain
@@ -65,7 +65,7 @@
           <p>{{ img_name }}</p>
         </div>
         <v-btn
-          v-if="img_url.length"
+          v-if="imgUrl.length"
           class="error"
           @click="remove"
         >
@@ -110,7 +110,7 @@ export default {
       name: '',
       description: '',
       img_name: '',
-      img_url: '',
+      imgUrl: '',
       count: 1,
       dialog: {
         isOpen: false,
@@ -128,14 +128,14 @@ export default {
   },
   methods: {
     async register () {
-      const res = await axios.post('/api/items', { name: this.name, code: this.code, type: Number(this.ownerID), description: this.description, img_url: this.img_url }).catch(e => { alert(e) })
+      const res = await axios.post('/api/items', { name: this.name, code: this.code, type: Number(this.ownerID), description: this.description, imgUrl: this.imgUrl }).catch(e => { alert(e) })
       if (!res) {
         this.setAlert('close', 'エラーが発生したため物品の登録が行われませんでした。')
         return
       }
-      const itemID = res.data.ID
-      const userID = Number(this.ownerID) === 0 ? Number(this.$store.state.me.ID) : Number(this.ownerID)
-      const res2 = await axios.post('/api/items/' + itemID + '/owners', { user_id: userID, rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
+      const itemID = res.data.id
+      const userID = Number(this.ownerID) === 0 ? Number(this.$store.state.me.id) : Number(this.ownerID)
+      const res2 = await axios.post('/api/items/' + itemID + '/owners', { userId: userID, rentalable: this.rentalable, count: Number(this.count) }).catch(e => { alert(e) })
       if (!res2) {
         this.setAlert('close', 'エラーが発生したため所有者の登録が行われませんでした。')
         return
@@ -156,11 +156,11 @@ export default {
       if (!data) {
         this.setAlert('close', '画像の投稿に失敗しました')
       }
-      this.img_url = data.data.url
+      this.imgUrl = data.data.url
       this.loading = false
     },
     remove () {
-      this.img_url = ''
+      this.imgUrl = ''
       this.img_name = ''
     },
     isbn13Toisbn10 (isbn13) {
@@ -183,7 +183,7 @@ export default {
         this.data = ''
         this.name = ''
         this.description = ''
-        this.img_url = ''
+        this.imgUrl = ''
         const openbd = axios
           .get(`https://api.openbd.jp/v1/get?isbn=${this.code}`)
           .then(async resp => {
@@ -194,7 +194,7 @@ export default {
                 this.description = this.data.CollateralDetail.TextContent[0].Text
               }
               if (this.data.CollateralDetail.SupportingResource) {
-                this.img_url = this.data.CollateralDetail.SupportingResource[0].ResourceVersion[0].ResourceLink
+                this.imgUrl = this.data.CollateralDetail.SupportingResource[0].ResourceVersion[0].ResourceLink
               }
             }
             const index = runnings.findIndex(v => v === openbd)
@@ -216,7 +216,7 @@ export default {
                 this.description = this.data.description
               }
               if (this.data.imageLinks.thumbnail) {
-                this.img_url = this.data.imageLinks.thumbnail
+                this.imgUrl = this.data.imageLinks.thumbnail
               }
             }
             const index = runnings.findIndex(v => v === googleBooksAPI)
