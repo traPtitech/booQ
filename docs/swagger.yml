@@ -425,16 +425,16 @@ paths:
         name: "user"
         in: "query"
         description: "特定のユーザーの投稿したコメント一覧を取得します。"
-      - schema:
-          type: "integer"
-        name: "limit"
-        in: "query"
-        description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
-      - schema:
-          type: "integer"
-        name: "offset"
-        in: "query"
-        description: "取得したいコメントの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
+      # - schema:
+      #     type: "integer"
+      #   name: "limit"
+      #   in: "query"
+      #   description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
+      # - schema:
+      #     type: "integer"
+      #   name: "offset"
+      #   in: "query"
+      #   description: "取得したいコメントの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
       responses:
         '200':
           description: "OK"
