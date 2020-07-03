@@ -82,7 +82,7 @@ func TestPutUsers(t *testing.T) {
 	}
 	_, _ = model.CreateUser(testUser)
 
-	testBody := model.User{
+	testBody := model.RequestPutUsersBody{
 		Name:        "PutUser",
 		Admin:       true,
 	}
@@ -99,8 +99,9 @@ func TestPutUsers(t *testing.T) {
 
 		assert.Equal(http.StatusForbidden, rec.Code)
 
-		_, err := model.GetUserByName(testUser.Name)
+		user, err := model.GetUserByName(testUser.Name)
 		assert.NoError(err)
+		assert.Equal(testUser.DisplayName, user.DisplayName)
 	})
 
 	t.Run("admin user", func(t *testing.T) {
@@ -119,6 +120,7 @@ func TestPutUsers(t *testing.T) {
 		_ = json.NewDecoder(rec.Body).Decode(&user)
 
 		assert.Equal(testBody.Name, user.Name)
-		assert.Equal(testBody.Admin, user.Admin)
+		assert.NotEqual(testUser.Admin, user.Admin)
+		assert.Equal(testUser.DisplayName, user.DisplayName)
 	})
 }
