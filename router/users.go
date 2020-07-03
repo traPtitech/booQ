@@ -21,16 +21,8 @@ func GetUsersMe(c echo.Context) error {
 
 //GetUsers GET /users
 func GetUsers(c echo.Context) error {
-	name := c.QueryParam("name")
-	if name == "" {
-		res := model.GetUsers()
-		return c.JSON(http.StatusOK, res)
-	}
-	result, err := model.GetUserByName(name)
-	if err != nil {
-		return c.JSON(http.StatusNotFound, err)
-	}
-	return c.JSON(http.StatusOK, result)
+	res := model.GetUsers()
+	return c.JSON(http.StatusOK, res)
 }
 
 // PutUsers PUT /users
