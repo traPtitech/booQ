@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	
+
 	"github.com/traPtitech/booQ/storage"
 	"io"
 )

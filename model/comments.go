@@ -41,6 +41,6 @@ func CreateComment(comment Comment) (Comment, error) {
 // GetCommentsByUserID UserIDからCommentsを取得する
 func GetCommentsByUserID(userID uint) ([]Comment, error) {
 	comments := []Comment{}
-	db.Preload("User").Find(&comments, "userId = ?", userID)
+	db.Preload("User").Find(&comments, "user_id = ?", userID)
 	return comments, nil
 }

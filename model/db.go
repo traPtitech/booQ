@@ -21,10 +21,10 @@ var allTables = []interface{}{
 }
 
 type GormModel struct {
-	ID        uint `gorm:"primary_key" json:"id"`
-  CreatedAt time.Time `json:"createdAt"`
-  UpdatedAt time.Time `json:"updatedAt"`
-  DeletedAt *time.Time `json:"deletedAt"`
+	ID        uint       `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
+	DeletedAt *time.Time `json:"deletedAt"`
 }
 
 // EstablishConnection DBに接続する
