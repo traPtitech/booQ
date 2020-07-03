@@ -52,6 +52,9 @@ func PutUsers(c echo.Context) error {
 	if !user.Admin && req.Admin {
 		return c.NoContent(http.StatusForbidden)
 	}
+	if req.ID != user.ID || req.Name != user.Name {
+		return c.NoContent(http.StatusForbidden)
+	}
 	res, err := model.UpdateUser(req)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
