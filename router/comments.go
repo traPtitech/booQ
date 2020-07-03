@@ -1,6 +1,7 @@
 package router
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -61,6 +62,5 @@ func GetComments(c echo.Context) error {
 		}
 		return c.JSON(http.StatusOK, res)
 	}
-	res := []model.Comment{}
-	return c.JSON(http.StatusOK, res)
+	return c.JSON(http.StatusBadRequest, errors.New("require params `user`"))
 }
