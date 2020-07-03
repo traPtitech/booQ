@@ -94,30 +94,40 @@ paths:
       summary: "物品の一覧を取得します。"
       parameters:
       - schema:
-          type: "integer"
-        name: "limit"
-        in: "query"
-        description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
-      - schema:
-          type: "integer"
-        name: "offset"
-        in: "query"
-        description: "取得したいデータの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
-      - schema:
-          type: "integer"
-        name: "type"
-        in: "query"
-        description: "リクエストした物品タイプに合う物品一覧を取得します。"
-      - schema:
           type: "string"
         name: "user"
         in: "query"
-        description: "特定のユーザーの所有する物品一覧を取得します。"
+        description: "指定したユーザーの所有する物品一覧を取得します。"
       - schema:
           type: "string"
-        name: "tag"
+        name: "search"
         in: "query"
-        description: "リクエストしたタグのついている物品一覧を取得します。"
+        description: "名称が部分一致する物品一覧を取得します。"
+      - schema:
+          type: "string"
+        name: "rental"
+        in: "query"
+        description: "指定したユーザーの借りている物品一覧を取得します。"
+      # - schema:
+      #     type: "integer"
+      #   name: "limit"
+      #   in: "query"
+      #   description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
+      # - schema:
+      #     type: "integer"
+      #   name: "offset"
+      #   in: "query"
+      #   description: "取得したいデータの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
+      # - schema:
+      #     type: "integer"
+      #   name: "type"
+      #   in: "query"
+      #   description: "リクエストした物品タイプに合う物品一覧を取得します。"
+      # - schema:
+      #     type: "string"
+      #   name: "tag"
+      #   in: "query"
+      #   description: "リクエストしたタグのついている物品一覧を取得します。"
       responses:
         '200':
           description: "OK"
