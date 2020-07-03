@@ -84,7 +84,6 @@ func TestPutUsers(t *testing.T) {
 
 	testBody := model.User{
 		Name:        "PutUser",
-		DisplayName: "変更されたテストユーザー",
 		Admin:       true,
 	}
 
