@@ -854,7 +854,7 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/get_logs"
-      rentalUUsers:
+      rentalUsers:
         type: "array"
         items:
           $ref: "#/definitions/rental_user"
