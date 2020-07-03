@@ -99,9 +99,8 @@ func TestPutUsers(t *testing.T) {
 
 		assert.Equal(http.StatusForbidden, rec.Code)
 
-		user, err := model.GetUserByName(testUser.Name)
+		_, err := model.GetUserByName(testUser.Name)
 		assert.NoError(err)
-		assert.Equal(user.DisplayName, testUser.DisplayName)
 	})
 
 	t.Run("admin user", func(t *testing.T) {
@@ -120,7 +119,6 @@ func TestPutUsers(t *testing.T) {
 		_ = json.NewDecoder(rec.Body).Decode(&user)
 
 		assert.Equal(testBody.Name, user.Name)
-		assert.Equal(testBody.DisplayName, user.DisplayName)
 		assert.Equal(testBody.Admin, user.Admin)
 	})
 }
