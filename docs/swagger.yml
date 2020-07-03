@@ -32,6 +32,7 @@ tags:
 paths:
   /items:
     get:
+      operationId: getItems
       tags:
       - "items"
       summary: "物品の一覧を取得します。"
@@ -64,6 +65,7 @@ paths:
           schema:
             $ref: "#/definitions/get_items"
     post:
+      operationId: postItem
       tags:
       - "items"
       summary: "物品を新しく登録します。"
@@ -91,6 +93,7 @@ paths:
 
   /items/:id:
     get:
+      operationId: getItem
       tags:
       - "items"
       summary: "物品の詳細情報を取得します。"
@@ -102,6 +105,7 @@ paths:
           schema:
             $ref: "#/definitions/get_items_id"
     put:
+      operationId: editItem
       tags:
       - "items"
       summary: "物品の情報を変更します。(所有者と管理者のみ)"
@@ -129,6 +133,7 @@ paths:
         '403':
           description: "権限がありません。"
     delete:
+      operationId: deleteItem
       tags:
       - "items"
       summary: "物品を削除します。(管理者のみ)"
@@ -142,6 +147,7 @@ paths:
 
   /items/:id/comments:
     post:
+      operationId: postComment
       tags:
       - "comments"
       summary: "コメントを新規作成します。"
@@ -165,6 +171,7 @@ paths:
 
   /items/:id/logs:
     post:
+      operationId: postLog
       tags:
       - "logs"
       summary: "履歴を新しく登録します。"
@@ -193,6 +200,7 @@ paths:
 
   /items/:id/likes:
     post:
+      operationId: addLike
       tags:
       - "likes"
       summary: "物品にいいねをつけます。"
@@ -205,6 +213,7 @@ paths:
         '400':
           description: "エラーが発生しました。"
     delete:
+      operationId: removeLike
       tags:
       - "likes"
       summary: "物品のいいねを取り消します。"
@@ -219,6 +228,7 @@ paths:
 
   /items/:id/owners:
     post:
+      operationId: postItemOwners
       tags:
       - "owners"
       summary: "物品の所有者を追加します。"
@@ -243,6 +253,7 @@ paths:
         '403':
           description: "権限がありません。"
     put:
+      operationId: editItemOwners
       tags:
       - "owners"
       summary: "物品の所有者を編集します。(所有者と管理者のみ)"
@@ -267,6 +278,7 @@ paths:
         '403':
           description: "権限がありません。"
     delete:
+      operationId: deleteItemOwners
       tags:
       - "owners"
       summary: "物品の所有権を削除します。(所有者と管理者のみ)"
@@ -281,6 +293,7 @@ paths:
 
   /items/:id/tags:
     post:
+      operationId: postItemTags
       tags:
       - "tags"
       summary: "item_idと紐づけてタグを登録します。"
@@ -310,6 +323,7 @@ paths:
 
   /tags:
     get:
+      operationId: getTags
       tags:
       - "tags"
       summary: "タグ一覧を取得します。"
@@ -326,6 +340,7 @@ paths:
               - id: 2
                 name: "天気の子"
     post:
+      operationId: postTag
       tags:
       - "tags"
       summary: "タグを追加します。"
@@ -352,6 +367,7 @@ paths:
 
   /items/:itemId/tags/:tagId:
     delete:
+      operationId: deleteItemTag
       tags:
       - "tags"
       summary: "物品に登録されているタグを削除します。"
@@ -366,6 +382,7 @@ paths:
 
   /comments:
     get:
+      operationId: getComments
       tags:
       - "comments"
       summary: "コメント一覧を取得します。"
@@ -394,6 +411,7 @@ paths:
 
   /comments/:id:
     put:
+      operationId: editComment
       tags:
       - "comments"
       summary: "コメントを編集します。"
@@ -417,6 +435,7 @@ paths:
         '403':
           description: "権限がありません。"
     delete:
+      operationId: deleteComment
       tags:
       - "comments"
       summary: "コメントを削除します。"
@@ -431,6 +450,7 @@ paths:
 
   /logs:
     get:
+      operationId: getLogs
       tags:
       - "logs"
       summary: "履歴の一覧を取得します。"
@@ -459,6 +479,7 @@ paths:
 
   /logs/:id:
     delete:
+      operationId: deleteLog
       tags:
       - "logs"
       summary: "履歴を取り消します。(管理者のみ)"
@@ -472,6 +493,7 @@ paths:
 
   /users/me:
     get:
+      operationId: getMe
       tags:
       - "users"
       summary: "自分の情報を取得します。存在しない場合はユーザーを作成します。"
@@ -485,6 +507,7 @@ paths:
 
   /users:
     get:
+      operationId: getUsers
       tags:
       - "users"
       summary: "ユーザー一覧を取得します。"
@@ -505,6 +528,7 @@ paths:
         '404':
           description: "見つかりませんでした。"
     put:
+      operationId: editUser
       tags:
       - "users"
       summary: "ユーザーの情報を変更します。主に権限の変更用です。"
@@ -531,6 +555,7 @@ paths:
 
   /files:
     post:
+      operationId: postFile
       tags:
       - "files"
       summary: "画像ファイルをアップロードします。"
@@ -562,6 +587,7 @@ paths:
 
   /files/:id:
     get:
+      operationId: getFile
       tags:
       - "files"
       summary: "画像ファイルをダウンロードします。"
