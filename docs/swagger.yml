@@ -30,6 +30,68 @@ tags:
   description: "画像アップロードに関するAPI"
 
 paths:
+  /users:
+    get:
+      operationId: getUsers
+      tags:
+      - "users"
+      summary: "ユーザー一覧を取得します。"
+      parameters:
+      - name: "name"
+        in: "query"
+        description: "取得したいユーザーのIDを指定します。"
+        type: "string"
+      produces:
+      - "application/json"
+      responses:
+        '200':
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/user"
+        '404':
+          description: "見つかりませんでした。"
+    put:
+      operationId: editUser
+      tags:
+      - "users"
+      summary: "ユーザーの情報を変更します。主に権限の変更用です。"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "RequestBody"
+        description: "権限の変更は権限を持っているユーザーからしかできないようにします。"
+        required: true
+        schema:
+          type: "object"
+          example:
+            name: "nagatech"
+            displayName: "ながてち"
+            admin: true
+      responses:
+        '200':
+          description: "OK"
+          schema:
+            $ref: "#/definitions/user"
+        '403':
+          description: "権限がありません"
+
+  /users/me:
+    get:
+      operationId: getMe
+      tags:
+      - "users"
+      summary: "自分の情報を取得します。存在しない場合はユーザーを作成します。"
+      produces:
+      - "application/json"
+      responses:
+        '200':
+          description: "OK"
+          schema:
+            $ref: "#/definitions/user"
+
   /items:
     get:
       operationId: getItems
@@ -145,87 +207,6 @@ paths:
         '403':
           description: "権限がありません。"
 
-  /items/:id/comments:
-    post:
-      operationId: postComment
-      tags:
-      - "comments"
-      summary: "コメントを新規作成します。"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "RequestBody"
-        required: true
-        schema:
-          type: "object"
-          example:
-            text: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
-      responses:
-        '201':
-          description: "Created"
-          schema:
-            $ref: "#/definitions/comment"
-        '400':
-          description: "リクエストボディが不正です。"
-
-  /items/:id/logs:
-    post:
-      operationId: postLog
-      tags:
-      - "logs"
-      summary: "履歴を新しく登録します。"
-      description: "itemとownerが紐づいていない場合はエラー(400)を返す必要があります。"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "RequestBody"
-        required: true
-        schema:
-          type: "object"
-          example:
-            owner_id: 1
-            type: 0
-            purpose: "読みたかったから。"
-            due_date: "2019/07/30 23:30:00"
-            count: 1
-      responses:
-        '201':
-          description: "Created"
-          schema:
-            $ref: "#/definitions/log"
-        '400':
-          description: "リクエストボディが不正です。"
-
-  /items/:id/likes:
-    post:
-      operationId: addLike
-      tags:
-      - "likes"
-      summary: "物品にいいねをつけます。"
-      description: "すでにいいねしている状態の場合、エラー(400)を返します。"
-      produces:
-      - "application/json"
-      responses:
-        '200':
-          description: "OK"
-        '400':
-          description: "エラーが発生しました。"
-    delete:
-      operationId: removeLike
-      tags:
-      - "likes"
-      summary: "物品のいいねを取り消します。"
-      description: "すでに所有済み状態の場合、エラー(400)を返します。"
-      produces:
-      - "application/json"
-      responses:
-        '200':
-          description: "OK"
-        '400':
-          description: "エラーが発生しました。"
-
   /items/:id/owners:
     post:
       operationId: postItemOwners
@@ -291,59 +272,15 @@ paths:
         '403':
           description: "権限がありません。"
 
-  /items/:id/tags:
+  /items/:id/logs:
     post:
-      operationId: postItemTags
+      operationId: postLog
       tags:
-      - "tags"
-      summary: "item_idと紐づけてタグを登録します。"
+      - "logs"
+      summary: "履歴を新しく登録します。"
+      description: "itemとownerが紐づいていない場合はエラー(400)を返す必要があります。"
       produces:
       - "application/json"
-      parameters:
-      - in: "body"
-        name: "RequestBody"
-        description: "複数一気に登録するので配列である必要があります。"
-        required: true
-        schema:
-          type: "object"
-          example:
-            id: [1, 2]
-      responses:
-        '200':
-          description: "OK"
-          schema:
-            type: "object"
-            example:
-              - id: 1
-                name: "小説"
-              - id: 2
-                name: "天気の子"
-        '400':
-          description: "リクエストボディが不正です。"
-
-  /tags:
-    get:
-      operationId: getTags
-      tags:
-      - "tags"
-      summary: "タグ一覧を取得します。"
-      produces:
-      - "application/json"
-      responses:
-        '200':
-          description: "OK"
-          schema:
-            type: "object"
-            example:
-              - id: 1
-                name: "小説"
-              - id: 2
-                name: "天気の子"
-    post:
-      operationId: postTag
-      tags:
-      - "tags"
-      summary: "タグを追加します。"
       parameters:
       - in: "body"
         name: "RequestBody"
@@ -351,27 +288,50 @@ paths:
         schema:
           type: "object"
           example:
-            name: "小説"
-      produces:
-      - "application/json"
+            owner_id: 1
+            type: 0
+            purpose: "読みたかったから。"
+            due_date: "2019/07/30 23:30:00"
+            count: 1
       responses:
-        '200':
-          description: "OK"
+        '201':
+          description: "Created"
           schema:
-            type: "object"
-            example:
-              id: 1
-              name: "小説"
+            $ref: "#/definitions/log"
         '400':
           description: "リクエストボディが不正です。"
 
-  /items/:itemId/tags/:tagId:
-    delete:
-      operationId: deleteItemTag
+  /items/:id/comments:
+    post:
+      operationId: postComment
       tags:
-      - "tags"
-      summary: "物品に登録されているタグを削除します。"
-      description: "itemとtagが紐づいていない場合はエラー(400)を返す必要があります。"
+      - "comments"
+      summary: "コメントを新規作成します。"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "RequestBody"
+        required: true
+        schema:
+          type: "object"
+          example:
+            text: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
+      responses:
+        '201':
+          description: "Created"
+          schema:
+            $ref: "#/definitions/comment"
+        '400':
+          description: "リクエストボディが不正です。"
+
+  /items/:id/likes:
+    post:
+      operationId: addLike
+      tags:
+      - "likes"
+      summary: "物品にいいねをつけます。"
+      description: "すでにいいねしている状態の場合、エラー(400)を返します。"
       produces:
       - "application/json"
       responses:
@@ -379,6 +339,108 @@ paths:
           description: "OK"
         '400':
           description: "エラーが発生しました。"
+    delete:
+      operationId: removeLike
+      tags:
+      - "likes"
+      summary: "物品のいいねを取り消します。"
+      description: "すでに所有済み状態の場合、エラー(400)を返します。"
+      produces:
+      - "application/json"
+      responses:
+        '200':
+          description: "OK"
+        '400':
+          description: "エラーが発生しました。"
+
+  # /items/:id/tags:
+  #   post:
+  #     operationId: postItemTags
+  #     tags:
+  #     - "tags"
+  #     summary: "item_idと紐づけてタグを登録します。"
+  #     produces:
+  #     - "application/json"
+  #     parameters:
+  #     - in: "body"
+  #       name: "RequestBody"
+  #       description: "複数一気に登録するので配列である必要があります。"
+  #       required: true
+  #       schema:
+  #         type: "object"
+  #         example:
+  #           id: [1, 2]
+  #     responses:
+  #       '200':
+  #         description: "OK"
+  #         schema:
+  #           type: "object"
+  #           example:
+  #             - id: 1
+  #               name: "小説"
+  #             - id: 2
+  #               name: "天気の子"
+  #       '400':
+  #         description: "リクエストボディが不正です。"
+
+  # /items/:itemId/tags/:tagId:
+  #   delete:
+  #     operationId: deleteItemTag
+  #     tags:
+  #     - "tags"
+  #     summary: "物品に登録されているタグを削除します。"
+  #     description: "itemとtagが紐づいていない場合はエラー(400)を返す必要があります。"
+  #     produces:
+  #     - "application/json"
+  #     responses:
+  #       '200':
+  #         description: "OK"
+  #       '400':
+  #         description: "エラーが発生しました。"
+
+  # /tags:
+  #   get:
+  #     operationId: getTags
+  #     tags:
+  #     - "tags"
+  #     summary: "タグ一覧を取得します。"
+  #     produces:
+  #     - "application/json"
+  #     responses:
+  #       '200':
+  #         description: "OK"
+  #         schema:
+  #           type: "object"
+  #           example:
+  #             - id: 1
+  #               name: "小説"
+  #             - id: 2
+  #               name: "天気の子"
+  #   post:
+  #     operationId: postTag
+  #     tags:
+  #     - "tags"
+  #     summary: "タグを追加します。"
+  #     parameters:
+  #     - in: "body"
+  #       name: "RequestBody"
+  #       required: true
+  #       schema:
+  #         type: "object"
+  #         example:
+  #           name: "小説"
+  #     produces:
+  #     - "application/json"
+  #     responses:
+  #       '200':
+  #         description: "OK"
+  #         schema:
+  #           type: "object"
+  #           example:
+  #             id: 1
+  #             name: "小説"
+  #       '400':
+  #         description: "リクエストボディが不正です。"
 
   /comments:
     get:
@@ -409,147 +471,85 @@ paths:
             items:
               $ref: "#/definitions/get_comments"
 
-  /comments/:id:
-    put:
-      operationId: editComment
-      tags:
-      - "comments"
-      summary: "コメントを編集します。"
-      description: "実行できるのは投稿したユーザーと管理者だけです。"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "RequestBody"
-        description: "実行できるのは投稿したユーザーと管理者だけです。変更できるのはtextのみです。"
-        required: true
-        schema:
-          type: "object"
-          example:
-            text: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
-      responses:
-        '200':
-          description: "OK"
-          schema:
-            $ref: "#/definitions/comment"
-        '403':
-          description: "権限がありません。"
-    delete:
-      operationId: deleteComment
-      tags:
-      - "comments"
-      summary: "コメントを削除します。"
-      description: "実行できるのは投稿したユーザーと管理者だけです。"
-      produces:
-      - "application/json"
-      responses:
-        '200':
-          description: "OK"
-        '403':
-          description: "権限がありません。"
+  # /comments/:id:
+  #   put:
+  #     operationId: editComment
+  #     tags:
+  #     - "comments"
+  #     summary: "コメントを編集します。"
+  #     description: "実行できるのは投稿したユーザーと管理者だけです。"
+  #     produces:
+  #     - "application/json"
+  #     parameters:
+  #     - in: "body"
+  #       name: "RequestBody"
+  #       description: "実行できるのは投稿したユーザーと管理者だけです。変更できるのはtextのみです。"
+  #       required: true
+  #       schema:
+  #         type: "object"
+  #         example:
+  #           text: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
+  #     responses:
+  #       '200':
+  #         description: "OK"
+  #         schema:
+  #           $ref: "#/definitions/comment"
+  #       '403':
+  #         description: "権限がありません。"
+  #   delete:
+  #     operationId: deleteComment
+  #     tags:
+  #     - "comments"
+  #     summary: "コメントを削除します。"
+  #     description: "実行できるのは投稿したユーザーと管理者だけです。"
+  #     produces:
+  #     - "application/json"
+  #     responses:
+  #       '200':
+  #         description: "OK"
+  #       '403':
+  #         description: "権限がありません。"
 
-  /logs:
-    get:
-      operationId: getLogs
-      tags:
-      - "logs"
-      summary: "履歴の一覧を取得します。"
-      parameters:
-      - name: "user"
-        in: "query"
-        description: "特定のユーザーの履歴一覧を取得します。"
-        type: "string"
-      - name: "limit"
-        in: "query"
-        description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
-        type: "integer"
-      - name: "offset"
-        in: "query"
-        description: "取得したいデータの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
-        type: "integer"
-      produces:
-      - "application/json"
-      responses:
-        '200':
-          description: "OK"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/get_logs"
-    delete:
-      operationId: deleteLog
-      tags:
-      - "logs"
-      summary: "履歴を取り消します。(管理者のみ)"
-      produces:
-      - "application/json"
-      responses:
-        '200':
-          description: "OK"
-        '403':
-          description: "権限がありません。"
-
-  /users:
-    get:
-      operationId: getUsers
-      tags:
-      - "users"
-      summary: "ユーザー一覧を取得します。"
-      parameters:
-      - name: "name"
-        in: "query"
-        description: "取得したいユーザーのIDを指定します。"
-        type: "string"
-      produces:
-      - "application/json"
-      responses:
-        '200':
-          description: "OK"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/user"
-        '404':
-          description: "見つかりませんでした。"
-    put:
-      operationId: editUser
-      tags:
-      - "users"
-      summary: "ユーザーの情報を変更します。主に権限の変更用です。"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "RequestBody"
-        description: "権限の変更は権限を持っているユーザーからしかできないようにします。"
-        required: true
-        schema:
-          type: "object"
-          example:
-            name: "nagatech"
-            displayName: "ながてち"
-            admin: true
-      responses:
-        '200':
-          description: "OK"
-          schema:
-            $ref: "#/definitions/user"
-        '403':
-          description: "権限がありません"
-
-  /users/me:
-    get:
-      operationId: getMe
-      tags:
-      - "users"
-      summary: "自分の情報を取得します。存在しない場合はユーザーを作成します。"
-      produces:
-      - "application/json"
-      responses:
-        '200':
-          description: "OK"
-          schema:
-            $ref: "#/definitions/user"
+  # /logs:
+  #   get:
+  #     operationId: getLogs
+  #     tags:
+  #     - "logs"
+  #     summary: "履歴の一覧を取得します。"
+  #     parameters:
+  #     - name: "user"
+  #       in: "query"
+  #       description: "特定のユーザーの履歴一覧を取得します。"
+  #       type: "string"
+  #     - name: "limit"
+  #       in: "query"
+  #       description: "取得したい件数を指定します。リクエストした件数が全部の件数より多い場合は全部の一覧になります。"
+  #       type: "integer"
+  #     - name: "offset"
+  #       in: "query"
+  #       description: "取得したいデータの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
+  #       type: "integer"
+  #     produces:
+  #     - "application/json"
+  #     responses:
+  #       '200':
+  #         description: "OK"
+  #         schema:
+  #           type: "array"
+  #           items:
+  #             $ref: "#/definitions/get_logs"
+  #   delete:
+  #     operationId: deleteLog
+  #     tags:
+  #     - "logs"
+  #     summary: "履歴を取り消します。(管理者のみ)"
+  #     produces:
+  #     - "application/json"
+  #     responses:
+  #       '200':
+  #         description: "OK"
+  #       '403':
+  #         description: "権限がありません。"
 
   /files:
     post:
