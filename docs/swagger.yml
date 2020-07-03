@@ -533,16 +533,7 @@ paths:
         '201':
           description: "OK"
           schema:
-            type: "object"
-            properties:
-              id:
-                type: "integer"
-                example: 1
-                description: "ファイルID"
-              url:
-                type: "string"
-                example: "/api/files/1"
-                description: "ファイルURL"
+            $ref: "#/definitions/file"
         '400':
           description: "不正なリクエストです。"
 
@@ -570,7 +561,7 @@ definitions:
         readOnly: true
       name:
         type: "string"
-        example:  "小説　天気の子"
+        example: "小説　天気の子"
       code:
         type: "integer"
         example: 9784041026403
@@ -841,3 +832,14 @@ definitions:
       count:
         type: "integer"
         example: 1
+  file:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        example: 1
+        description: "ファイルID"
+      url:
+        type: "string"
+        example: "/api/files/1"
+        description: "ファイルURL"
