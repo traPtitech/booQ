@@ -15,14 +15,14 @@
           <v-list-item
             v-for="item in items"
             :key="item.id"
-            @click.stop="$router.push({path: `/items/${item.ID}`})"
+            @click.stop="$router.push({path: `/items/${item.id}`})"
             style="height: 100px;"
           >
             <img
-              :src="item.img_url.length ? item.img_url : '/img/no-image.svg'"
+              :src="item.imgUrl.length ? item.imgUrl : '/img/no-image.svg'"
               class="item-list-image"
             />
-            <v-list-item-content style="padding-left: 15px;" :to="`/items/${item.ID}`">
+            <v-list-item-content style="padding-left: 15px;" :to="`/items/${item.id}`">
               <v-list-item-title class="headline mb-1">{{ item.name }}</v-list-item-title>
               <v-list-item-subtitle>{{ item.owners.map(i => i.user.name).join(', ') }}</v-list-item-subtitle>
             </v-list-item-content>
@@ -31,7 +31,7 @@
                 <mdi-icon name="mdi-thumb-up" />
                 {{ item.like_counts }}
               </div>
-              <v-btn :disabled="getBihinLatestCount(item.ID) < 1" icon v-if="item.type !== 0" @click.stop="click2Cart(item)">
+              <v-btn :disabled="getBihinLatestCount(item.id) < 1" icon v-if="item.type !== 0" @click.stop="click2Cart(item)">
                 <mdi-icon name="mdi-cart-arrow-down" />
               </v-btn>
             </v-list-item-action>
@@ -86,13 +86,13 @@ export default {
   methods: {
     getBihinLatestCount (itemID) {
       const item = this.items.find(element => {
-        return element.ID === itemID
+        return element.id === itemID
       })
       if (!item) {
         alert('対象itemがありません')
         return 0
       }
-      const targetLog = item.latest_logs.find(log => {
+      const targetLog = item.latestLogs.find(log => {
         return log.owner.name === 'traP' || log.owner.name === 'sienka'
       })
       if (!targetLog) {
@@ -122,12 +122,12 @@ export default {
     },
     click2Cart (item) {
       this.item = item
-      this.maxCount = this.getBihinLatestCount(item.ID) - this.searchItemCountInCart(item)
+      this.maxCount = this.getBihinLatestCount(item.id) - this.searchItemCountInCart(item)
       this.isOpen2Cart = !this.isOpen2Cart
     },
     searchItemCountInCart (item) {
       const targetItem = this.$store.state.cart.find(element => {
-        return element.ID === item.ID
+        return element.id === item.id
       })
       if (targetItem) {
         return targetItem.rentalCount

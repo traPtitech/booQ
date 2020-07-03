@@ -13,7 +13,7 @@
         >
           <div class="mb-4 cover-container">
             <img class="cover"
-              :src="data.img_url.length ? data.img_url : '/img/no-image.svg'"
+              :src="data.imgUrl.length ? data.imgUrl : '/img/no-image.svg'"
             />
           </div>
           <div>
@@ -66,9 +66,9 @@
               />
               {{ owner.user.name }} {{ checkRentalable(owner) }}
               <EditOwner
-                :itemID="data.ID"
+                :itemID="data.id"
                 :propOwner="owner"
-                :propLatestLogs="data.latest_logs"
+                :propLatestLogs="data.latestLogs"
                 @reload="reload"
               />
             </div>
@@ -178,7 +178,7 @@ export default {
     checkOwnOrAdmin () {
       if (this.data.owners) {
         const owner = this.data.owners.find(element => {
-          return element.owner_id === this.$store.state.me.ID
+          return element.owner_id === this.$store.state.me.id
         })
         if (owner || this.$store.state.me.admin) {
           return true
@@ -191,8 +191,8 @@ export default {
         if (!owner.rentalable) {
           return false
         }
-        const latestLog = this.data.latest_logs.find(log => {
-          return log.owner.ID === owner.owner_id
+        const latestLog = this.data.latestLogs.find(log => {
+          return log.owner.id === owner.owner_id
         })
         const rentalableCount = latestLog ? latestLog.count : owner.count
         return rentalableCount !== 0
@@ -214,8 +214,8 @@ export default {
       if (!owner.rentalable) {
         return '貸し出しできません'
       }
-      const latestLog = this.data.latest_logs.find(log => {
-        return log.owner.ID === owner.owner_id
+      const latestLog = this.data.latestLogs.find(log => {
+        return log.owner.id === owner.owner_id
       })
       let rentalableCount = 0
       if (latestLog) {
@@ -243,7 +243,7 @@ export default {
         ownerWord = ''
         logComment = '減らしました'
       }
-      const logTime = log.CreatedAt.replace('T', ' ').replace('+09:00', '')
+      const logTime = log.createdAt.replace('T', ' ').replace('+09:00', '')
       return `${userName}さんが${ownerWord}物品を${logComment} - ${logTime}`
     },
     async like () {

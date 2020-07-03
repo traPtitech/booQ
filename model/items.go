@@ -332,7 +332,7 @@ func DestroyItem(item Item) (Item, error) {
 
 // UpdateItem itemを変更する
 func UpdateItem(item *Item, body *map[string]interface{}, isAdmin bool) Item {
-	fields := []string{"name", "code", "description", "img_url"}
+	fields := []string{"name", "code", "description", "imgUrl"}
 	if isAdmin {
 		fields = append(fields, "type")
 	}

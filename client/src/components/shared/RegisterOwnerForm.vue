@@ -71,12 +71,12 @@ export default {
       let newOwnerID = 0
       if (Number(this.ownerID) === 0) {
         this.message = '所有者に' + this.$store.state.me.name + 'を追加しました。'
-        newOwnerID = this.$store.state.me.ID
+        newOwnerID = this.$store.state.me.id
       } else {
         this.message = '所有者に' + this.ownerOptions.find(element => element.id === this.ownerID).name + 'を追加しました。'
         newOwnerID = this.ownerID
       }
-      await axios.post('/api/items/' + this.$route.params.id + '/owners', { user_id: newOwnerID, rentalable: this.rentalable, count: this.count })
+      await axios.post('/api/items/' + this.$route.params.id + '/owners', { userId: newOwnerID, rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e

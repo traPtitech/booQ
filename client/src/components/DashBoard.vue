@@ -12,7 +12,7 @@
         <div>
           <div
             v-for="item in items"
-            :key="item.ID"
+            :key="item.id"
           >
             <v-alert type="error" v-if="checkDueDate(item)">
               {{ item.name }}が未返却です
@@ -69,7 +69,7 @@
                     </v-toolbar>
                     <br>
                     <div class="text-center">
-                      <v-img v-if="selectedItem.img_url" contain :src="selectedItem.img_url !== '' ? selectedItem.img_url : '/img/no-image.svg'" height="194" />
+                      <v-img v-if="selectedItem.imgUrl" contain :src="selectedItem.imgUrl !== '' ? selectedItem.imgUrl : '/img/no-image.svg'" height="194" />
                     </div>
                     <v-card-text>
                       <span>{{ selectedItem.description }}</span>
@@ -88,7 +88,7 @@
                         block
                         text
                         color="secondary"
-                        @click.stop="$router.push({path: `/items/${selectedItem.ID}`})"
+                        @click.stop="$router.push({path: `/items/${selectedItem.id}`})"
                         outlined
                         v-else
                       >
@@ -105,7 +105,7 @@
       <div v-if="returnCart.length">
         <div>まとめて返却する備品</div>
         <div>
-          <v-list-item v-for="itemInCart in returnCart" :key="itemInCart.ID">
+          <v-list-item v-for="itemInCart in returnCart" :key="itemInCart.id">
             <div>{{itemInCart.name}} × {{itemInCart.returnCount}}</div>
           </v-list-item>
         </div>
@@ -211,13 +211,13 @@ export default {
   methods: {
     getBihinMyRentalCount (itemID) {
       const item = this.items.find(element => {
-        return element.ID === itemID
+        return element.id === itemID
       })
       if (!item) {
         alert('対象itemがありません')
         return 0
       }
-      const targetRentalUser = item.rental_users.find(rentalUser => {
+      const targetRentalUser = item.rentalUsers.find(rentalUser => {
         return rentalUser.count < 0
       })
       if (!targetRentalUser) {
@@ -232,7 +232,7 @@ export default {
       }
       this.item.returnCount = this.itemCount
       const targetItem = this.returnCart.filter(element => {
-        return element.ID === this.item.ID
+        return element.id === this.item.id
       })
       if (targetItem.length === 1) {
         targetItem[0].returnCount += this.item.returnCount
@@ -246,12 +246,12 @@ export default {
     },
     click2Cart (item) {
       this.item = item
-      this.maxCount = this.getBihinMyRentalCount(item.ID) - this.searchItemCountInCart(item)
+      this.maxCount = this.getBihinMyRentalCount(item.id) - this.searchItemCountInCart(item)
       this.isOpen2Cart = !this.isOpen2Cart
     },
     searchItemCountInCart (item) {
       const targetItem = this.returnCart.find(element => {
-        return element.ID === item.ID
+        return element.id === item.id
       })
       if (targetItem) {
         return targetItem.returnCount
@@ -263,13 +263,13 @@ export default {
       if (!this.returnCart) return false
       for (let i = 0; i < this.returnCart.length; i++) {
         let names = []
-        const myLatest = this.returnCart[i].latest_logs.find(element => {
-          return element.user_id === this.$store.state.me.ID
+        const myLatest = this.returnCart[i].latestLogs.find(element => {
+          return element.userId === this.$store.state.me.id
         })
-        const dueDate = myLatest.due_date
+        const dueDate = myLatest.dueDate
         names = names.push(this.returnCart[i].name)
-        const ownerID = this.returnCart[i].rental_users.length === 1 ? this.returnCart[i].rental_users[0].owner_id : 1
-        await axios.post('/api/items/' + this.returnCart[i].ID + '/logs', { owner_id: ownerID, type: 1, count: this.returnCart[i].returnCount, purpose: '', due_date: dueDate.substr(0, 10) })
+        const ownerID = this.returnCart[i].rentalUsers.length === 1 ? this.returnCart[i].rentalUsers[0].ownerId : 1
+        await axios.post('/api/items/' + this.returnCart[i].id + '/logs', { owner_id: ownerID, type: 1, count: this.returnCart[i].returnCount, purpose: '', due_date: dueDate.substr(0, 10) })
           .catch(e => {
             this.error = e
             alert(e)
@@ -289,7 +289,7 @@ export default {
           alert(e)
         })
       for (let i = 0; i < res.data.length; i++) {
-        res.data[i].start = res.data[i].latest_logs[0].due_date.substr(0, 10)
+        res.data[i].start = res.data[i].latestLogs[0].dueDate.substr(0, 10)
         // res.data[i].stop = res.data[i].due_date
       }
       this.items = res.data

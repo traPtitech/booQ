@@ -2,7 +2,7 @@
   <nobr>
     <nobr
       class="buttonform"
-      v-if="propOwner.user.name === $store.state.me.name || propOwner.user.ID === 1"
+      v-if="propOwner.user.name === $store.state.me.name || propOwner.user.id === 1"
       @click.stop="open"
     >
       <mdi-icon style="color: #66CC33;" left name="mdi-pencil" />編集
@@ -82,7 +82,7 @@ export default {
           return
         }
       }
-      await axios.put('/api/items/' + this.itemID + '/owners', { user_id: this.propOwner.owner_id, rentalable: this.rentalable, count: this.count })
+      await axios.put('/api/items/' + this.itemID + '/owners', { userId: this.propOwner.owner_id, rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e
