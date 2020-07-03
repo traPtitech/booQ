@@ -55,7 +55,7 @@ paths:
       parameters:
       - in: "body"
         name: "RequestBody"
-        description: "権限の変更は権限を持っているユーザーからしかできないようにします。"
+        description: "権限の変更は権限を持っているユーザーからしかできません。"
         required: true
         schema:
           $ref: "#/definitions/user"
