@@ -1,12 +1,12 @@
 swagger: "2.0"
 info:
+  title: booQ
   version: "2.0.0"
-  title: "booQ"
-  description: "booQサーバーのAPIです。"
+  description: booQサーバーのAPIです。
   contact:
     name: traP
     url: 'https://github.com/traPtitech/booQ'
-host: "booq-dev.trapti.tech"
+host: booq.jp
 basePath: /api/
 schemes:
   - https
