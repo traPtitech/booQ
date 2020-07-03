@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn block color="warning" @click.stop="open" :disabled="propItem.rental_users.filter(element => {return element.userId === $store.state.me.id}).length === 0">返却する</v-btn>
+    <v-btn block color="warning" @click.stop="open" :disabled="propItem.rentalUsers.filter(element => {return element.userId === $store.state.me.id}).length === 0">返却する</v-btn>
     <div class="text-center">
       <v-dialog light v-model="isOpenReturnForm" max-width="320">
         <v-card width="320">
@@ -12,7 +12,7 @@
               </template>
               <v-list>
                 <v-list-item
-                v-for="(rentalUser, i) in propItem.rental_users.filter(function (element) {return element.userId === $store.state.me.id})"
+                v-for="(rentalUser, i) in propItem.rentalUsers.filter(function (element) {return element.userId === $store.state.me.id})"
                 :key="i"
                 @click="returnOwnerID = rentalUser.owner.id; returnOwnerName = rentalUser.owner.name">
                   <v-list-item-title>{{ rentalUser.owner.name }}</v-list-item-title>
@@ -56,10 +56,10 @@ export default {
   },
   methods: {
     getRentalCount (ownerID) {
-      if (this.propItem.rental_users.length === 0) {
+      if (this.propItem.rentalUsers.length === 0) {
         return 0
       }
-      const rentalUsers = this.propItem.rental_users.filter(element => {
+      const rentalUsers = this.propItem.rentalUsers.filter(element => {
         return element.user.id === this.$store.state.me.id
       })
       const rentalUser = rentalUsers.find(element => {
