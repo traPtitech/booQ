@@ -186,12 +186,12 @@ export default {
         let names = []
         names = names.push(this.$store.state.cart[i].name)
         await axios.post(
-          '/api/items/' + this.$store.state.cart[i].ID + '/logs',
+          '/api/items/' + this.$store.state.cart[i].id + '/logs',
           {
-            owner_id: 1,
+            ownerId: 1,
             type: 0,
             purpose: this.cartPurpose,
-            due_date: this.cartDueDate,
+            dueDate: this.cartDueDate,
             count: this.$store.state.cart[i].rentalCount
           }
         ).catch(e => {

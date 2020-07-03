@@ -18,7 +18,7 @@ type Item struct {
 	LatestLogs  []Log         `json:"latestLogs"`
 	Comments    []Comment     `json:"comments"`
 	Likes       []User        `gorm:"many2many:like_maps;" json:"likes"`
-	LikeCounts  int           `gorm:"-" json:"like_counts"`
+	LikeCounts  int           `gorm:"-" json:"likeCounts"`
 }
 
 type Owner struct {

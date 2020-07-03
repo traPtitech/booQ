@@ -70,7 +70,7 @@ export default {
         return false
       }
       const latestLog = this.propLatestLogs.find(element => {
-        return element.owner_id === this.propOwner.owner_id
+        return element.ownerId === this.propOwner.ownerId
       })
       if (latestLog) {
         if (this.count - this.propOwner.count + latestLog.count < 0) {
@@ -82,7 +82,7 @@ export default {
           return
         }
       }
-      await axios.put('/api/items/' + this.itemID + '/owners', { userId: this.propOwner.owner_id, rentalable: this.rentalable, count: this.count })
+      await axios.put('/api/items/' + this.itemID + '/owners', { userId: this.propOwner.ownerId, rentalable: this.rentalable, count: this.count })
         .catch(e => {
           alert(e)
           this.error = e

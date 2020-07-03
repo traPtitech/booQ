@@ -178,7 +178,7 @@ export default {
     checkOwnOrAdmin () {
       if (this.data.owners) {
         const owner = this.data.owners.find(element => {
-          return element.owner_id === this.$store.state.me.id
+          return element.ownerId === this.$store.state.me.id
         })
         if (owner || this.$store.state.me.admin) {
           return true
@@ -192,7 +192,7 @@ export default {
           return false
         }
         const latestLog = this.data.latestLogs.find(log => {
-          return log.owner.id === owner.owner_id
+          return log.owner.id === owner.ownerId
         })
         const rentalableCount = latestLog ? latestLog.count : owner.count
         return rentalableCount !== 0
@@ -215,7 +215,7 @@ export default {
         return '貸し出しできません'
       }
       const latestLog = this.data.latestLogs.find(log => {
-        return log.owner.id === owner.owner_id
+        return log.owner.id === owner.ownerId
       })
       let rentalableCount = 0
       if (latestLog) {

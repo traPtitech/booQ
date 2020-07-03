@@ -27,9 +27,9 @@
               <v-list-item-subtitle>{{ item.owners.map(i => i.user.name).join(', ') }}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action class="item-list-icons">
-              <div v-if="item.like_counts > 0">
+              <div v-if="item.likeCounts > 0">
                 <mdi-icon name="mdi-thumb-up" />
-                {{ item.like_counts }}
+                {{ item.likeCounts }}
               </div>
               <v-btn :disabled="getBihinLatestCount(item.id) < 1" icon v-if="item.type !== 0" @click.stop="click2Cart(item)">
                 <mdi-icon name="mdi-cart-arrow-down" />

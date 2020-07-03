@@ -63,7 +63,7 @@ export default {
         return element.user.id === this.$store.state.me.id
       })
       const rentalUser = rentalUsers.find(element => {
-        return element.owner_id === ownerID
+        return element.ownerId === ownerID
       })
       if (!rentalUser) {
         return 0
@@ -77,7 +77,7 @@ export default {
         return
       }
       const today = new Date()
-      await axios.post('/api/items/' + this.$route.params.id + '/logs', { owner_id: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', due_date: today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2) })
+      await axios.post('/api/items/' + this.$route.params.id + '/logs', { ownerId: this.returnOwnerID, type: 1, count: this.returnCount, purpose: '', dueDate: today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2) })
         .catch(e => {
           alert(e)
           this.error = e
