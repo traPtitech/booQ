@@ -266,7 +266,7 @@ func PostLikes(c echo.Context) error {
 	}
 	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusNotFound, err)
 	}
 	_, err = model.CreateLike(item.ID, user.ID)
 	if err != nil {
@@ -290,12 +290,12 @@ func DeleteLikes(c echo.Context) error {
 	}
 	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusNotFound, err)
 	}
 	_, err = model.CancelLike(item.ID, user.ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	return c.NoContent(http.StatusCreated)
+	return c.NoContent(http.StatusOK)
 }
