@@ -512,7 +512,7 @@ paths:
   #            schema:
   #              type: "array"
   #              items:
-  #                $ref: "#/components/schemas/logs"
+  #                $ref: "#/components/schemas/log"
   #   delete:
   #     operationId: deleteLog
   #     tags:
@@ -614,12 +614,12 @@ components:
             latestLogs:
               type: "array"
               items:
-                $ref: "#/components/schemas/logs"
+                $ref: "#/components/schemas/log"
               readOnly: true
             logs:
               type: "array"
               items:
-                $ref: "#/components/schemas/logs"
+                $ref: "#/components/schemas/log"
               readOnly: true
             rentalUsers:
               type: "array"
@@ -718,9 +718,13 @@ components:
           type: "integer"
           example: 1
           readOnly: true
+        user:
+          $ref: "#/components/schemas/user"
         ownerId:
           type: "integer"
           example: 1
+        owner:
+          $ref: "#/components/schemas/user"
         type:
           type: "integer"
           example: 0
@@ -801,40 +805,6 @@ components:
           format: "date-time"
           example: "2019-07-28T22:00:00Z"
         deletedAt:
-          type: "string"
-          format: "date-time"
-          example: "2019-07-28T22:00:00Z"
-    logs:
-      type: "object"
-      properties:
-        id:
-          type: "integer"
-          example: 1
-        itemId:
-          type: "integer"
-          example: 1
-        user:
-          $ref: "#/components/schemas/user"
-        owner:
-          $ref: "#/components/schemas/user"
-        type:
-          type: "integer"
-          example: 0
-        purpose:
-          type: "string"
-          example: "読みたかったから。"
-        dueDate:
-          type: "string"
-          format: "date-time"
-          example: "2019-07-30T23:30:00Z"
-        count:
-          type: "integer"
-          example: 1
-        createdAt:
-          type: "string"
-          format: "date-time"
-          example: "2019-07-28T22:00:00Z"
-        updatedAt:
           type: "string"
           format: "date-time"
           example: "2019-07-28T22:00:00Z"
