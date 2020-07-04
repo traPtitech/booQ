@@ -135,6 +135,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/itemSummary"
+        '400':
+          description: リクエストが不正です
     post:
       operationId: postItem
       tags:
@@ -155,6 +157,8 @@ paths:
                 $ref: "#/components/schemas/itemPosted"
         '400':
           description: "リクエストボディが不正です。"
+        '403':
+          description: "権限がありません"
 
   /items/:id:
     get:
@@ -169,6 +173,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/itemDetail"
+        '404':
+          description: "アイテムが存在しません"
     put:
       operationId: editItem
       tags:
@@ -191,6 +197,8 @@ paths:
           description: "リクエストボディが不正です。"
         '403':
           description: "権限がありません。"
+        '404':
+          description: "アイテムが存在しません"
     delete:
       operationId: deleteItem
       tags:
@@ -201,6 +209,8 @@ paths:
           description: "OK"
         '403':
           description: "権限がありません。"
+        '404':
+          description: "アイテムが存在しません"
 
   /items/:id/owners:
     post:
@@ -224,6 +234,8 @@ paths:
                 $ref: "#/components/schemas/ownership"
         '403':
           description: "権限がありません。"
+        '404':
+          description: "アイテムが存在しません"
     put:
       operationId: editItemOwners
       tags:
@@ -245,17 +257,8 @@ paths:
                 $ref: "#/components/schemas/ownership"
         '403':
           description: "権限がありません。"
-    delete:
-      operationId: deleteItemOwners
-      tags:
-      - "owners"
-      summary: "物品の所有権を削除します。(所有者と管理者のみ)"
-      description: "他者の所有権を操作する場合は権限が必要です。"
-      responses:
-        '200':
-          description: "OK"
-        '403':
-          description: "権限がありません。"
+        '404':
+          description: "アイテムが存在しません"
 
   /items/:id/logs:
     post:
@@ -279,6 +282,10 @@ paths:
                 $ref: "#/components/schemas/log"
         '400':
           description: "リクエストボディが不正です。"
+        '403':
+          description: "権限が存在しません。またはそのアイテムを持っていません。"
+        '404':
+          description: "アイテムが存在しません"
 
   /items/:id/comments:
     post:
@@ -301,6 +308,8 @@ paths:
                 $ref: "#/components/schemas/comment"
         '400':
           description: "リクエストボディが不正です。"
+        '404':
+          description: "アイテムが存在しません"
 
   /items/:id/likes:
     post:
@@ -310,10 +319,12 @@ paths:
       summary: "物品にいいねをつけます。"
       description: "すでにいいねしている状態の場合、エラー(400)を返します。"
       responses:
-        '200':
-          description: "OK"
+        '201':
+          description: "正常にいいねしました"
         '400':
-          description: "エラーが発生しました。"
+          description: "不正なリクエストです"
+        '404':
+          description: "指定されたアイテムが存在しません"
     delete:
       operationId: removeLike
       tags:
@@ -322,9 +333,11 @@ paths:
       description: "すでに所有済み状態の場合、エラー(400)を返します。"
       responses:
         '200':
-          description: "OK"
+          description: "正常に削除しました"
         '400':
-          description: "エラーが発生しました。"
+          description: "不正なリクエストです"
+        '404':
+          description: "指定されたアイテムが存在しません"
 
   # /items/:id/tags:
   #   post:
@@ -425,6 +438,7 @@ paths:
         name: "user"
         in: "query"
         description: "特定のユーザーの投稿したコメント一覧を取得します。"
+        required: true
       # - schema:
       #     type: "integer"
       #   name: "limit"
@@ -444,6 +458,8 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/comment"
+        '400':
+          description: 不正なリクエストです
 
   # /comments/:id:
   #   put:
