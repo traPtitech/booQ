@@ -29,7 +29,10 @@ func PostLogs(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	itemID := uint(itemIDb)
-	item, _ := model.GetItemByID(itemID)
+	item, err := model.GetItemByID(itemID)
+	if err != nil {
+		return c.NoContent(http.StatusNotFound)
+	}
 	var itemCount int
 	var exist bool
 	for _, owner := range item.Owners {

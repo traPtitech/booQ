@@ -568,6 +568,6 @@ func TestDeleteLikes(t *testing.T) {
 		rec = httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
 
-		assert.Equal(http.StatusCreated, rec.Code)
+		assert.Equal(http.StatusOK, rec.Code)
 	})
 }
