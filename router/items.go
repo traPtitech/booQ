@@ -225,7 +225,7 @@ func PutOwners(c echo.Context) error {
 	}
 	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusNotFound, err)
 	}
 	if body.UserID > 2 && item.Type > 0 {
 		return c.NoContent(http.StatusForbidden)
