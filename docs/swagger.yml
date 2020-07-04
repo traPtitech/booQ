@@ -595,11 +595,11 @@ components:
         name:
           type: "string"
           example: "小説　天気の子"
+        type:
+          $ref: "#/components/schemas/itemType"
         code:
           type: "integer"
           example: 9784041026403
-        type:
-          $ref: "#/components/schemas/itemType"
         description:
           type: "string"
           example: "高校1年の夏、帆高（ほだか）は離島から家出し、東京にやってきた。連日降り続ける雨の中、雑踏ひしめく都会の片隅で、帆高は不思議な能力を持つ少女・陽菜（ひな）に出会う。「ねぇ、今から晴れるよ」。それは祈るだけで、空を晴れに出来る力だった――。天候の調和が狂っていく時代に、運命に翻弄される少年と少女が自らの生き方を「選択」する物語。長編アニメーション映画『天気の子』の、新海誠監督自身が執筆した原作小説。"
@@ -616,6 +616,22 @@ components:
           format: "date-time"
           example: "2019-07-28T22:00:00Z"
           readOnly: true
+        deletedAt:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-28T22:00:00Z"
+          readOnly: true
+          nullable: true
+      required:
+        - id
+        - name
+        - type
+        - code
+        - description
+        - imgUrl
+        - createdAt
+        - updatedAt
+        - deletedAt
     item:
       allOf:
         - $ref: "#/components/schemas/itemPosted"
@@ -626,20 +642,20 @@ components:
               items:
                 $ref: "#/components/schemas/owner"
               readOnly: true
-            latestLogs:
+            rentalUsers:
               type: "array"
               items:
-                $ref: "#/components/schemas/log"
+                $ref: "#/components/schemas/rentalUser"
               readOnly: true
             logs:
               type: "array"
               items:
                 $ref: "#/components/schemas/log"
               readOnly: true
-            rentalUsers:
+            latestLogs:
               type: "array"
               items:
-                $ref: "#/components/schemas/rentalUser"
+                $ref: "#/components/schemas/log"
               readOnly: true
             # tags:
             #   type: "array"
@@ -651,6 +667,12 @@ components:
               items:
                 $ref: "#/components/schemas/comment"
               readOnly: true
+          required:
+            - owners
+            - rentalUsers
+            - logs
+            - lastestlogs
+            - comments
     itemSummary:
       allOf:
         - $ref: "#/components/schemas/item"
@@ -660,6 +682,8 @@ components:
               type: "integer"
               example: 1
               readOnly: true
+          required:
+            - likeCount
     itemDetail:
       allOf:
         - $ref: "#/components/schemas/item"
@@ -670,6 +694,8 @@ components:
               items:
                 $ref: "#/components/schemas/user"
               readOnly: true
+          required:
+            - likes
     comment:
       type: "object"
       properties:
@@ -700,6 +726,21 @@ components:
           format: "date-time"
           example: "2019-07-28T22:00:00Z"
           readOnly: true
+        deletedAt:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-28T22:00:00Z"
+          readOnly: true
+          nullable: true
+      required:
+        - id
+        - itemId
+        - userId
+        - user
+        - text
+        - createdAt
+        - updatedAt
+        - deletedAt
     user:
       type: "object"
       properties:
@@ -718,6 +759,30 @@ components:
         admin:
           type: "boolean"
           example: true
+        createdAt:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-28T22:00:00Z"
+          readOnly: true
+        updatedAt:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-28T22:00:00Z"
+          readOnly: true
+        deletedAt:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-28T22:00:00Z"
+          readOnly: true
+          nullable: true
+      required:
+        - id
+        - name
+        - displayName
+        - admin
+        - createdAt
+        - updatedAt
+        - deletedAt
     logType:
       type: integer
       title: LogType
@@ -775,6 +840,26 @@ components:
           format: "date-time"
           example: "2019-07-28T22:00:00Z"
           readOnly: true
+        deletedAt:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-28T22:00:00Z"
+          readOnly: true
+          nullable: true
+      required:
+        - id
+        - itemId
+        - userId
+        - user
+        - ownerId
+        - owner
+        - type
+        - purpose
+        - dueDate
+        - count
+        - createdAt
+        - updatedAt
+        - deletedAt
     ownership:
       type: "object"
       properties:
@@ -795,6 +880,12 @@ components:
         count:
           type: "integer"
           example: 1
+      required:
+        - id
+        - itemId
+        - userId
+        - rentalable
+        - count
     # tag:
     #   type: "object"
     #   properties:
@@ -810,19 +901,19 @@ components:
         id:
           type: "integer"
           example: 1
-        count:
-          type: "integer"
-          example: 1
-        ownerId:
-          type: "integer"
-          example: 1
         userId:
+          type: "integer"
+          example: 1
+        user:
+          $ref: "#/components/schemas/user"
+        ownerId:
           type: "integer"
           example: 1
         owner:
           $ref: "#/components/schemas/user"
-        user:
-          $ref: "#/components/schemas/user"
+        count:
+          type: "integer"
+          example: 1
         createdAt:
           type: "string"
           format: "date-time"
@@ -835,9 +926,25 @@ components:
           type: "string"
           format: "date-time"
           example: "2019-07-28T22:00:00Z"
+      required:
+        - id
+        - userId
+        - user
+        - ownerId
+        - owner
+        - count
+        - createdAt
+        - updatedAt
+        - deletedAt
     owner:
       type: "object"
       properties:
+        id:
+          type: "integer"
+          example: 1
+        userId:
+          type: "integer"
+          example: 1
         user:
           $ref: "#/components/schemas/user"
         rentalable:
@@ -846,6 +953,27 @@ components:
         count:
           type: "integer"
           example: 1
+        createdAt:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-28T22:00:00Z"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-28T22:00:00Z"
+        deletedAt:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-28T22:00:00Z"
+      required:
+        - id
+        - userId
+        - user
+        - rentalable
+        - count
+        - createdAt
+        - updatedAt
+        - deletedAt
     file:
       type: "object"
       properties:
@@ -857,3 +985,6 @@ components:
           type: "string"
           example: "/api/files/1"
           description: "ファイルURL"
+      required:
+        - id
+        - url
