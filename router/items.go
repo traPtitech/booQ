@@ -172,7 +172,7 @@ func PostOwners(c echo.Context) error {
 	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
 		fmt.Println("e")
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusNotFound, err)
 	}
 	if body.UserID > 2 && item.Type > 0 {
 		return c.NoContent(http.StatusForbidden)
