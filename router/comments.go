@@ -21,7 +21,7 @@ func PostComments(c echo.Context) error {
 	}
 	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusNotFound, err)
 	}
 	user := c.Get("user").(model.User)
 	user, err = model.GetUserByName(user.Name)
