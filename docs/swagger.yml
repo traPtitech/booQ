@@ -134,7 +134,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/itemSummary"
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/itemSummary"
         '400':
           description: リクエストが不正です
     post:
