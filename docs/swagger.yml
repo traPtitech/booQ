@@ -162,7 +162,9 @@ paths:
         '403':
           description: "権限がありません"
 
-  /items/:id:
+  /items/{itemId}:
+    parameters:
+      - $ref: '#/components/parameters/itemIdInPath'
     get:
       operationId: getItem
       tags:
@@ -214,7 +216,9 @@ paths:
         '404':
           description: "アイテムが存在しません"
 
-  /items/:id/owners:
+  /items/{itemId}/owners:
+    parameters:
+      - $ref: '#/components/parameters/itemIdInPath'
     post:
       operationId: postItemOwners
       tags:
@@ -262,7 +266,9 @@ paths:
         '404':
           description: "アイテムが存在しません"
 
-  /items/:id/logs:
+  /items/{itemId}/logs:
+    parameters:
+      - $ref: '#/components/parameters/itemIdInPath'
     post:
       operationId: postLog
       tags:
@@ -289,7 +295,9 @@ paths:
         '404':
           description: "アイテムが存在しません"
 
-  /items/:id/comments:
+  /items/{itemId}/comments:
+    parameters:
+      - $ref: '#/components/parameters/itemIdInPath'
     post:
       operationId: postComment
       tags:
@@ -313,7 +321,9 @@ paths:
         '404':
           description: "アイテムが存在しません"
 
-  /items/:id/likes:
+  /items/{itemId}/likes:
+    parameters:
+      - $ref: '#/components/parameters/itemIdInPath'
     post:
       operationId: addLike
       tags:
@@ -341,7 +351,9 @@ paths:
         '404':
           description: "指定されたアイテムが存在しません"
 
-  # /items/:id/tags:
+  # /items/{itemId}/tags:
+  #  parameters:
+  #    - $ref: '#/components/parameters/itemIdInPath'
   #   post:
   #     operationId: postItemTags
   #     tags:
@@ -371,7 +383,10 @@ paths:
   #       '400':
   #         description: "リクエストボディが不正です。"
 
-  # /items/:itemId/tags/:tagId:
+  # /items/{itemId}/tags/{tagId}:
+  #  parameters:
+  #    - $ref: '#/components/parameters/itemIdInPath'
+  #    - $ref: '#/components/parameters/tagIdInPath'
   #   delete:
   #     operationId: deleteItemTag
   #     tags:
@@ -463,7 +478,9 @@ paths:
         '400':
           description: 不正なリクエストです
 
-  # /comments/:id:
+  # /comments/{commentId}:
+  #  parameters:
+  #    - $ref: '#/components/parameters/commentIdInPath'
   #   put:
   #     operationId: editComment
   #     tags:
@@ -568,7 +585,9 @@ paths:
         '400':
           description: "不正なリクエストです。"
 
-  /files/:id:
+  /files/{fileId}:
+    parameters:
+      - $ref: '#/components/parameters/fileIdInPath'
     get:
       operationId: getFile
       tags:
@@ -586,6 +605,21 @@ paths:
           description: "ファイルが存在しません。"
 
 components:
+  parameters:
+    itemIdInPath:
+      name: itemId
+      in: path
+      required: true
+      description: アイテムID
+      schema:
+        type: integer
+    fileIdInPath:
+      name: fileId
+      in: path
+      required: true
+      description: ファイルID
+      schema:
+        type: integer
   schemas:
     itemType:
       type: integer
