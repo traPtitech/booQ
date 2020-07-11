@@ -730,12 +730,12 @@ components:
         - $ref: "#/components/schemas/item"
         - type: "object"
           properties:
-            likeCount:
+            likeCounts:
               type: "integer"
               example: 1
               readOnly: true
           required:
-            - likeCount
+            - likeCounts
     itemDetail:
       allOf:
         - $ref: "#/components/schemas/item"
