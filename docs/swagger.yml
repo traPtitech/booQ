@@ -842,12 +842,18 @@ components:
         ログ種類
         0: 借りる
         1: 返却
+        2: 追加
+        3: 減らす
       enum:
         - 0
         - 1
+        - 2
+        - 3
       x-enum-varnames:
         - borrow
         - return
+        - add
+        - remove
     log:
       type: "object"
       properties:
