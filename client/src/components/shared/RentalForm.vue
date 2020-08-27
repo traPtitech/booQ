@@ -46,7 +46,7 @@
           </div>
           <div>返却日</div>
           <v-card-actions max-width="320">
-            <v-date-picker v-model="dueDate"></v-date-picker>
+            <v-date-picker :allowed-dates="allowedDate" v-model="dueDate"></v-date-picker>
           </v-card-actions>
           <v-divider></v-divider>
           <v-card-actions>
@@ -78,7 +78,6 @@
 
 <script>
 import axios from 'axios'
-
 export default {
   name: 'RentalForm',
   props: {
@@ -98,6 +97,15 @@ export default {
     }
   },
   methods: {
+    allowedDate (val) {
+      let today = new Date()
+      today = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      )
+      return today <= new Date(val)
+    },
     getBihinLatestCount (itemID) {
       const item = this.propItem
       const targetLog = item.latestLogs.find(log => {
