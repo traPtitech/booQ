@@ -280,7 +280,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/log"
+              $ref: "#/components/schemas/postLog"
       responses:
         '201':
           description: "Created"
@@ -854,6 +854,25 @@ components:
         - return
         - add
         - remove
+    postLog:
+      type: "object"
+      properties:
+        ownerId:
+          type: "integer"
+          example: 1
+        type:
+          type: "integer"
+          example: 0
+        purpose:
+          type: "string"
+          example: "読みたかったから。"
+        dueDate:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-30T23:30:00Z"
+        count:
+          type: "integer"
+          example: 1
     log:
       type: "object"
       properties:
