@@ -280,7 +280,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/log"
+              $ref: "#/components/schemas/postLog"
       responses:
         '201':
           description: "Created"
@@ -854,6 +854,31 @@ components:
         - return
         - add
         - remove
+    # generatorのreadOnlyが対処されたら消す
+    postLog:
+      type: "object"
+      properties:
+        ownerId:
+          type: "integer"
+          example: 1
+        type:
+          $ref: "#/components/schemas/logType"
+        purpose:
+          type: "string"
+          example: "読みたかったから。"
+        dueDate:
+          type: "string"
+          format: "date-time"
+          example: "2019-07-30T23:30:00Z"
+        count:
+          type: "integer"
+          example: 1
+      required:
+        - ownerId
+        - type
+        - purpose
+        - dueDate
+        - count
     log:
       type: "object"
       properties:
@@ -870,12 +895,16 @@ components:
           example: 1
           readOnly: true
         user:
-          $ref: "#/components/schemas/user"
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/user"
         ownerId:
           type: "integer"
           example: 1
         owner:
-          $ref: "#/components/schemas/user"
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/user"
         type:
           $ref: "#/components/schemas/logType"
         purpose:
