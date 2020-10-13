@@ -854,6 +854,7 @@ components:
         - return
         - add
         - remove
+    # generatorのreadonlyが対処されたら消す
     postLog:
       type: "object"
       properties:
