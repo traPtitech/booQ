@@ -895,14 +895,16 @@ components:
           example: 1
           readOnly: true
         user:
-          $ref: "#/components/schemas/user"
           readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/user"
         ownerId:
           type: "integer"
           example: 1
         owner:
-          $ref: "#/components/schemas/user"
           readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/user"
         type:
           $ref: "#/components/schemas/logType"
         purpose:
