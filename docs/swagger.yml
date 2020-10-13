@@ -862,8 +862,7 @@ components:
           type: "integer"
           example: 1
         type:
-          type: "integer"
-          example: 0
+          $ref: "#/components/schemas/logType"
         purpose:
           type: "string"
           example: "読みたかったから。"
@@ -874,6 +873,12 @@ components:
         count:
           type: "integer"
           example: 1
+      required:
+        - ownerId
+        - type
+        - purpose
+        - dueDate
+        - count
     log:
       type: "object"
       properties:
