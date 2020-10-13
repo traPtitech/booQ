@@ -854,7 +854,7 @@ components:
         - return
         - add
         - remove
-    # generatorのreadonlyが対処されたら消す
+    # generatorのreadOnlyが対処されたら消す
     postLog:
       type: "object"
       properties:
@@ -896,11 +896,13 @@ components:
           readOnly: true
         user:
           $ref: "#/components/schemas/user"
+          readOnly: true
         ownerId:
           type: "integer"
           example: 1
         owner:
           $ref: "#/components/schemas/user"
+          readOnly: true
         type:
           $ref: "#/components/schemas/logType"
         purpose:
