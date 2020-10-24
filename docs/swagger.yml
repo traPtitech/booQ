@@ -1029,7 +1029,7 @@ components:
         id:
           type: "integer"
           example: 1
-        userId:
+        ownerId:
           type: "integer"
           example: 1
         user:
