@@ -230,7 +230,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ownership"
+              $ref: "#/components/schemas/postOwnership"
       responses:
         '201':
           description: "Created"
@@ -253,7 +253,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ownership"
+              $ref: "#/components/schemas/postOwnership"
       responses:
         '200':
           description: "OK"
@@ -854,7 +854,7 @@ components:
         - return
         - add
         - remove
-    # generatorのreadOnlyが対処されたら消す
+    # TODO: generatorのreadOnlyが対処されたら消す
     postLog:
       type: "object"
       properties:
@@ -970,6 +970,23 @@ components:
       required:
         - id
         - itemId
+        - userId
+        - rentalable
+        - count
+    # TODO: generatorのreadOnlyが対処されたら消す
+    postOwnership:
+      type: "object"
+      properties:
+        userId:
+          type: "integer"
+          example: 1
+        rentalable:
+          type: "boolean"
+          example: true
+        count:
+          type: "integer"
+          example: 1
+      required:
         - userId
         - rentalable
         - count
