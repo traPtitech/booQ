@@ -719,12 +719,18 @@ components:
               items:
                 $ref: "#/components/schemas/comment"
               readOnly: true
+            likes:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/user"
+              readOnly: true
           required:
             - owners
             - rentalUsers
             - logs
             - lastestlogs
             - comments
+            - likes
     itemSummary:
       allOf:
         - $ref: "#/components/schemas/item"
