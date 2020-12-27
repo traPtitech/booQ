@@ -637,6 +637,10 @@ components:
         - individual
         - equipment
         - sienka
+      x-enum-descriptions:
+        - 個人所有
+        - 備品
+        - 支援課所有
     itemPosted:
       type: "object"
       properties:
@@ -854,6 +858,11 @@ components:
         - return
         - add
         - remove
+      x-enum-descriptions:
+        - 借りる
+        - 返却
+        - 追加
+        - 減らす
     # TODO: generatorのreadOnlyが対処されたら消す
     postLog:
       type: "object"
