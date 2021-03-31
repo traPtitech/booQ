@@ -768,7 +768,8 @@ components:
           example: 1
           readOnly: true
         user:
-          $ref: "#/components/schemas/user"
+          allOf:
+            $ref: "#/components/schemas/user"
           readOnly: true
         text:
           type: "string"
