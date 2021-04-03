@@ -768,7 +768,9 @@ components:
           example: 1
           readOnly: true
         user:
-          $ref: "#/components/schemas/user"
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/user"
         text:
           type: "string"
           example: "小説版は夏美の心理描写がよく描かれていて、映画版を補完するものになっている。あとがきと解説だけでも読む価値はあると思います。"
