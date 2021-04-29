@@ -98,7 +98,6 @@ func GetItems() ([]Item, error) {
 			return []Item{}, err
 		}
 		item.LikeCounts = len(item.Likes)
-		item.Likes = []User{}
 		res[i] = item
 	}
 	return res, nil
