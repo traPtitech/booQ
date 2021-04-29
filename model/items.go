@@ -102,6 +102,7 @@ func GetItems(meID uint) ([]Item, error) {
 		for _, like := range item.Likes {
 			if like.ID == meID {
 				item.IsLiked = true
+				break
 			}
 		}
 		item.LikeCounts = len(item.Likes)
@@ -288,6 +289,7 @@ func SearchItemByOwner(ownerName string, meID uint) ([]Item, error) {
 		for _, like := range item.Likes {
 			if like.ID == meID {
 				item.IsLiked = true
+				break
 			}
 		}
 		for _, owner := range item.Owners {
@@ -314,6 +316,7 @@ func SearchItemByRental(rentalUserID uint, meID uint) ([]Item, error) {
 		for _, like := range item.Likes {
 			if like.ID == meID {
 				item.IsLiked = true
+				break
 			}
 		}
 		for _, rentalUser := range item.RentalUsers {
