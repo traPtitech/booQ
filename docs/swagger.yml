@@ -738,8 +738,13 @@ components:
               type: "integer"
               example: 1
               readOnly: true
+            isLiked:
+              type: "boolean"
+              example: true
+              readOnly: true
           required:
             - likeCounts
+            - isLiked
     itemDetail:
       allOf:
         - $ref: "#/components/schemas/item"

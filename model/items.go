@@ -19,6 +19,7 @@ type Item struct {
 	Comments    []Comment     `json:"comments"`
 	Likes       []User        `gorm:"many2many:like_maps;" json:"likes"`
 	LikeCounts  int           `gorm:"-" json:"likeCounts"`
+	IsLiked     bool          `gorm:"-" json:"isLiked"`
 }
 
 type Owner struct {
@@ -88,7 +89,7 @@ func GetItemByName(name string) (Item, error) {
 }
 
 // GetItems 全itemを取得する
-func GetItems() ([]Item, error) {
+func GetItems(meID uint) ([]Item, error) {
 	res := []Item{}
 	db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&res)
 	for i, item := range res {
@@ -96,6 +97,13 @@ func GetItems() ([]Item, error) {
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
 			return []Item{}, err
+		}
+		item.IsLiked = false
+		for _, like := range item.Likes {
+			if like.ID == meID {
+				item.IsLiked = true
+				break
+			}
 		}
 		item.LikeCounts = len(item.Likes)
 		item.Likes = []User{}
@@ -260,7 +268,7 @@ func CancelLike(itemID, userID uint) (Item, error) {
 }
 
 // SearchItemsByOwner itemsをOwnerNameから取得する
-func SearchItemByOwner(ownerName string) ([]Item, error) {
+func SearchItemByOwner(ownerName string, meID uint) ([]Item, error) {
 	res := []Item{}
 	items := []Item{}
 	owner, err := GetUserByName(ownerName)
@@ -277,6 +285,13 @@ func SearchItemByOwner(ownerName string) ([]Item, error) {
 		if err != nil {
 			return []Item{}, err
 		}
+		item.IsLiked = false
+		for _, like := range item.Likes {
+			if like.ID == meID {
+				item.IsLiked = true
+				break
+			}
+		}
 		for _, owner := range item.Owners {
 			if owner.User.Name == ownerName {
 				items = append(items, item)
@@ -287,7 +302,7 @@ func SearchItemByOwner(ownerName string) ([]Item, error) {
 }
 
 // SearchItemsByRental itemsをRentalUserNameから取得する
-func SearchItemByRental(rentalUserID uint) ([]Item, error) {
+func SearchItemByRental(rentalUserID uint, meID uint) ([]Item, error) {
 	items := []Item{}
 	res := []Item{}
 	db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&items)
@@ -296,6 +311,13 @@ func SearchItemByRental(rentalUserID uint) ([]Item, error) {
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
 			return []Item{}, err
+		}
+		item.IsLiked = false
+		for _, like := range item.Likes {
+			if like.ID == meID {
+				item.IsLiked = true
+				break
+			}
 		}
 		for _, rentalUser := range item.RentalUsers {
 			if rentalUser.UserID == rentalUserID && rentalUser.Count < 0 {
