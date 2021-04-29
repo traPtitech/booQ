@@ -109,7 +109,8 @@ func TestGetItems(t *testing.T) {
 		t.Parallel()
 		assert := assert.New(t)
 
-		items, err := GetItems()
+		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
+		items, err := GetItems(0)
 		assert.NoError(err)
 
 		for _, value := range items {
@@ -203,7 +204,8 @@ func TestSearchItems(t *testing.T) {
 		t.Parallel()
 		assert := assert.New(t)
 
-		items, err := GetItems()
+		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
+		items, err := GetItems(0)
 		assert.NoError(err)
 
 		for _, value := range items {
@@ -429,7 +431,8 @@ func TestSearchItemByRental(t *testing.T) {
 		successItem2, err = RentalItem(rentalUserReturn, item2)
 		assert.NotEmpty(successItem2)
 		assert.NoError(err)
-		items, err := SearchItemByRental(user.ID)
+		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
+		items, err := SearchItemByRental(user.ID, 0)
 		assert.NotEmpty(successItem2)
 		assert.NoError(err)
 		exist1 := false
@@ -455,7 +458,8 @@ func TestSearchItemByRental(t *testing.T) {
 func TestSearchItemByOwner(t *testing.T) {
 	t.Run("failuer", func(t *testing.T) {
 		assert := assert.New(t)
-		items, err := SearchItemByOwner("testSearchItemByOwnerFailOwner")
+		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
+		items, err := SearchItemByOwner("testSearchItemByOwnerFailOwner", 0)
 		assert.Empty(items)
 		assert.Error(err)
 	})
@@ -480,7 +484,8 @@ func TestSearchItemByOwner(t *testing.T) {
 		item1, err = RegisterOwner(owner, item1)
 		assert.NotEmpty(item1)
 		assert.NoError(err)
-		items, err := SearchItemByOwner(ownerUser.Name)
+		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
+		items, err := SearchItemByOwner(ownerUser.Name, 0)
 		assert.NotEmpty(items)
 		assert.NoError(err)
 		exist1 := false
