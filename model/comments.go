@@ -8,7 +8,7 @@ import (
 type Comment struct {
 	GormModel
 	ItemID uint   `gorm:"type:int;not null" json:"itemId"`
-	Item   Item   `json:"item"`
+	Item   Item   `gorm:"many2many:comment_maps;" json:"item"`
 	UserID uint   `gorm:"type:int;not null" json:"userId"`
 	User   User   `json:"user"`
 	Text   string `gorm:"type:text;not null" json:"text"`
