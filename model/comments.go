@@ -8,10 +8,13 @@ import (
 type Comment struct {
 	GormModel
 	ItemID uint   `gorm:"type:int;not null" json:"itemId"`
-	Item   Item   `gorm:"many2many:comment_maps;" json:"item"`
 	UserID uint   `gorm:"type:int;not null" json:"userId"`
 	User   User   `json:"user"`
 	Text   string `gorm:"type:text;not null" json:"text"`
+}
+type ResponseGetComments struct {
+	*Comment
+	Item Item `json:"item"`
 }
 type RequestPostCommentBody struct {
 	Text string `gorm:"type:text;not null" json:"text"`
@@ -40,8 +43,23 @@ func CreateComment(comment Comment) (Comment, error) {
 }
 
 // GetCommentsByUserID UserIDからCommentsを取得する
-func GetCommentsByUserID(userID uint) ([]Comment, error) {
+func GetCommentsByUserID(userID uint) ([]ResponseGetComments, error) {
 	comments := []Comment{}
-	db.Preload("User").Preload("Item").Find(&comments, "user_id = ?", userID)
-	return comments, nil
+	db.Preload("User").Find(&comments, "user_id = ?", userID)
+	ids := []uint{}
+	for _, c := range comments {
+		ids = append(ids, c.ItemID)
+	}
+	items := []Item{}
+	res := []ResponseGetComments{}
+	db.Where(ids).Find(&items)
+	for _, item := range items {
+		for _, comment := range comments {
+			if item.ID == comment.ItemID {
+				res = append(res, ResponseGetComments{&comment, item})
+				break
+			}
+		}
+	}
+	return res, nil
 }
