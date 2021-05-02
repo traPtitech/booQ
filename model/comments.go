@@ -8,6 +8,7 @@ import (
 type Comment struct {
 	GormModel
 	ItemID uint   `gorm:"type:int;not null" json:"itemId"`
+	Item   Item   `json:"item"`
 	UserID uint   `gorm:"type:int;not null" json:"userId"`
 	User   User   `json:"user"`
 	Text   string `gorm:"type:text;not null" json:"text"`
@@ -41,6 +42,6 @@ func CreateComment(comment Comment) (Comment, error) {
 // GetCommentsByUserID UserIDからCommentsを取得する
 func GetCommentsByUserID(userID uint) ([]Comment, error) {
 	comments := []Comment{}
-	db.Preload("User").Find(&comments, "user_id = ?", userID)
+	db.Preload("User").Preload("Item").Find(&comments, "user_id = ?", userID)
 	return comments, nil
 }

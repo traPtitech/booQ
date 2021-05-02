@@ -768,6 +768,10 @@ components:
           type: "integer"
           example: 1
           readOnly: true
+        item:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/itemSummary"
         userId:
           type: "integer"
           example: 1
@@ -800,6 +804,7 @@ components:
         - itemId
         - userId
         - user
+        - item
         - text
         - createdAt
         - updatedAt
