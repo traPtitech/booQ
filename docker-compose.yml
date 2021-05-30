@@ -1,15 +1,5 @@
 version: "3"
 services:
-  proxy:
-    image: caddy:2.0.0-alpine
-    ports:
-      - "3000:80"
-    volumes:
-      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
-    depends_on:
-      - booq-server
-      - booq-client
-
   db:
     image: mariadb:10.3.9
     restart: always
@@ -37,6 +27,8 @@ services:
     tty: true
     entrypoint: dockerize -timeout 60s -wait tcp://db:3306
     command: fresh -c fresh.conf
+    ports:
+      - '8080:3001'
     depends_on:
       - db
 

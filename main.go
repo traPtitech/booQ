@@ -63,10 +63,6 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-		Root:  "client/dist",
-		HTML5: true,
-	}))
 
 	// Routing
 	router.SetupRouting(e, router.CreateUserProvider())
