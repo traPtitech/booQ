@@ -1,7 +1,7 @@
 # booQ
 
 [![GitHub release](https://img.shields.io/github/release/traPtitech/booQ.svg)](https://GitHub.com/traPtitech/booQ/releases/)
-![CI (server)](https://github.com/traPtitech/booQ/workflows/CI%20(server)/badge.svg)
+![CI](https://github.com/traPtitech/booQ/workflows/CI/badge.svg)
 ![master](https://github.com/traPtitech/booQ/workflows/master/badge.svg)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=traPtitech/booQ)](https://dependabot.com)
 
