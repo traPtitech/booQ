@@ -1,6 +1,10 @@
-name: CI (server)
+name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
 
 jobs:
   mod:
@@ -11,7 +15,7 @@ jobs:
         with:
           go-version: 1.14
       - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-gomod-${{ hashFiles('**/go.sum') }}
@@ -26,14 +30,14 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: 1.14
-      - uses: actions/checkout@v1
-      - uses: actions/cache@v1
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-gomod-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-gomod-
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: /tmp/go/cache
           key: ${{ runner.os }}-go-build-${{ github.ref }}-${{ github.sha }}
@@ -42,7 +46,7 @@ jobs:
             ${{ runner.os }}-go-build-
       - name: build
         run: go build
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: booQ
           path: booQ
@@ -59,7 +63,7 @@ jobs:
       - name: Install golangci-lint
         run: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s --  -b $(go env GOPATH)/bin
       - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-gomod-${{ hashFiles('**/go.sum') }}
@@ -92,13 +96,13 @@ jobs:
         with:
           go-version: 1.14
       - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-gomod-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-gomod-
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: /tmp/go/cache
           key: ${{ runner.os }}-go-build-${{ github.ref }}-${{ github.sha }}
