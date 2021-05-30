@@ -6,7 +6,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 go build
 
-FROM alpine:3.12.0
+FROM alpine:3.13.5
 WORKDIR /app
 RUN apk --update add tzdata ca-certificates && \
   cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
