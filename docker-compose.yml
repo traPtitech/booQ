@@ -40,13 +40,6 @@ services:
     depends_on:
       - db
 
-  booq-client:
-    build: ./client
-    volumes:
-      - './client:/app'
-    tty: true
-    entrypoint: npm run serve
-
   swagger:
     image: swaggerapi/swagger-ui
     volumes:
