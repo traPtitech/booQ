@@ -1,4 +1,4 @@
-FROM golang:1.15.0-alpine AS server-build
+FROM golang:1.16.6-alpine AS server-build
 RUN apk add --update --no-cache git
 WORKDIR /go/src/github.com/traPtitech/booQ
 COPY ./go.* ./
