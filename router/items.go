@@ -1,6 +1,7 @@
 package router
 
 import (
+	"database/sql"
 	"errors"
 	"net/http"
 	"os"
@@ -193,7 +194,7 @@ func PostOwners(c echo.Context) error {
 	}
 	owner := model.Owner{
 		UserID:     user.ID,
-		Rentalable: body.Rentalable,
+		Rentalable: sql.NullBool{Bool: body.Rentalable},
 		Count:      body.Count,
 	}
 	if owner.Count < 0 {
@@ -247,7 +248,7 @@ func PutOwners(c echo.Context) error {
 	}
 	owner := model.Owner{
 		UserID:     user.ID,
-		Rentalable: body.Rentalable,
+		Rentalable: sql.NullBool{Bool: body.Rentalable},
 		Count:      body.Count,
 	}
 	res, err := model.AddOwner(owner, item)

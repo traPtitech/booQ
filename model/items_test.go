@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -49,7 +50,7 @@ func TestRegisterOwner(t *testing.T) {
 		assert.NoError(err)
 		var owner Owner
 		owner.UserID = user.ID
-		owner.Rentalable = true
+		owner.Rentalable = sql.NullBool{Bool: true}
 		owner.Count = 1
 		item, err := CreateItem(Item{Name: "testRegisterOwnerItem"})
 		assert.NoError(err)
@@ -65,7 +66,7 @@ func TestAddOwner(t *testing.T) {
 	user, _ := CreateUser(User{Name: "testAddOwnerUser"})
 	var owner Owner
 	owner.UserID = user.ID
-	owner.Rentalable = true
+	owner.Rentalable = sql.NullBool{Bool: true}
 	owner.Count = 5
 	item, _ := CreateItem(Item{Name: "testAddOwnerItem"})
 	t.Run("decreace fail", func(t *testing.T) {
@@ -102,7 +103,7 @@ func TestGetItems(t *testing.T) {
 	user, _ := CreateUser(User{Name: "testAllItemUser"})
 	var owner Owner
 	owner.UserID = user.ID
-	owner.Rentalable = true
+	owner.Rentalable = sql.NullBool{Bool: true}
 	owner.Count = 1
 	item, _ := CreateItem(Item{Name: "testAllItemItem"})
 	_, _ = RegisterOwner(owner, item)
@@ -132,7 +133,7 @@ func TestGetItemByID(t *testing.T) {
 	rentalUser, _ := CreateUser(User{Name: "testGetItemByIDUser"})
 	owner := Owner{
 		UserID:     ownerUser.ID,
-		Rentalable: true,
+		Rentalable: sql.NullBool{Bool: true},
 		Count:      1,
 	}
 
@@ -164,7 +165,7 @@ func TestGetItemByName(t *testing.T) {
 	rentalUser, _ := CreateUser(User{Name: "testGetItemByNameUser"})
 	owner := Owner{
 		UserID:     ownerUser.ID,
-		Rentalable: true,
+		Rentalable: sql.NullBool{Bool: false},
 		Count:      1,
 	}
 
@@ -195,7 +196,7 @@ func TestSearchItems(t *testing.T) {
 	user, _ := CreateUser(User{Name: "testSearchItemUser"})
 	var owner Owner
 	owner.UserID = user.ID
-	owner.Rentalable = true
+	owner.Rentalable = sql.NullBool{Bool: true}
 	owner.Count = 1
 	item, _ := CreateItem(Item{Name: "testSearchItemItem"})
 	_, _ = CreateItem(Item{Name: "testSearchItemItem1"})
@@ -481,7 +482,7 @@ func TestSearchItemByOwner(t *testing.T) {
 			UserID:     ownerUser.ID,
 			User:       ownerUser,
 			Count:      1,
-			Rentalable: true,
+			Rentalable: sql.NullBool{Bool: true},
 		}
 		item1, err = RegisterOwner(owner, item1)
 		assert.NotEmpty(item1)

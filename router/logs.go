@@ -40,7 +40,7 @@ func PostLogs(c echo.Context) error {
 	var exist bool
 	for _, owner := range item.Owners {
 		if owner.UserID == body.OwnerID {
-			if !owner.Rentalable {
+			if !owner.Rentalable.Bool {
 				return c.NoContent(http.StatusForbidden)
 			}
 			itemCount = owner.Count

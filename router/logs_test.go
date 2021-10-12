@@ -2,6 +2,7 @@ package router
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -22,12 +23,12 @@ func TestPostLogs(t *testing.T) {
 	trap, _ := model.GetUserByName("traP")
 	owner := model.Owner{
 		UserID:     trap.ID,
-		Rentalable: true,
+		Rentalable: sql.NullBool{Bool: true},
 		Count:      1,
 	}
 	ownerRentalDenied := model.Owner{
 		UserID:     trap.ID,
-		Rentalable: false,
+		Rentalable: sql.NullBool{Bool: true},
 		Count:      1,
 	}
 	_, err := model.RegisterOwner(owner, item)

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -53,13 +54,13 @@ func TestGetLatestLogs(t *testing.T) {
 	assert.NoError(err)
 	owner1 := Owner{
 		UserID:     ownerUser1.ID,
-		Rentalable: true,
+		Rentalable: sql.NullBool{Bool: true},
 		Count:      1,
 	}
 	ownerUser2, _ := GetUserByName("sienka")
 	owner2 := Owner{
 		UserID:     ownerUser2.ID,
-		Rentalable: true,
+		Rentalable: sql.NullBool{Bool: true},
 		Count:      1,
 	}
 
@@ -112,13 +113,13 @@ func TestGetLatestLog(t *testing.T) {
 	assert.NoError(err)
 	owner1 := Owner{
 		UserID:     ownerUser1.ID,
-		Rentalable: true,
+		Rentalable: sql.NullBool{Bool: true},
 		Count:      1,
 	}
 	ownerUser2, _ := GetUserByName("sienka")
 	owner2 := Owner{
 		UserID:     ownerUser2.ID,
-		Rentalable: true,
+		Rentalable: sql.NullBool{Bool: true},
 		Count:      1,
 	}
 

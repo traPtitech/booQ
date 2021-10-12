@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 
@@ -27,10 +28,10 @@ type Item struct {
 
 type Owner struct {
 	GormModel
-	UserID     uint `gorm:"type:int;not null" json:"ownerId"`
-	User       User `json:"user"`
-	Rentalable bool `gorm:"type:bool;not null;default:true" json:"rentalable"`
-	Count      int  `gorm:"type:int;default:1" json:"count"`
+	UserID     uint         `gorm:"type:int;not null" json:"ownerId"`
+	User       User         `json:"user"`
+	Rentalable sql.NullBool `gorm:"type:bool;not null;default:true" json:"rentalable"`
+	Count      int          `gorm:"type:int;default:1" json:"count"`
 }
 
 type RentalUser struct {

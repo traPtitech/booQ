@@ -2,6 +2,7 @@ package router
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -203,7 +204,7 @@ func TestGetItems(t *testing.T) {
 		assert.NoError(err)
 		owner := model.Owner{
 			UserID:     ownerUser.ID,
-			Rentalable: true,
+			Rentalable: sql.NullBool{Bool: true},
 			Count:      1,
 		}
 		_, err = model.RegisterOwner(owner, item)
