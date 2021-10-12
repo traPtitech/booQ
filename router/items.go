@@ -155,27 +155,22 @@ func PostOwners(c echo.Context) error {
 	me := c.Get("user").(model.User)
 	body := model.RequestPostOwnersBody{}
 	if err := c.Bind(&body); err != nil {
-		fmt.Println("a")
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	itemID, err := strconv.Atoi(ID)
 	if err != nil {
-		fmt.Println("b")
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	user, err := model.GetUserByID(body.UserID)
 	if err != nil {
-		fmt.Println("c")
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	err = model.CheckTargetedOrAdmin(me, user)
 	if err != nil {
-		fmt.Println("d")
 		return c.JSON(http.StatusForbidden, err)
 	}
 	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
-		fmt.Println("e")
 		return c.JSON(http.StatusNotFound, err)
 	}
 	if body.UserID > 2 && item.Type > 0 {
