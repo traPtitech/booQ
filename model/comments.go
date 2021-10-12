@@ -38,21 +38,30 @@ func CreateComment(comment Comment) (Comment, error) {
 	if comment.Text == "" {
 		return Comment{}, errors.New("Textが存在しません")
 	}
-	db.Preload("User").Create(&comment)
+	err = db.Preload("User").Create(&comment).Error
+	if err != nil {
+		return Comment{}, err
+	}
 	return comment, nil
 }
 
 // GetCommentsByUserID UserIDからCommentsを取得する
 func GetCommentsByUserID(userID uint) ([]ResponseGetComments, error) {
 	comments := []Comment{}
-	db.Preload("User").Find(&comments, "user_id = ?", userID)
+	err := db.Preload("User").Find(&comments, "user_id = ?", userID).Error
+	if err != nil {
+		return nil, err
+	}
 	ids := []uint{}
 	for _, c := range comments {
 		ids = append(ids, c.ItemID)
 	}
 	items := []Item{}
 	res := []ResponseGetComments{}
-	db.Where(ids).Find(&items)
+	err = db.Where(ids).Find(&items).Error
+	if err != nil {
+		return nil, err
+	}
 	for _, item := range items {
 		for _, comment := range comments {
 			if item.ID == comment.ItemID {
