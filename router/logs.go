@@ -23,6 +23,9 @@ func PostLogs(c echo.Context) error {
 	if err := c.Bind(&body); err != nil {
 		return err
 	}
+	if body.Type == 2 || body.Type == 3 {
+		return echo.NewHTTPError(http.StatusBadRequest, "アイテムの増減は POST /api/items/:id/owner を使用してください")
+	}
 
 	itemIDb, err := strconv.Atoi(ID)
 	if err != nil {
