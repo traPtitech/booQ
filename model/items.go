@@ -127,10 +127,7 @@ func CreateItem(item Item) (Item, error) {
 	}
 	reddiedItem := Item{}
 	err := db.Where("name = ?", item.Name).Or("code != '' AND code = ?", item.Code).Find(&reddiedItem).Error
-	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			return Item{}, errors.New("該当するItemがありません")
-		}
+	if err != nil && !gorm.IsRecordNotFoundError(err) {
 		return Item{}, err
 	}
 	if reddiedItem.Name != "" {
