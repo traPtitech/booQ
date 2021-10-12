@@ -29,8 +29,8 @@ type Owner struct {
 	GormModel
 	UserID     uint `gorm:"type:int;not null" json:"ownerId"`
 	User       User `json:"user"`
-	Rentalable bool `gorm:"type:bool;not null;default:true" json:"rentalable"`
-	Count      int  `gorm:"type:int;default:1" json:"count"`
+	Rentalable bool `gorm:"type:bool;not null;" json:"rentalable"`
+	Count      int  `gorm:"type:int;" json:"count"`
 }
 
 type RentalUser struct {
@@ -39,7 +39,7 @@ type RentalUser struct {
 	User    User `json:"user"`
 	OwnerID uint `gorm:"type:int;not null" json:"ownerId"`
 	Owner   User `gorm:"foreignkey:OwnerID" json:"owner"`
-	Count   int  `gorm:"type:int;default:1" json:"count"`
+	Count   int  `gorm:"type:int;" json:"count"`
 }
 
 type RequestPostOwnersBody struct {
