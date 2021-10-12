@@ -138,9 +138,17 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 		return Item{}, errors.New("該当の物品をすでに所有しています")
 	}
 
-	db.Create(&owner)
-	db.Model(&item).Association("Owners").Append(&owner)
-	_, err := CreateLog(Log{ItemID: item.ID, UserID: owner.UserID, OwnerID: owner.UserID, Type: 2, Count: owner.Count})
+	err := db.Create(&owner).Error
+	if err != nil {
+		return Item{}, err
+	}
+
+	err = db.Model(&item).Association("Owners").Append(&owner).Error
+	if err != nil {
+		return Item{}, err
+	}
+
+	_, err = CreateLog(Log{ItemID: item.ID, UserID: owner.UserID, OwnerID: owner.UserID, Type: 2, Count: owner.Count})
 	if err != nil {
 		return Item{}, err
 	}
