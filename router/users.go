@@ -21,7 +21,10 @@ func GetUsersMe(c echo.Context) error {
 
 //GetUsers GET /users
 func GetUsers(c echo.Context) error {
-	res := model.GetUsers()
+	res, err := model.GetUsers()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
 	return c.JSON(http.StatusOK, res)
 }
 
