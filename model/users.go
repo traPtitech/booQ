@@ -2,6 +2,8 @@ package model
 
 import (
 	"errors"
+
+	"github.com/jinzhu/gorm"
 )
 
 // User userの構造体
@@ -13,8 +15,8 @@ type User struct {
 }
 
 type RequestPutUsersBody struct {
-	Name string `json:"name"`
-	Admin bool `json:"admin"`
+	Name  string `json:"name"`
+	Admin bool   `json:"admin"`
 }
 
 // TableName dbのテーブル名を指定する
@@ -23,18 +25,24 @@ func (user *User) TableName() string {
 }
 
 // GetUsers 全userを取得する
-func GetUsers() []User {
+func GetUsers() ([]User, error) {
 	res := []User{}
-	db.Find(&res)
-	return res
+	err := db.Find(&res).Error
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 // GetUserByName userをNameから取得する
 func GetUserByName(name string) (User, error) {
 	res := User{}
-	db.Where("name = ?", name).First(&res)
-	if name == "" {
-		return User{}, errors.New("nameが存在しません")
+	err := db.Where("name = ?", name).First(&res).Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return User{}, errors.New("nameが存在しません")
+		}
+		return User{}, err
 	}
 	return res, nil
 }
@@ -42,9 +50,12 @@ func GetUserByName(name string) (User, error) {
 // GetUserByID userをIDから取得する
 func GetUserByID(id int) (User, error) {
 	res := User{}
-	db.Where("id = ?", id).First(&res)
-	if res.Name == "" {
-		return User{}, errors.New("該当するNameがありません")
+	err := db.Where("id = ?", id).First(&res).Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return User{}, errors.New("該当するNameがありません")
+		}
+		return User{}, err
 	}
 	return res, nil
 }
@@ -54,7 +65,10 @@ func CreateUser(user User) (User, error) {
 	if user.Name == "" {
 		return User{}, errors.New("Nameが存在しません")
 	}
-	db.Create(&user)
+	err := db.Create(&user).Error
+	if err != nil {
+		return User{}, err
+	}
 	return user, nil
 }
 
@@ -64,13 +78,19 @@ func UpdateUser(newUser User) (User, error) {
 	if newUser.Name == "" {
 		return User{}, errors.New("Nameが存在しません")
 	}
-	db.Where("name = ?", newUser.Name).Find(&user)
-	if user.Name == "" {
-		return User{}, errors.New("指定したuserが存在しません")
+	err := db.Where("name = ?", newUser.Name).Find(&user).Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return User{}, errors.New("指定したuserが存在しません")
+		}
+		return User{}, err
 	}
 	user.DisplayName = newUser.DisplayName
 	user.Admin = newUser.Admin
-	db.Save(&user)
+	err = db.Save(&user).Error
+	if err != nil {
+		return User{}, err
+	}
 	return user, nil
 }
 

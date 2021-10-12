@@ -45,7 +45,10 @@ func CreateLog(log Log) (Log, error) {
 	if err != nil {
 		return Log{}, errors.New("Ownerが存在しません")
 	}
-	db.Create(&log)
+	err = db.Create(&log).Error
+	if err != nil {
+		return Log{}, err
+	}
 	return log, nil
 }
 

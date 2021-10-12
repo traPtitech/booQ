@@ -43,19 +43,21 @@ func TestCreateItem(t *testing.T) {
 }
 
 func TestRegisterOwner(t *testing.T) {
-	user, _ := CreateUser(User{Name: "testRegisterOwnerUser"})
-	var owner Owner
-	owner.UserID = user.ID
-	owner.Rentalable = true
-	owner.Count = 1
-	item, _ := CreateItem(Item{Name: "testRegisterOwnerItem"})
-	item2, err := RegisterOwner(owner, item)
 	t.Run("make success", func(t *testing.T) {
+		user, err := CreateUser(User{Name: "testRegisterOwnerUser"})
 		assert := assert.New(t)
-		assert.Equal(user.ID, item2.Owners[0].UserID)
-		assert.Equal(user.Name, item2.Owners[0].User.Name)
+		assert.NoError(err)
+		var owner Owner
+		owner.UserID = user.ID
+		owner.Rentalable = true
+		owner.Count = 1
+		item, err := CreateItem(Item{Name: "testRegisterOwnerItem"})
+		assert.NoError(err)
+		item2, err := RegisterOwner(owner, item)
 		assert.NoError(err)
 		assert.NotEmpty(item2)
+		assert.Equal(user.ID, item2.Owners[0].UserID)
+		assert.Equal(user.Name, item2.Owners[0].User.Name)
 	})
 }
 
