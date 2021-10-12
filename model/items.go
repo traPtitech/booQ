@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jinzhu/gorm"
 )
@@ -151,6 +152,7 @@ func RegisterOwner(owner Owner, item Item) (Item, error) {
 		return Item{}, errors.New("該当の物品をすでに所有しています")
 	}
 
+	fmt.Printf("db.Create(&owner) %+v\n", owner)
 	err := db.Create(&owner).Error
 	if err != nil {
 		return Item{}, err

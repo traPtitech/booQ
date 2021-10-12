@@ -199,6 +199,7 @@ func PostOwners(c echo.Context) error {
 	if owner.Count < 0 {
 		return c.NoContent(http.StatusBadRequest)
 	}
+	fmt.Printf("PostOwners %+v\n", owner)
 	res, err := model.RegisterOwner(owner, item)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
