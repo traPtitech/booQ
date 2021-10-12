@@ -118,7 +118,10 @@ func PutItem(c echo.Context) error {
 		return c.JSON(http.StatusForbidden, err)
 	}
 
-	item = model.UpdateItem(&item, &body, user.Admin)
+	item, err = model.UpdateItem(&item, &body, user.Admin)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 
 	return c.JSON(http.StatusOK, item)
 }
