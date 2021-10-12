@@ -25,3 +25,5 @@ booQ
 
 !/uploads/.gitkeep
 /uploads/*
+
+.tool-versions
