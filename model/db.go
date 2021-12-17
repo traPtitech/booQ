@@ -44,12 +44,17 @@ func EstablishConnection() (*gorm.DB, error) {
 		host = "localhost"
 	}
 
+	port := os.Getenv("MYSQL_PORT")
+	if port == "" {
+		port = "3306"
+	}
+
 	dbname := os.Getenv("MYSQL_DATABASE")
 	if dbname == "" {
 		dbname = "booq"
 	}
 
-	_db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", user, pass, host, dbname)+"?parseTime=true&loc=Asia%2FTokyo&charset=utf8mb4")
+	_db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, dbname)+"?parseTime=true&loc=Asia%2FTokyo&charset=utf8mb4")
 	db = _db
 	db.BlockGlobalUpdate(true)
 	return db, err
