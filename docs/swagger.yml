@@ -628,7 +628,6 @@ components:
         アイテム種別
         0: 個人所有
         1: 備品
-        2: 支援課所有
       enum:
         - 0
         - 1
@@ -636,11 +635,9 @@ components:
       x-enum-varnames:
         - individual
         - equipment
-        - sienka
       x-enum-descriptions:
         - 個人所有
         - 備品
-        - 支援課所有
     itemPosted:
       type: "object"
       properties:
