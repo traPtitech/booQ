@@ -418,27 +418,39 @@ func SearchItems(searchString string) ([]Item, error) {
 // SearchItemsRefactored iroiro
 func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
 	items := []Item{}
-	dbQuery := db.Set("gorm:auto_preload", true).
-		Preload("Logs.User").
-		Preload("Comments.User").
-		Preload("RentalUsers.Owner")
+	dbQuery := db
 
 	if query.MeID != 0 && query.RentalUserID != 0 {
 		dbQuery = dbQuery.
-			Preload("RentalUsers.User", "id = ?", query.RentalUserID)
+			Preload("RentalUsers", "user_id = ?", query.RentalUserID)
 	} else {
 		dbQuery = dbQuery.
-			Preload("RentalUsers.User")
+			Preload("RentalUsers")
 	}
 
 	if query.OwnerName != "" {
+		owner, err := GetUserByName(query.OwnerName)
+		if err != nil {
+			return nil, err
+		}
+		if owner.ID == 0 {
+			return []Item{}, errors.New("該当のUserが存在しません")
+		}
 		dbQuery = dbQuery.
-			Preload("Owners.User", "name = ?", query.OwnerName)
+			Preload("Owners", "user_id = ?", query.OwnerName)
 	} else {
 		dbQuery = dbQuery.
-			Preload("Owners.User")
-
+			Preload("Owners")
 	}
+
+	dbQuery = dbQuery.Preload("Logs").
+		Preload("Comments").
+		Preload("Likes").
+		Preload("Logs.User").
+		Preload("Comments.User").
+		Preload("RentalUsers.User").
+		Preload("RentalUsers.Owner").
+		Preload("Owners.User")
 
 	if query.SearchString != "" {
 		dbQuery = dbQuery.Where("name LIKE ?", "%"+query.SearchString+"%")
@@ -460,7 +472,7 @@ func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
 
 		item.IsLiked = false
 		for _, like := range item.Likes {
-			if like.ID == uint(query.MeID) {
+			if like.ID == query.MeID {
 				item.IsLiked = true
 				break
 			}
