@@ -434,7 +434,7 @@ func TestSearchItemByRental(t *testing.T) {
 		assert.NotEmpty(successItem2)
 		assert.NoError(err)
 		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
-		items, err := SearchItemByRental(user.ID, 0)
+		items, err := SearchItemsRefactored(SearchItemsQuery{RentalUserID: user.ID, MeID: 0})
 		assert.NotEmpty(successItem2)
 		assert.NoError(err)
 		exist1 := false
@@ -461,7 +461,7 @@ func TestSearchItemByOwner(t *testing.T) {
 	t.Run("failuer", func(t *testing.T) {
 		assert := assert.New(t)
 		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
-		items, err := SearchItemByOwner("testSearchItemByOwnerFailOwner", 0)
+		items, err := SearchItemsRefactored(SearchItemsQuery{OwnerName: "testSearchItemByOwnerFailOwner", MeID: 0})
 		assert.Empty(items)
 		assert.Error(err)
 	})
@@ -487,7 +487,7 @@ func TestSearchItemByOwner(t *testing.T) {
 		assert.NotEmpty(item1)
 		assert.NoError(err)
 		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
-		items, err := SearchItemByOwner(ownerUser.Name, 0)
+		items, err := SearchItemsRefactored(SearchItemsQuery{OwnerName: ownerUser.Name, MeID: 0})
 		assert.NotEmpty(items)
 		assert.NoError(err)
 		exist1 := false
