@@ -420,9 +420,9 @@ func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
 	items := []Item{}
 	dbQuery := db
 
-	if query.MeID != 0 && query.RentalUserID != 0 {
+	if query.RentalUserID != 0 {
 		dbQuery = dbQuery.
-			Preload("RentalUsers", "user_id = ?", query.RentalUserID)
+			Preload("RentalUsers", "user_id = ? AND count < 0", query.RentalUserID)
 	} else {
 		dbQuery = dbQuery.
 			Preload("RentalUsers")
@@ -477,15 +477,7 @@ func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
 				break
 			}
 		}
-
-		if query.RentalUserID != 0 {
-			for _, rentalUser := range item.RentalUsers {
-				if rentalUser.Count < 0 {
-					res = append(res, item)
-					break
-				}
-			}
-		}
+		res = append(res, item)
 	}
 	return res, nil
 }
