@@ -425,7 +425,8 @@ func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
 
 	if query.MeID != 0 && query.RentalUserID != 0 {
 		dbQuery = dbQuery.
-			Preload("RentalUsers.User", "id = ? AND count > 0", query.RentalUserID)
+			Preload("RentalUsers", "count > 0").
+			Preload("RentalUsers.User", "id = ?", query.RentalUserID)
 	} else {
 		dbQuery = dbQuery.
 			Preload("RentalUsers.User")
