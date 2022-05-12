@@ -47,6 +47,13 @@ type RequestPostOwnersBody struct {
 	Count      int  `json:"count"`
 }
 
+type SearchItemsQuery struct {
+	SearchString string
+	RentalUserID int
+	MeID         int
+	OwnerName    string
+}
+
 // TableName dbのテーブル名を指定する
 func (item *Item) TableName() string {
 	return "items"
@@ -403,6 +410,59 @@ func SearchItems(searchString string) ([]Item, error) {
 		}
 		item.LikeCounts = len(item.Likes)
 		item.Likes = []User{}
+		res[i] = item
+	}
+	return res, nil
+}
+
+// SearchItemsRefactored iroiro
+func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
+	res := []Item{}
+	dbQuery := db.Set("gorm:auto_preload", true).
+		Preload("Logs.User").
+		Preload("Comments.User").
+		Preload("RentalUsers.Owner")
+
+	if query.MeID != 0 && query.RentalUserID != 0 {
+		dbQuery = dbQuery.
+			Preload("RentalUsers.User", "id = ? AND count > 0", query.RentalUserID)
+	} else {
+		dbQuery = dbQuery.
+			Preload("RentalUsers.User")
+	}
+
+	if query.OwnerName != "" {
+		dbQuery = dbQuery.
+			Preload("Owners.User", "name = ?", query.OwnerName)
+	} else {
+		dbQuery = dbQuery.
+			Preload("Owners.User")
+
+	}
+
+	if query.SearchString != "" {
+		dbQuery = dbQuery.Where("name LIKE ?", "%"+query.SearchString+"%")
+	}
+
+	err := dbQuery.Find(&res).Error
+	if err != nil {
+		return []Item{}, err
+	}
+	for i, item := range res {
+		var err error
+		item.LatestLogs, err = GetLatestLogs(item.Logs)
+		if err != nil {
+			return []Item{}, err
+		}
+		item.LikeCounts = len(item.Likes)
+
+		item.IsLiked = false
+		for _, like := range item.Likes {
+			if like.ID == uint(query.MeID) {
+				item.IsLiked = true
+				break
+			}
+		}
 		res[i] = item
 	}
 	return res, nil

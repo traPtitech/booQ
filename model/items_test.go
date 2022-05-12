@@ -220,7 +220,7 @@ func TestSearchItems(t *testing.T) {
 		}
 		assert.NotEmpty(items)
 
-		items, err = SearchItems("SearchItemItem")
+		items, err = SearchItemsRefactored(SearchItemsQuery{SearchString: "SearchItemItem"})
 		assert.NoError(err)
 		var existSearchItem = false
 		var existSearchItem1 = false
