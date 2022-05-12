@@ -417,7 +417,7 @@ func SearchItems(searchString string) ([]Item, error) {
 
 // SearchItemsRefactored iroiro
 func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
-	res := []Item{}
+	items := []Item{}
 	dbQuery := db.Set("gorm:auto_preload", true).
 		Preload("Logs.User").
 		Preload("Comments.User").
@@ -425,7 +425,6 @@ func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
 
 	if query.MeID != 0 && query.RentalUserID != 0 {
 		dbQuery = dbQuery.
-			Preload("RentalUsers", "count < 0").
 			Preload("RentalUsers.User", "id = ?", query.RentalUserID)
 	} else {
 		dbQuery = dbQuery.
@@ -445,11 +444,13 @@ func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
 		dbQuery = dbQuery.Where("name LIKE ?", "%"+query.SearchString+"%")
 	}
 
-	err := dbQuery.Find(&res).Error
+	err := dbQuery.Find(&items).Error
 	if err != nil {
 		return []Item{}, err
 	}
-	for i, item := range res {
+
+	res := []Item{}
+	for _, item := range res {
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
@@ -464,7 +465,15 @@ func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
 				break
 			}
 		}
-		res[i] = item
+
+		if query.RentalUserID != 0 {
+			for _, rentalUser := range item.RentalUsers {
+				if rentalUser.Count < 0 {
+					res = append(res, item)
+					break
+				}
+			}
+		}
 	}
 	return res, nil
 }
