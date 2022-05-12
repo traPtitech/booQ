@@ -22,11 +22,6 @@ func TestCreateItem(t *testing.T) {
 		assert.Error(err)
 		assert.Empty(item)
 
-		_, _ = CreateItem(Item{Name: "testCreateItemFail", Code: "1234567891012"})
-		item, err = CreateItem(Item{Name: "testCreateItemFail"})
-		assert.Error(err)
-		assert.Empty(item)
-
 		item, err = CreateItem(Item{Name: "testCreateItemFail1", Code: "1234567891012"})
 		assert.Error(err)
 		assert.Empty(item)
