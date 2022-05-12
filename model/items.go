@@ -49,8 +49,8 @@ type RequestPostOwnersBody struct {
 
 type SearchItemsQuery struct {
 	SearchString string
-	RentalUserID int
-	MeID         int
+	RentalUserID uint
+	MeID         uint
 	OwnerName    string
 }
 

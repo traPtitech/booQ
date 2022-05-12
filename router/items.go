@@ -16,28 +16,18 @@ import (
 // GetItems GET /items
 func GetItems(c echo.Context) error {
 	me := c.Get("user").(model.User)
-	ownerName := c.QueryParam("user")
-	if ownerName != "" {
-		user, err := model.GetUserByName(ownerName)
+	searchQuery := model.SearchItemsQuery{
+		SearchString: c.QueryParam("search"),
+		OwnerName:    c.QueryParam("user"),
+	}
+	if searchQuery.OwnerName != "" {
+		user, err := model.GetUserByName(searchQuery.OwnerName)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)
 		}
 		if user.ID == 0 {
 			return c.JSON(http.StatusBadRequest, errors.New("指定してるNameが不正です"))
 		}
-		res, err := model.SearchItemByOwner(ownerName, me.ID)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
-		}
-		return c.JSON(http.StatusOK, res)
-	}
-	searchString := c.QueryParam("search")
-	if searchString != "" {
-		res, err := model.SearchItems(searchString)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
-		}
-		return c.JSON(http.StatusOK, res)
 	}
 	rentalName := c.QueryParam("rental")
 	if rentalName != "" {
@@ -48,13 +38,11 @@ func GetItems(c echo.Context) error {
 		if user.ID == 0 {
 			return c.JSON(http.StatusBadRequest, errors.New("指定してるNameが不正です"))
 		}
-		res, err := model.SearchItemByRental(user.ID, me.ID)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
-		}
-		return c.JSON(http.StatusOK, res)
+		searchQuery.RentalUserID = user.ID
+		searchQuery.MeID = me.ID
 	}
-	res, err := model.GetItems(me.ID)
+
+	res, err := model.SearchItemsRefactored(searchQuery)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
