@@ -139,7 +139,7 @@ func createMessage(log model.Log, bodyCount int, item model.Item, user model.Use
 	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", item.Name, os.Getenv("HOST"), item.ID)
 	if item.Type != 0 {
 		purpose := ""
-		count := int64(math.Abs(float64(bodyCount)))
+		count := int(math.Abs(float64(bodyCount)))
 		if log.Type == 0 {
 			action = "出"
 			purpose = fmt.Sprintf("目的: %v", log.Purpose)
