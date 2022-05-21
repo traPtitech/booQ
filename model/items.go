@@ -130,6 +130,9 @@ func CreateItem(item Item) (Item, error) {
 	if err != nil && !gorm.IsRecordNotFoundError(err) {
 		return Item{}, err
 	}
+	if reddiedItem.Name != "" {
+		return Item{}, errors.New("すでに同じItemが存在しています")
+	}
 	err = db.Create(&item).Error
 	if err != nil {
 		return Item{}, err
