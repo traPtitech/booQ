@@ -21,6 +21,10 @@ func TestCreateItem(t *testing.T) {
 		item, err := CreateItem(Item{})
 		assert.Error(err)
 		assert.Empty(item)
+
+		item, err = CreateItem(Item{Name: "testCreateItemFail1", Code: "1234567891012"})
+		assert.Error(err)
+		assert.Empty(item)
 	})
 
 	t.Run("success", func(t *testing.T) {
