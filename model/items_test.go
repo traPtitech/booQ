@@ -30,6 +30,11 @@ func TestCreateItem(t *testing.T) {
 		item, err = CreateItem(Item{Name: "testCreateItemFail1", Code: "1234567891012"})
 		assert.Error(err)
 		assert.Empty(item)
+
+		_, _ = CreateItem(Item{Name: "testCreateItemDuplicateFail", Type: 1})
+		item, err = CreateItem(Item{Name: "testCreateItemDuplicateFail", Type: 1})
+		assert.Error(err)
+		assert.Empty(item)
 	})
 
 	t.Run("success", func(t *testing.T) {
@@ -37,6 +42,11 @@ func TestCreateItem(t *testing.T) {
 		assert := assert.New(t)
 
 		item, err := CreateItem(Item{Name: "testCreateItemSuccess"})
+		assert.NoError(err)
+		assert.NotEmpty(item)
+
+		_, _ = CreateItem(Item{Name: "testCreateItemDuplicateSuccess", Type: 1})
+		item, err = CreateItem(Item{Name: "testCreateItemDuplicateSuccess", Type: 0})
 		assert.NoError(err)
 		assert.NotEmpty(item)
 	})
