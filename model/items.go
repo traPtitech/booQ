@@ -47,6 +47,13 @@ type RequestPostOwnersBody struct {
 	Count      int  `json:"count"`
 }
 
+type SearchItemsQuery struct {
+	SearchString string
+	RentalUserID uint
+	MeID         uint
+	OwnerName    string
+}
+
 // TableName dbのテーブル名を指定する
 func (item *Item) TableName() string {
 	return "items"
@@ -404,6 +411,73 @@ func SearchItems(searchString string) ([]Item, error) {
 		item.LikeCounts = len(item.Likes)
 		item.Likes = []User{}
 		res[i] = item
+	}
+	return res, nil
+}
+
+// SearchItemsRefactored iroiro
+func SearchItemsRefactored(query SearchItemsQuery) ([]Item, error) {
+	items := []Item{}
+	dbQuery := db
+
+	if query.RentalUserID != 0 {
+		dbQuery = dbQuery.
+			Preload("RentalUsers", "user_id = ? AND count < 0", query.RentalUserID)
+	} else {
+		dbQuery = dbQuery.
+			Preload("RentalUsers")
+	}
+
+	if query.OwnerName != "" {
+		owner, err := GetUserByName(query.OwnerName)
+		if err != nil {
+			return nil, err
+		}
+		if owner.ID == 0 {
+			return []Item{}, errors.New("該当のUserが存在しません")
+		}
+		dbQuery = dbQuery.
+			Preload("Owners", "user_id = ?", query.OwnerName)
+	} else {
+		dbQuery = dbQuery.
+			Preload("Owners")
+	}
+
+	dbQuery = dbQuery.Preload("Logs").
+		Preload("Comments").
+		Preload("Likes").
+		Preload("Logs.User").
+		Preload("Comments.User").
+		Preload("RentalUsers.User").
+		Preload("RentalUsers.Owner").
+		Preload("Owners.User")
+
+	if query.SearchString != "" {
+		dbQuery = dbQuery.Where("name LIKE ?", "%"+query.SearchString+"%")
+	}
+
+	err := dbQuery.Find(&items).Error
+	if err != nil {
+		return []Item{}, err
+	}
+
+	res := []Item{}
+	for _, item := range res {
+		var err error
+		item.LatestLogs, err = GetLatestLogs(item.Logs)
+		if err != nil {
+			return []Item{}, err
+		}
+		item.LikeCounts = len(item.Likes)
+
+		item.IsLiked = false
+		for _, like := range item.Likes {
+			if like.ID == query.MeID {
+				item.IsLiked = true
+				break
+			}
+		}
+		res = append(res, item)
 	}
 	return res, nil
 }
