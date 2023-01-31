@@ -1,4 +1,4 @@
-FROM golang:1.15.0-alpine AS build
+FROM golang:1.19.0-alpine AS build
 ENV CGO_ENABLED=0
 ENV DOCKERIZE_VERSION v0.6.1
 RUN apk add --update --no-cache git && \
@@ -6,12 +6,11 @@ RUN apk add --update --no-cache git && \
   cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
   apk del tzdata && \
   rm -rf /var/cache/apk/*
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
-  tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
-  rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-WORKDIR /go/src/github.com/traPtitech/booQ
-RUN go get github.com/pilu/fresh
-COPY ./go.* ./
+WORKDIR /app
+RUN go install github.com/cosmtrek/air@latest
+
+COPY go.mod go.sum ./
 RUN go mod download
-COPY . .
+
+CMD ["air"]
