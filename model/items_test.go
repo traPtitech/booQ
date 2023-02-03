@@ -122,18 +122,18 @@ func TestGetItems(t *testing.T) {
 		assert := assert.New(t)
 
 		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
-		items, err := GetItems(0)
+		res, err := GetItems(0)
 		assert.NoError(err)
-
-		for _, value := range items {
-			if value.Name == "testAllItemItem" {
-				assert.Equal(user.ID, value.Owners[0].UserID)
-				assert.Equal(user.Name, value.Owners[0].User.Name)
+		assert.NotEmpty(res)
+		for _, value := range res {
+			item := value.Item
+			if item.Name == "testAllItemItem" {
+				assert.Equal(user.ID, item.Owners[0].UserID)
+				assert.Equal(user.Name, item.Owners[0].User.Name)
 				break
 			}
 			continue
 		}
-		assert.NotEmpty(items)
 	})
 }
 
@@ -217,20 +217,20 @@ func TestSearchItems(t *testing.T) {
 		assert := assert.New(t)
 
 		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
-		items, err := GetItems(0)
+		res, err := GetItems(0)
 		assert.NoError(err)
-
-		for _, value := range items {
-			if value.Name == "testSearchItemItem" {
-				assert.Equal(user.ID, value.Owners[0].UserID)
-				assert.Equal(user.Name, value.Owners[0].User.Name)
+		assert.NotEmpty(res)
+		for _, value := range res {
+			item := value.Item
+			if item.Name == "testSearchItemItem" {
+				assert.Equal(user.ID, item.Owners[0].UserID)
+				assert.Equal(user.Name, item.Owners[0].User.Name)
 				break
 			}
 			continue
 		}
-		assert.NotEmpty(items)
 
-		items, err = SearchItems("SearchItemItem")
+		items, err := SearchItems("SearchItemItem")
 		assert.NoError(err)
 		var existSearchItem = false
 		var existSearchItem1 = false
@@ -444,13 +444,14 @@ func TestSearchItemByRental(t *testing.T) {
 		assert.NotEmpty(successItem2)
 		assert.NoError(err)
 		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
-		items, err := SearchItemByRental(user.ID, 0)
+		res, err := SearchItemByRental(user.ID, 0)
 		assert.NotEmpty(successItem2)
 		assert.NoError(err)
 		exist1 := false
 		exist2 := false
 		exist3 := false
-		for _, item := range items {
+		for _, value := range res {
+			item := value.Item
 			if item.Name == item1.Name {
 				exist1 = true
 			}
@@ -497,12 +498,13 @@ func TestSearchItemByOwner(t *testing.T) {
 		assert.NotEmpty(item1)
 		assert.NoError(err)
 		// TODO: ちゃんとlikeしてるやつはIsLikedがtrueになってるかチェックする
-		items, err := SearchItemByOwner(ownerUser.Name, 0)
-		assert.NotEmpty(items)
+		res, err := SearchItemByOwner(ownerUser.Name, 0)
+		assert.NotEmpty(res)
 		assert.NoError(err)
 		exist1 := false
 		exist2 := false
-		for _, item := range items {
+		for _, value := range res {
+			item := value.Item
 			if item.Name == item1.Name {
 				for _, nowOwner := range item.Owners {
 					if nowOwner.User.Name == ownerUser.Name {
