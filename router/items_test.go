@@ -230,12 +230,12 @@ func TestGetItems(t *testing.T) {
 		e.ServeHTTP(rec, req)
 
 		assert.Equal(http.StatusOK, rec.Code)
-		gotItemsSuccess1 := []model.Item{}
+		gotItemsSuccess1 := []model.GetItemResponse{}
 		_ = json.NewDecoder(rec.Body).Decode(&gotItemsSuccess1)
 		assert.NotEmpty(gotItemsSuccess1)
 		exist1 := false
 		for _, gotItem := range gotItemsSuccess1 {
-			if item.Name == gotItem.Name {
+			if item.Name == gotItem.Item.Name {
 				exist1 = true
 			}
 		}
@@ -247,12 +247,12 @@ func TestGetItems(t *testing.T) {
 		e.ServeHTTP(rec, req)
 
 		assert.Equal(http.StatusOK, rec.Code)
-		gotItemsSuccess2 := []model.Item{}
+		gotItemsSuccess2 := []model.GetItemResponse{}
 		_ = json.NewDecoder(rec.Body).Decode(&gotItemsSuccess2)
 		assert.NotEmpty(gotItemsSuccess2)
 		exist2 := false
 		for _, gotItem := range gotItemsSuccess2 {
-			if item.Name == gotItem.Name {
+			if item.Name == gotItem.Item.Name {
 				exist2 = true
 			}
 		}
