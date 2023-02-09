@@ -48,7 +48,7 @@ type RequestPostOwnersBody struct {
 
 type GetItemResponse struct {
 	IsLiked bool `json:"isLiked"`
-	Item    Item `json:"item"`
+	Item    `json:"item"`
 }
 
 // TableName dbのテーブル名を指定する
