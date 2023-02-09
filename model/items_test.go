@@ -126,10 +126,9 @@ func TestGetItems(t *testing.T) {
 		assert.NoError(err)
 		assert.NotEmpty(res)
 		for _, value := range res {
-			item := value.Item
-			if item.Name == "testAllItemItem" {
-				assert.Equal(user.ID, item.Owners[0].UserID)
-				assert.Equal(user.Name, item.Owners[0].User.Name)
+			if value.Name == "testAllItemItem" {
+				assert.Equal(user.ID, value.Owners[0].UserID)
+				assert.Equal(user.Name, value.Owners[0].User.Name)
 				break
 			}
 			continue
@@ -221,10 +220,9 @@ func TestSearchItems(t *testing.T) {
 		assert.NoError(err)
 		assert.NotEmpty(res)
 		for _, value := range res {
-			item := value.Item
-			if item.Name == "testSearchItemItem" {
-				assert.Equal(user.ID, item.Owners[0].UserID)
-				assert.Equal(user.Name, item.Owners[0].User.Name)
+			if value.Name == "testSearchItemItem" {
+				assert.Equal(user.ID, value.Owners[0].UserID)
+				assert.Equal(user.Name, value.Owners[0].User.Name)
 				break
 			}
 			continue
@@ -451,14 +449,13 @@ func TestSearchItemByRental(t *testing.T) {
 		exist2 := false
 		exist3 := false
 		for _, value := range res {
-			item := value.Item
-			if item.Name == item1.Name {
+			if value.Name == item1.Name {
 				exist1 = true
 			}
-			if item.Name == item2.Name {
+			if value.Name == item2.Name {
 				exist2 = true
 			}
-			if item.Name == item3.Name {
+			if value.Name == item3.Name {
 				exist3 = true
 			}
 		}
@@ -504,16 +501,15 @@ func TestSearchItemByOwner(t *testing.T) {
 		exist1 := false
 		exist2 := false
 		for _, value := range res {
-			item := value.Item
-			if item.Name == item1.Name {
-				for _, nowOwner := range item.Owners {
+			if value.Name == item1.Name {
+				for _, nowOwner := range value.Owners {
 					if nowOwner.User.Name == ownerUser.Name {
 						exist1 = true
 					}
 				}
 			}
-			if item.Name == item2.Name {
-				for _, nowOwner := range item.Owners {
+			if value.Name == item2.Name {
+				for _, nowOwner := range value.Owners {
 					if nowOwner.User.Name == ownerUser.Name {
 						exist2 = true
 					}

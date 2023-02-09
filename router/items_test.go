@@ -235,7 +235,7 @@ func TestGetItems(t *testing.T) {
 		assert.NotEmpty(gotItemsSuccess1)
 		exist1 := false
 		for _, gotItem := range gotItemsSuccess1 {
-			if item.Name == gotItem.Item.Name {
+			if item.Name == gotItem.Name {
 				exist1 = true
 			}
 		}
@@ -252,7 +252,7 @@ func TestGetItems(t *testing.T) {
 		assert.NotEmpty(gotItemsSuccess2)
 		exist2 := false
 		for _, gotItem := range gotItemsSuccess2 {
-			if item.Name == gotItem.Item.Name {
+			if item.Name == gotItem.Name {
 				exist2 = true
 			}
 		}
