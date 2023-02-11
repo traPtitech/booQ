@@ -24,6 +24,12 @@ type Item struct {
 	IsLiked     bool          `gorm:"-" json:"isLiked"`
 }
 
+const (
+	PersonalItem = iota
+	TrapItem
+	SienkaItem
+)
+
 type Owner struct {
 	GormModel
 	UserID     uint `gorm:"type:int;not null" json:"ownerId"`
@@ -197,9 +203,9 @@ func AddOwner(owner Owner, item Item) (Item, error) {
 			return Item{}, errors.New("現在貸し出し中の物品が存在するのでそれよりも少ない数にはできません")
 		}
 		if owner.Count-nowOwner.Count < 0 {
-			log.Type = 3
+			log.Type = ReduceItem
 		} else {
-			log.Type = 2
+			log.Type = AddItem
 		}
 		log.Count = owner.Count - nowOwner.Count
 		nowOwner.Count = owner.Count
