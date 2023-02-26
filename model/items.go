@@ -21,7 +21,6 @@ type Item struct {
 	Comments    []Comment     `json:"comments"`
 	Likes       []User        `gorm:"many2many:like_maps;" json:"likes"`
 	LikeCounts  int           `gorm:"-" json:"likeCounts"`
-	IsLiked     bool          `gorm:"-" json:"isLiked"`
 }
 
 type Owner struct {
@@ -45,6 +44,11 @@ type RequestPostOwnersBody struct {
 	UserID     int  `json:"userId"`
 	Rentalable bool `json:"rentalable"`
 	Count      int  `json:"count"`
+}
+
+type GetItemResponse struct {
+	IsLiked bool `json:"isLiked"`
+	Item
 }
 
 // TableName dbのテーブル名を指定する
@@ -95,27 +99,29 @@ func GetItemByName(name string) (Item, error) {
 }
 
 // GetItems 全itemを取得する
-func GetItems(meID uint) ([]Item, error) {
-	res := []Item{}
-	err := db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&res).Error
+func GetItems(meID uint) ([]GetItemResponse, error) {
+	items := []Item{}
+	err := db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&items).Error
 	if err != nil {
-		return []Item{}, err
+		return []GetItemResponse{}, err
 	}
-	for i, item := range res {
+	res := make([]GetItemResponse, 0, len(items))
+	for _, item := range items {
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
-			return []Item{}, err
+			return []GetItemResponse{}, err
 		}
-		item.IsLiked = false
+		isLiked := false
 		for _, like := range item.Likes {
 			if like.ID == meID {
-				item.IsLiked = true
+				isLiked = true
 				break
 			}
 		}
 		item.LikeCounts = len(item.Likes)
 		item.Likes = []User{}
-		res[i] = item
+		r := GetItemResponse{IsLiked: isLiked, Item: item}
+		res = append(res, r)
 	}
 	return res, nil
 }
@@ -322,68 +328,84 @@ func CancelLike(itemID, userID uint) (Item, error) {
 }
 
 // SearchItemsByOwner itemsをOwnerNameから取得する
-func SearchItemByOwner(ownerName string, meID uint) ([]Item, error) {
-	res := []Item{}
+func SearchItemByOwner(ownerName string, meID uint) ([]GetItemResponse, error) {
 	items := []Item{}
 	owner, err := GetUserByName(ownerName)
 	if owner.ID == 0 {
-		return []Item{}, errors.New("該当のUserが存在しません")
+		return []GetItemResponse{}, errors.New("該当のUserが存在しません")
 	}
 	if err != nil {
-		return []Item{}, err
+		return []GetItemResponse{}, err
 	}
-	err = db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Preload("Owners.User").Find(&res).Error
+	err = db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Preload("Owners.User").Find(&items).Error
 	if err != nil {
-		return []Item{}, err
+		return []GetItemResponse{}, err
 	}
-	for _, item := range res {
-		var err error
-		item.LatestLogs, err = GetLatestLogs(item.Logs)
-		if err != nil {
-			return []Item{}, err
-		}
-		item.IsLiked = false
-		for _, like := range item.Likes {
-			if like.ID == meID {
-				item.IsLiked = true
-				break
-			}
-		}
-		for _, owner := range item.Owners {
-			if owner.User.Name == ownerName {
-				items = append(items, item)
-			}
-		}
-	}
-	return items, nil
-}
-
-// SearchItemsByRental itemsをRentalUserNameから取得する
-func SearchItemByRental(rentalUserID uint, meID uint) ([]Item, error) {
-	items := []Item{}
-	res := []Item{}
-	err := db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&items).Error
-	if err != nil {
-		return []Item{}, err
-	}
+	res := make([]GetItemResponse, 0, len(items))
 	for _, item := range items {
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
-			return []Item{}, err
+			return []GetItemResponse{}, err
 		}
-		item.IsLiked = false
-		for _, like := range item.Likes {
-			if like.ID == meID {
-				item.IsLiked = true
+		match := false
+		for _, owner := range item.Owners {
+			if owner.User.Name == ownerName {
+				match = true
 				break
 			}
 		}
-		for _, rentalUser := range item.RentalUsers {
-			if rentalUser.UserID == rentalUserID && rentalUser.Count < 0 {
-				res = append(res, item)
+		if !match {
+			continue
+		}
+		isLiked := false
+		for _, like := range item.Likes {
+			if like.ID == meID {
+				isLiked = true
+				break
 			}
 		}
+		r := GetItemResponse{IsLiked: isLiked, Item: item}
+		res = append(res, r)
+	}
+	return res, nil
+}
+
+// SearchItemsByRental itemsをRentalUserNameから取得する
+func SearchItemByRental(rentalUserID uint, meID uint) ([]GetItemResponse, error) {
+	items := []Item{}
+	err := db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&items).Error
+	if err != nil {
+		return []GetItemResponse{}, err
+	}
+	res := make([]GetItemResponse, 0, len(items))
+	for _, item := range items {
+		var err error
+		item.LatestLogs, err = GetLatestLogs(item.Logs)
+		if err != nil {
+			return []GetItemResponse{}, err
+		}
+		match := false
+		for _, rentalUser := range item.RentalUsers {
+			if rentalUser.UserID == rentalUserID && rentalUser.Count < 0 {
+				match = true
+			}
+		}
+		if !match {
+			continue
+		}
+		isLiked := false
+		for _, like := range item.Likes {
+			if like.ID == meID {
+				isLiked = true
+				break
+			}
+		}
+		r := GetItemResponse{
+			IsLiked: isLiked,
+			Item:    item,
+		}
+		res = append(res, r)
 	}
 	return res, nil
 }
