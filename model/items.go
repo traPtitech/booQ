@@ -40,6 +40,14 @@ type RentalUser struct {
 	Count   int  `gorm:"type:int;" json:"count"`
 }
 
+type RequestPutItemBody struct {
+	Name        string `json:"name"`
+	Code        string `json:"code"`
+	Description string `json:"description"`
+	ImgURL      string `json:"imgUrl"`
+	Type        int    `json:"type"`
+}
+
 type RequestPostOwnersBody struct {
 	UserID     int  `json:"userId"`
 	Rentalable bool `json:"rentalable"`
@@ -438,25 +446,13 @@ func DestroyItem(item Item) (Item, error) {
 }
 
 // UpdateItem itemを変更する
-func UpdateItem(item *Item, body *map[string]interface{}, isAdmin bool) (Item, error) {
-	fields := []string{"name", "code", "description", "imgUrl"}
-	if isAdmin {
-		fields = append(fields, "type")
+func UpdateItem(item *Item, body *RequestPutItemBody, isAdmin bool) (Item, error) {
+	if !isAdmin {
+		body.Type = 0
 	}
-	err := db.Model(item).Updates(filterMap(body, fields)).Error
+	err := db.Model(item).Updates(body).Error
 	if err != nil {
 		return Item{}, err
 	}
-
 	return *item, nil
-}
-
-func filterMap(input *map[string]interface{}, keys []string) map[string]interface{} {
-	output := make(map[string]interface{})
-	for _, key := range keys {
-		if val, ok := (*input)[key]; ok {
-			output[key] = val
-		}
-	}
-	return output
 }

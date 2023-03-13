@@ -101,7 +101,7 @@ func GetItem(c echo.Context) error {
 func PutItem(c echo.Context) error {
 	ID := c.Param("id")
 	user := c.Get("user").(model.User)
-	body := map[string]interface{}{}
+	body := model.RequestPutItemBody{}
 	if err := c.Bind(&body); err != nil {
 		return err
 	}
