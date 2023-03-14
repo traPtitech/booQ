@@ -68,6 +68,9 @@ func PostItems(c echo.Context) error {
 	if err := c.Bind(&item); err != nil {
 		return err
 	}
+	if err := c.Validate(&item); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 	// item.Type=0⇒個人、1⇒trap所有、2⇒支援課
 	if item.Type != 0 && !user.Admin {
 		return c.NoContent(http.StatusForbidden)
@@ -104,6 +107,9 @@ func PutItem(c echo.Context) error {
 	body := model.RequestPutItemBody{}
 	if err := c.Bind(&body); err != nil {
 		return err
+	}
+	if err := c.Validate(&body); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 	itemID, err := strconv.Atoi(ID)
 	if err != nil {
@@ -155,6 +161,9 @@ func PostOwners(c echo.Context) error {
 	me := c.Get("user").(model.User)
 	body := model.RequestPostOwnersBody{}
 	if err := c.Bind(&body); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	if err := c.Validate(&body); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	itemID, err := strconv.Atoi(ID)
@@ -209,6 +218,9 @@ func PutOwners(c echo.Context) error {
 	me := c.Get("user").(model.User)
 	body := model.RequestPostOwnersBody{}
 	if err := c.Bind(&body); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	if err := c.Validate(&body); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	itemID, err := strconv.Atoi(ID)

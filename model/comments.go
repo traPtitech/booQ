@@ -2,6 +2,8 @@ package model
 
 import (
 	"errors"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // Comment commentの構造体
@@ -18,6 +20,12 @@ type ResponseGetComments struct {
 }
 type RequestPostCommentBody struct {
 	Text string `gorm:"type:text;not null" json:"text"`
+}
+
+func (body RequestPostCommentBody) Validate() error {
+	return validation.ValidateStruct(&body,
+		validation.Field(&body.Text, validation.Required),
+	)
 }
 
 // TableName dbのテーブル名を指定する

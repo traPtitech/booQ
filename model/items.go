@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/jinzhu/gorm"
 )
 
@@ -64,12 +66,50 @@ func (item *Item) TableName() string {
 	return "items"
 }
 
+// checkItemType Item.Typeのバリデーション
+func checkItemType(value interface{}) error {
+	i := value.(int)
+	// item.Type=0⇒個人、1⇒trap所有、2⇒支援課
+	if !(i == 0 || i == 1 || i == 2) {
+		return errors.New("must be 0, 1, or 2")
+	}
+	return nil
+}
+
+func (item Item) Validate() error {
+	return validation.ValidateStruct(&item,
+		validation.Field(&item.Name, validation.Required),
+		validation.Field(&item.Type, validation.By(checkItemType)),
+		validation.Field(&item.Code, validation.Required),
+		validation.Field(&item.Description, validation.Required),
+		validation.Field(&item.ImgURL, is.URL),
+	)
+}
+
 func (owner *Owner) TableName() string {
 	return "owners"
 }
 
 func (rentalUser *RentalUser) TableName() string {
 	return "rental_users"
+}
+
+func (body RequestPutItemBody) Validate() error {
+	return validation.ValidateStruct(&body,
+		validation.Field(&body.Name, validation.Required),
+		validation.Field(&body.Code, validation.Required),
+		validation.Field(&body.Description, validation.Required),
+		validation.Field(&body.ImgURL, is.URL),
+		validation.Field(&body.Type, validation.By(checkItemType)),
+	)
+}
+
+func (body RequestPostOwnersBody) Validate() error {
+	return validation.ValidateStruct(&body,
+		validation.Field(&body.UserID, validation.Required),
+		validation.Field(&body.Rentalable, validation.Skip),
+		validation.Field(&body.Count, validation.Required),
+	)
 }
 
 // GetItemByID IDからitemを取得する

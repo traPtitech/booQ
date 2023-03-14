@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // Log logの構造体
@@ -30,6 +32,24 @@ type RequestPostLogsBody struct {
 // TableName dbのテーブル名を指定する
 func (log *Log) TableName() string {
 	return "logs"
+}
+
+func checkLogsType(value interface{}) error {
+	t, _ := value.(int)
+	if !(t == 0 || t == 1 || t == 2 || t == 3) {
+		return errors.New("must be 1, 2, or 3")
+	}
+	return nil
+}
+
+func (body RequestPostLogsBody) Validate() error {
+	return validation.ValidateStruct(&body,
+		validation.Field(&body.OwnerID, validation.Required),
+		validation.Field(&body.Type, validation.By(checkLogsType)),
+		validation.Field(&body.Purpose, validation.Required),
+		validation.Field(&body.DueDate, validation.Date("2006-01-02")),
+		validation.Field(&body.Count, validation.Required),
+	)
 }
 
 // CreateLog logを作成する

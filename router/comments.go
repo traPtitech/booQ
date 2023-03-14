@@ -32,6 +32,9 @@ func PostComments(c echo.Context) error {
 	if err := c.Bind(&commentRequest); err != nil {
 		return err
 	}
+	if err := c.Validate(&commentRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 	comment := model.Comment{
 		ItemID: uint(itemID),
 		UserID: user.ID,
