@@ -129,7 +129,7 @@ func PostLogs(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	_ = PostMessage(c, message, item.Type != 0)
+	_ = PostMessage(c, message, item.Type != model.PersonalItem)
 	return c.JSON(http.StatusCreated, res)
 }
 
@@ -137,10 +137,10 @@ func createMessage(log model.Log, bodyCount int, item model.Item, user model.Use
 	action := ""
 	message := ""
 	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", item.Name, os.Getenv("HOST"), item.ID)
-	if item.Type != 0 {
+	if item.Type != model.PersonalItem {
 		purpose := ""
 		count := int(math.Abs(float64(bodyCount)))
-		if log.Type == 0 {
+		if log.Type == model.BorrowItem {
 			action = "出"
 			purpose = fmt.Sprintf("目的: %v", log.Purpose)
 		} else {
@@ -148,7 +148,7 @@ func createMessage(log model.Log, bodyCount int, item model.Item, user model.Use
 		}
 		message = fmt.Sprintf("@%v \n%v\n%v × %v\n%v", user.Name, action, itemInfo, count, purpose)
 	} else {
-		if log.Type == 0 {
+		if log.Type == model.BorrowItem {
 			action = "借り"
 		} else {
 			action = "返し"
