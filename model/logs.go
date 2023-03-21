@@ -21,6 +21,18 @@ type Log struct {
 	Count   int       `gorm:"type:int;not null" json:"count"`
 }
 
+const (
+	BorrowItem = iota
+	ReturnItem
+	AddItem
+	ReduceItem
+)
+
+// 0: 借りる
+//         1: 返却
+//         2: 追加
+//         3: 減らす
+
 type RequestPostLogsBody struct {
 	OwnerID uint   `json:"ownerId"`
 	Type    int    `json:"type"`

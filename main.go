@@ -15,7 +15,6 @@ import (
 )
 
 func main() {
-
 	db, err := model.EstablishConnection()
 	if err != nil {
 		panic(err)
@@ -68,7 +67,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routing
-	router.SetupRouting(e, router.CreateUserProvider())
+	router.SetupRouting(e, router.CreateUserProvider(os.Getenv("DEBUG_USER_NAME")))
 
 	// Start server
 	e.Logger.Fatal(e.Start(":3001"))
