@@ -34,6 +34,44 @@ func TestPostItems(t *testing.T) {
 		ImgURL:      "http://example.com/testKojin.jpg",
 	}
 
+	testInvalidBodies := []model.Item{
+		{
+			Name:        "",
+			Type:        0,
+			Code:        "9094409852630",
+			Description: "これはバリデーションのテスト1です",
+			ImgURL:      "http://example.com/testInvalid1.jpg",
+		},
+		{
+			Name:        "testPostInvalidItem2",
+			Type:        5,
+			Code:        "3904390033750",
+			Description: "これはバリデーションのテスト2です",
+			ImgURL:      "http://example.com/testInvalid2.jpg",
+		},
+		{
+			Name:        "testPostInvalidItem3",
+			Type:        0,
+			Code:        "",
+			Description: "これはバリデーションのテスト3です",
+			ImgURL:      "http://example.com/testInvalid3.jpg",
+		},
+		{
+			Name:        "testPostInvalidItem4",
+			Type:        0,
+			Code:        "3665321293882",
+			Description: "",
+			ImgURL:      "http://example.com/testInvalid4.jpg",
+		},
+		{
+			Name:        "testPostInvalidItem5",
+			Type:        0,
+			Code:        "3575736936335",
+			Description: "これはバリデーションのテスト5です",
+			ImgURL:      "not a url",
+		},
+	}
+
 	t.Run("admin user", func(t *testing.T) {
 		assert := assert.New(t)
 		e := echoSetupWithAdminUser()
@@ -85,6 +123,113 @@ func TestPostItems(t *testing.T) {
 		assert.Equal(testBodyKojin.Description, item.Description)
 		assert.Equal(testBodyKojin.ImgURL, item.ImgURL)
 	})
+
+	for _, body := range testInvalidBodies {
+		t.Run("admin user/validation error", func(t *testing.T) {
+			assert := assert.New(t)
+			e := echoSetupWithAdminUser()
+
+			reqBody, _ := json.Marshal(body)
+			req := httptest.NewRequest(echo.POST, "/api/items", bytes.NewReader(reqBody))
+			req.Header.Set("Content-Type", "application/json")
+			rec := httptest.NewRecorder()
+			e.ServeHTTP(rec, req)
+
+			assert.Equal(http.StatusBadRequest, rec.Code)
+		})
+	}
+}
+
+func TestPutItem(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+
+	item, err := model.CreateItem(model.Item{Name: "testPutItem_traP"})
+	assert.NoError(err)
+	assert.NotEmpty(item)
+
+	// TODO: 非管理者のテストを書く
+
+	testBodyTrap := model.RequestPutItemBody{
+		Name:        "testPutTrapItem",
+		Type:        0,
+		Code:        "3485283223982",
+		Description: "これは備品のテストです",
+		ImgURL:      "http://example.com/testTrap.jpg",
+	}
+
+	testInvalidBodies := []model.RequestPutItemBody{
+		{
+			Name:        "",
+			Type:        0,
+			Code:        "3904390033750",
+			Description: "これはバリデーションのテスト1です",
+			ImgURL:      "http://example.com/testInvalid1.jpg",
+		},
+		{
+			Name:        "testPutInvalidItem2",
+			Type:        5,
+			Code:        "6273713712501",
+			Description: "これはバリデーションのテスト2です",
+			ImgURL:      "http://example.com/testInvalid2.jpg",
+		},
+		{
+			Name:        "testPutInvalidItem3",
+			Type:        0,
+			Code:        "",
+			Description: "これはバリデーションのテスト3です",
+			ImgURL:      "http://example.com/testInvalid3.jpg",
+		},
+		{
+			Name:        "testPutInvalidItem4",
+			Type:        0,
+			Code:        "8033934069374",
+			Description: "",
+			ImgURL:      "http://example.com/testInvalid4.jpg",
+		},
+		{
+			Name:        "testPutInvalidItem5",
+			Type:        0,
+			Code:        "2876118801654",
+			Description: "これはバリデーションのテスト5です",
+			ImgURL:      "not a url",
+		},
+	}
+
+	t.Run("admin user", func(t *testing.T) {
+		e := echoSetupWithAdminUser()
+
+		reqBody, _ := json.Marshal(testBodyTrap)
+		req := httptest.NewRequest(echo.PUT, "/api/items/"+strconv.Itoa(int(item.ID)), bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusOK, rec.Code)
+
+		item := model.Item{}
+		_ = json.NewDecoder(rec.Body).Decode(&item)
+
+		assert.Equal(testBodyTrap.Name, item.Name)
+		assert.Equal(testBodyTrap.Type, item.Type)
+		assert.Equal(testBodyTrap.Code, item.Code)
+		assert.Equal(testBodyTrap.Description, item.Description)
+		assert.Equal(testBodyTrap.ImgURL, item.ImgURL)
+	})
+
+	for _, body := range testInvalidBodies {
+		t.Run("admin user/validation error", func(t *testing.T) {
+			e := echoSetupWithAdminUser()
+
+			reqBody, _ := json.Marshal(body)
+			req := httptest.NewRequest(echo.PUT, "/api/items/"+strconv.Itoa(int(item.ID)), bytes.NewReader(reqBody))
+			req.Header.Set("Content-Type", "application/json")
+			rec := httptest.NewRecorder()
+			e.ServeHTTP(rec, req)
+
+			assert.Equal(http.StatusBadRequest, rec.Code)
+		})
+	}
 }
 
 func TestDeleteItem(t *testing.T) {
@@ -277,11 +422,41 @@ func TestPutOwners(t *testing.T) {
 		Description: "これは個人所有物のテストです",
 		ImgURL:      "http://example.com/testKojin.jpg",
 	}
+	testValidBodies := []model.Item{
+		{
+			Name:        "testPutOwnersValidItem1",
+			Type:        0,
+			Code:        "2733639430995",
+			Description: "これはバリデーションのテスト1です",
+			ImgURL:      "http://example.com/testOwnerValidation1.jpg",
+		},
+		{
+			Name:        "testPutOwnersValidItem2",
+			Type:        0,
+			Code:        "7039380242344",
+			Description: "これはバリデーションのテスト2です",
+			ImgURL:      "http://example.com/testOwnerValidation2.jpg",
+		},
+	}
+
 	trap, _ := model.GetUserByName("traP")
+
 	testOwnerTrap := model.RequestPostOwnersBody{
 		UserID:     int(trap.ID),
 		Rentalable: true,
 		Count:      1,
+	}
+	testInvalidOwners := []model.RequestPostOwnersBody{
+		{
+			UserID:     0,
+			Rentalable: true,
+			Count:      1,
+		},
+		{
+			UserID:     int(trap.ID),
+			Rentalable: false,
+			Count:      0,
+		},
 	}
 
 	t.Run("admin user", func(t *testing.T) {
@@ -400,6 +575,38 @@ func TestPutOwners(t *testing.T) {
 		}
 		assert.Equal(true, exist)
 	})
+
+	for i, owner := range testInvalidOwners {
+		t.Run("admin user/validation error", func(t *testing.T) {
+			e := echoSetupWithAdminUser()
+
+			reqBody, _ := json.Marshal(testValidBodies[i])
+			req := httptest.NewRequest(echo.POST, "/api/items", bytes.NewReader(reqBody))
+			req.Header.Set("Content-Type", "application/json")
+			rec := httptest.NewRecorder()
+			e.ServeHTTP(rec, req)
+			assert.Equal(http.StatusCreated, rec.Code)
+			item := model.Item{}
+			_ = json.NewDecoder(rec.Body).Decode(&item)
+			createdBihin, _ := model.GetItemByName(item.Name)
+			bihinID := int(createdBihin.ID)
+			reqBody, _ = json.Marshal(testOwnerTrap)
+			req = httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(bihinID)+"/owners", bytes.NewReader(reqBody))
+			req.Header.Set("Content-Type", "application/json")
+			rec = httptest.NewRecorder()
+			e.ServeHTTP(rec, req)
+
+			assert.Equal(http.StatusCreated, rec.Code)
+
+			reqBody, _ = json.Marshal(owner)
+			req = httptest.NewRequest(echo.PUT, "/api/items/"+strconv.Itoa(bihinID)+"/owners", bytes.NewReader(reqBody))
+			req.Header.Set("Content-Type", "application/json")
+			rec = httptest.NewRecorder()
+			e.ServeHTTP(rec, req)
+
+			assert.Equal(http.StatusBadRequest, rec.Code)
+		})
+	}
 }
 
 func TestPostOwners(t *testing.T) {
@@ -419,12 +626,42 @@ func TestPostOwners(t *testing.T) {
 		ImgURL:      "http://example.com/testKojin.jpg",
 	}
 
+	testValidBodies := []model.Item{
+		{
+			Name:        "testPostOwnersValidItem1",
+			Type:        0,
+			Code:        "7154380351518",
+			Description: "これはバリデーションのテスト1です",
+			ImgURL:      "http://example.com/testOwnerValidation1.jpg",
+		},
+		{
+			Name:        "testPostOwnersValidItem2",
+			Type:        0,
+			Code:        "6611388199760",
+			Description: "これはバリデーションのテスト2です",
+			ImgURL:      "http://example.com/testOwnerValidation2.jpg",
+		},
+	}
+
 	trap, _ := model.GetUserByName("traP")
 
 	testOwnerTrap := model.RequestPostOwnersBody{
 		UserID:     int(trap.ID),
 		Rentalable: true,
 		Count:      1,
+	}
+
+	testInvalidOwners := []model.RequestPostOwnersBody{
+		{
+			UserID:     0,
+			Rentalable: true,
+			Count:      1,
+		},
+		{
+			UserID:     int(trap.ID),
+			Rentalable: false,
+			Count:      0,
+		},
 	}
 
 	t.Run("admin user", func(t *testing.T) {
@@ -458,6 +695,7 @@ func TestPostOwners(t *testing.T) {
 		assert.Equal(testBodyTrap.Name, item.Name)
 		assert.Equal(trap.ID, item.Owners[0].UserID)
 	})
+
 	t.Run("not admin user", func(t *testing.T) {
 		assert := assert.New(t)
 		e := echoSetupWithUser()
@@ -504,6 +742,34 @@ func TestPostOwners(t *testing.T) {
 		assert.Equal(testBodyKojin.Name, item.Name)
 		assert.Equal(testUser.ID, item.Owners[0].UserID)
 	})
+
+	for i, owner := range testInvalidOwners {
+		t.Run("admin user/validation error", func(t *testing.T) {
+			assert := assert.New(t)
+			e := echoSetupWithAdminUser()
+
+			reqBody, _ := json.Marshal(testValidBodies[i])
+			req := httptest.NewRequest(echo.POST, "/api/items", bytes.NewReader(reqBody))
+			req.Header.Set("Content-Type", "application/json")
+			rec := httptest.NewRecorder()
+			e.ServeHTTP(rec, req)
+
+			assert.Equal(http.StatusCreated, rec.Code)
+
+			item := model.Item{}
+			_ = json.NewDecoder(rec.Body).Decode(&item)
+
+			createdBihin, _ := model.GetItemByName(item.Name)
+			bihinID := int(createdBihin.ID)
+			reqBody, _ = json.Marshal(owner)
+			req = httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(bihinID)+"/owners", bytes.NewReader(reqBody))
+			req.Header.Set("Content-Type", "application/json")
+			rec = httptest.NewRecorder()
+			e.ServeHTTP(rec, req)
+
+			assert.Equal(http.StatusBadRequest, rec.Code)
+		})
+	}
 }
 
 func TestPostLikes(t *testing.T) {
