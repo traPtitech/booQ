@@ -17,7 +17,7 @@ management tool for equipment and book rental
 $ docker compose -f .\compose-dev.yml up --build
 ```
 
-Now you can access to `http://localhost:3000` for booQ
+Now you can access to `http://localhost:8080` for booQ
 
 And you can access booQ MariaDB by executing commands
 `docker-compose exec db bash` and `mysql -uroot -ppassword -Dbooq`
