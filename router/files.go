@@ -55,8 +55,11 @@ func PostFile(c echo.Context) error {
 	draw.Draw(newImg, newImg.Bounds(), &image.Uniform{color.White}, image.Point{}, draw.Src)
 	draw.Draw(newImg, newImg.Bounds(), orig, orig.Bounds().Min, draw.Over)
 	b := &bytes.Buffer{}
-	_ = imaging.Encode(b, imaging.Fit(newImg, 360, 480, imaging.Linear), imaging.JPEG, imaging.JPEGQuality(85))
-
+	err = imaging.Encode(b, imaging.Fit(newImg, 360, 480, imaging.Linear), imaging.JPEG, imaging.JPEGQuality(85))
+	if err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+	
 	// 保存
 	f, err := model.CreateFile(user.ID, b, "jpg")
 	if err != nil {
