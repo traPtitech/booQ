@@ -17,3 +17,10 @@ func (v *Validator) Validate(i interface{}) error {
 func SetValidator(e *echo.Echo) {
 	e.Validator = &Validator{}
 }
+
+func BindAndValidate(c echo.Context, i interface{}) error {
+	if err := c.Bind(i); err != nil {
+		return err
+	}
+	return c.Validate(i)
+}

@@ -29,10 +29,7 @@ func PostComments(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	commentRequest := model.RequestPostCommentBody{}
-	if err := c.Bind(&commentRequest); err != nil {
-		return err
-	}
-	if err := c.Validate(&commentRequest); err != nil {
+	if err := BindAndValidate(c, &commentRequest); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	comment := model.Comment{

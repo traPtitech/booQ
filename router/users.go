@@ -31,10 +31,7 @@ func GetUsers(c echo.Context) error {
 // PutUsers PUT /users
 func PutUsers(c echo.Context) error {
 	req := model.RequestPutUsersBody{}
-	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-	if err := c.Validate(&req); err != nil {
+	if err := BindAndValidate(c, &req); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
