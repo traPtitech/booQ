@@ -20,8 +20,8 @@ func PostLogs(c echo.Context) error {
 	user := c.Get("user").(model.User)
 	user, _ = model.GetUserByName(user.Name)
 	body := model.RequestPostLogsBody{}
-	if err := c.Bind(&body); err != nil {
-		return err
+	if err := BindAndValidate(c, &body); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 	if body.Type == 2 || body.Type == 3 {
 		return echo.NewHTTPError(http.StatusBadRequest, "アイテムの増減は POST /api/items/:id/owner を使用してください")

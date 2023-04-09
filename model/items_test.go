@@ -326,6 +326,24 @@ func TestDestroyItem(t *testing.T) {
 	})
 }
 
+func TestUpdateItem(t *testing.T) {
+	t.Parallel()
+
+	t.Run("success", func(t *testing.T) {
+		assert := assert.New(t)
+		item, err := CreateItem(Item{Name: "testUpdateItemSuccess", Type: 1})
+		assert.NotEmpty(item)
+		assert.NoError(err)
+		body := RequestPutItemBody{}
+		body.Name = "updateTestUpdateItemSuccess"
+		updateItem, err := UpdateItem(&item, &body, false)
+		assert.NotEmpty(updateItem)
+		assert.NoError(err)
+		assert.Equal("updateTestUpdateItemSuccess", updateItem.Name)
+		assert.Equal(1, updateItem.Type)
+	})
+}
+
 func TestRentalItem(t *testing.T) {
 	t.Parallel()
 

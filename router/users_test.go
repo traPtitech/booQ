@@ -83,8 +83,13 @@ func TestPutUsers(t *testing.T) {
 	_, _ = model.CreateUser(testUser)
 
 	testBody := model.RequestPutUsersBody{
-		Name:        "PutUser",
-		Admin:       true,
+		Name:  "PutUser",
+		Admin: true,
+	}
+
+	testInvalidBody := model.RequestPutUsersBody{
+		Name:  "",
+		Admin: false,
 	}
 
 	t.Run("not admin user", func(t *testing.T) {
@@ -122,5 +127,18 @@ func TestPutUsers(t *testing.T) {
 		assert.Equal(testBody.Name, user.Name)
 		assert.NotEqual(testUser.Admin, user.Admin)
 		assert.Equal(testUser.DisplayName, user.DisplayName)
+	})
+
+	t.Run("validation error", func(t *testing.T) {
+		assert := assert.New(t)
+		e := echoSetupWithAdminUser()
+
+		reqBody, _ := json.Marshal(testInvalidBody)
+		req := httptest.NewRequest(echo.PUT, "/api/users", bytes.NewReader(reqBody))
+		req.Header.Set("Content-Type", "application/json")
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(http.StatusBadRequest, rec.Code)
 	})
 }
