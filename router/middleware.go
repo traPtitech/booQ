@@ -25,6 +25,31 @@ func (client *UserProvider) MiddlewareAuthUser(next echo.HandlerFunc) echo.Handl
 	}
 }
 
+// MiddlewareAdmin Admin以外を弾くmiddleware
+func MiddlewareAdmin(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		user := c.Get("user").(model.User)
+		if !user.Admin {
+			return c.NoContent(http.StatusForbidden)
+		}
+		return next(c)
+	}
+}
+
+// MiddlewareItemSocial ItemがPersonalItemでない場合はAdmin以外を弾くmiddleware
+func MiddlewareItemSocial(getItem func(c echo.Context) model.Item) func(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			item := getItem(c)
+			user := c.Get("user").(model.User)
+			if item.Type != model.PersonalItem && !user.Admin {
+				return c.NoContent(http.StatusForbidden)
+			}
+			return next(c)
+		}
+	}
+}
+
 func CreateUserProvider(debugUserName string) *UserProvider {
 	return &UserProvider{AuthUser: func(c echo.Context) (echo.Context, error) {
 		res := debugUserName
