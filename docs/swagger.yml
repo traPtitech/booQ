@@ -11,7 +11,7 @@ servers:
     description: production
   - url: "https://booq-dev.trapti.tech/api"
     description: staging
-  - url: "http://localhost:3000/api"
+  - url: 'http://localhost:8080/api'
     description: local
 
 tags:
