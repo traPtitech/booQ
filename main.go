@@ -59,6 +59,9 @@ func main() {
 	// Echo instance
 	e := echo.New()
 
+	// Validator
+	router.SetValidator(e)
+
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
