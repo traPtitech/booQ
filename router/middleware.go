@@ -1,8 +1,12 @@
 package router
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo"
 
@@ -36,17 +40,39 @@ func MiddlewareAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-// MiddlewareItemSocial ItemがPersonalItemでない場合はAdmin以外を弾くmiddleware
-func MiddlewareItemSocial(getItem func(c echo.Context) model.Item) func(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			item := getItem(c)
-			user := c.Get("user").(model.User)
-			if item.Type != model.PersonalItem && !user.Admin {
-				return c.NoContent(http.StatusForbidden)
-			}
+// MiddlewareBodyItemSocial リクエストボディから取得したItemがPersonalItemでない場合はAdmin以外を弾くmiddleware
+func MiddlewareBodyItemSocial(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		body, err := ioutil.ReadAll(c.Request().Body)
+		if err != nil {
 			return next(c)
 		}
+		c.Request().Body = ioutil.NopCloser(bytes.NewBuffer(body))
+		item := model.Item{}
+		if err = json.Unmarshal(body, &item); err != nil {
+			return next(c)
+		}
+		user := c.Get("user").(model.User)
+		if item.Type != model.PersonalItem && !user.Admin {
+			return c.NoContent(http.StatusForbidden)
+		}
+		return next(c)
+	}
+}
+
+// MiddlewareParamItemSocial パラメータから取得したItemがPersonalItemでない場合はAdmin以外を弾くmiddleware
+func MiddlewareParamItemSocial(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		itemID, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return next(c)
+		}
+		item, _ := model.GetItemByID(uint(itemID))
+		user := c.Get("user").(model.User)
+		if item.Type != model.PersonalItem && !user.Admin {
+			return c.NoContent(http.StatusForbidden)
+		}
+		return next(c)
 	}
 }
 

@@ -1,14 +1,9 @@
 package router
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/middleware"
-	"github.com/traPtitech/booQ/model"
 
 	"github.com/labstack/echo"
 )
@@ -31,37 +26,12 @@ func SetupRouting(e *echo.Echo, client *UserProvider) {
 		apiItems := api.Group("/items")
 		{
 			apiItems.GET("", GetItems)
-			apiItems.POST("", PostItems, MiddlewareItemSocial(func(c echo.Context) model.Item {
-				item := model.Item{}
-				body, err := ioutil.ReadAll(c.Request().Body)
-				if err != nil {
-					return model.Item{}
-				}
-				c.Request().Body = ioutil.NopCloser(bytes.NewBuffer(body))
-				if err = json.Unmarshal(body, &item); err != nil {
-					return model.Item{}
-				}
-				return item
-			}))
+			apiItems.POST("", PostItems, MiddlewareBodyItemSocial)
 			apiItems.GET("/:id", GetItem)
 			apiItems.PUT("/:id", PutItem)
 			apiItems.DELETE("/:id", DeleteItem, MiddlewareAdmin)
-			apiItems.POST("/:id/owners", PostOwners, MiddlewareItemSocial(func(c echo.Context) model.Item {
-				itemID, err := strconv.Atoi(c.Param("id"))
-				if err != nil {
-					return model.Item{}
-				}
-				item, _ := model.GetItemByID(uint(itemID))
-				return item
-			}))
-			apiItems.PUT("/:id/owners", PutOwners, MiddlewareItemSocial(func(c echo.Context) model.Item {
-				itemID, err := strconv.Atoi(c.Param("id"))
-				if err != nil {
-					return model.Item{}
-				}
-				item, _ := model.GetItemByID(uint(itemID))
-				return item
-			}))
+			apiItems.POST("/:id/owners", PostOwners, MiddlewareParamItemSocial)
+			apiItems.PUT("/:id/owners", PutOwners, MiddlewareParamItemSocial)
 			apiItems.POST("/:id/logs", PostLogs)
 			apiItems.POST("/:id/comments", PostComments)
 			apiItems.POST("/:id/likes", PostLikes)
