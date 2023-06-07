@@ -428,7 +428,15 @@ func SearchItemByOwner(ownerName string, meID uint) ([]GetItemResponse, error) {
 // SearchItemsByRental itemsをRentalUserNameから取得する
 func SearchItemByRental(rentalUserID uint, meID uint) ([]GetItemResponse, error) {
 	items := []Item{}
-	err := db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&items).Error
+	err := db.
+		Set("gorm:auto_preload", true).
+		Model(&Item{}).
+		Preload("Logs.User").
+		Preload("RentalUsers.User", "id = ?", rentalUserID).
+		Preload("RentalUsers.Owner").
+		Preload("Comments.User").
+		Find(&items).
+		Error
 	if err != nil {
 		return []GetItemResponse{}, err
 	}
@@ -441,8 +449,9 @@ func SearchItemByRental(rentalUserID uint, meID uint) ([]GetItemResponse, error)
 		}
 		match := false
 		for _, rentalUser := range item.RentalUsers {
-			if rentalUser.UserID == rentalUserID && rentalUser.Count < 0 {
+			if rentalUser.Count < 0 {
 				match = true
+				break
 			}
 		}
 		if !match {
