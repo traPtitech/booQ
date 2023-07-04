@@ -64,8 +64,8 @@ func GetItems(c echo.Context) error {
 // PostItems POST /items
 func PostItems(c echo.Context) error {
 	user := c.Get("user").(model.User)
-	item := model.Item{}
-	if err := BindAndValidate(c, &item); err != nil {
+	item := c.Get("item").(model.Item)
+	if err := c.Validate(&item); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	res, err := model.CreateItem(item)

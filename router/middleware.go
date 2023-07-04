@@ -1,10 +1,7 @@
 package router
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -43,15 +40,11 @@ func MiddlewareAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 // MiddlewareBodyItemSocial リクエストボディから取得したItemがPersonalItemでない場合はAdmin以外を弾くmiddleware
 func MiddlewareBodyItemSocial(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		body, err := ioutil.ReadAll(c.Request().Body)
-		if err != nil {
-			return next(c)
-		}
-		c.Request().Body = ioutil.NopCloser(bytes.NewBuffer(body))
 		item := model.Item{}
-		if err = json.Unmarshal(body, &item); err != nil {
-			return next(c)
+		if err := c.Bind(&item); err != nil {
+			return err
 		}
+		c.Set("item", item)
 		user := c.Get("user").(model.User)
 		if item.Type != model.PersonalItem && !user.Admin {
 			return c.NoContent(http.StatusForbidden)
