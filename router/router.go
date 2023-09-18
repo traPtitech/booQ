@@ -36,6 +36,7 @@ func SetupRouting(e *echo.Echo, client *UserProvider) {
 			apiItems.POST("/:id/comments", PostComments)
 			apiItems.POST("/:id/likes", PostLikes)
 			apiItems.DELETE("/:id/likes", DeleteLikes)
+			apiItems.GET("/check_ndl_image/:code", GetCheckNdlImage)
 		}
 
 		apiComments := api.Group("/comments")

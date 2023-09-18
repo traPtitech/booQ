@@ -11,7 +11,7 @@ servers:
     description: production
   - url: "https://booq-dev.trapti.tech/api"
     description: staging
-  - url: 'http://localhost:8080/api'
+  - url: "http://localhost:8080/api"
     description: local
 
 tags:
@@ -559,6 +559,17 @@ paths:
   #       '403':
   #         description: "権限がありません。"
 
+  /items/check_ndl_image/{isbnCode}:
+    parameters:
+      - $ref: "#/components/parameters/isbnCodeInPath"
+    get:
+      summary: "入力されたISBNCodeに対応するNDLの書影が存在するかどうかを返す"
+      responses:
+        "200":
+          description: "存在する"
+        "404":
+          description: "存在しない"
+
   /files:
     post:
       operationId: postFile
@@ -618,6 +629,13 @@ components:
       in: path
       required: true
       description: ファイルID
+      schema:
+        type: integer
+    isbnCodeInPath:
+      name: isbnCode
+      in: path
+      required: true
+      description: ISBNCode
       schema:
         type: integer
   schemas:
@@ -1120,3 +1138,4 @@ components:
       required:
         - id
         - url
+

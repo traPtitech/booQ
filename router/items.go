@@ -299,3 +299,21 @@ func DeleteLikes(c echo.Context) error {
 
 	return c.NoContent(http.StatusOK)
 }
+
+// GET /items/check_ndl_image/:code
+func GetCheckNdlImage(c echo.Context) error {
+	ISBNCode := c.Param("code")
+	resp, err := http.Get("https://iss.ndl.go.jp/thumbnail/" + ISBNCode)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	defer resp.Body.Close()
+	
+	if (resp.StatusCode == 200) {
+		return c.NoContent(http.StatusOK)
+	} else {
+		// エラーを404に丸める
+		return c.NoContent(http.StatusBadRequest);
+	}
+}
