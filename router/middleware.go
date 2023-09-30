@@ -25,14 +25,11 @@ func (client *UserProvider) MiddlewareAuthUser(next echo.HandlerFunc) echo.Handl
 	}
 }
 
-func CreateUserProvider(debugUserName string) *UserProvider {
+func CreateUserProvider() *UserProvider {
 	return &UserProvider{AuthUser: func(c echo.Context) (echo.Context, error) {
-		res := debugUserName
-		if debugUserName == "" {
-			res = c.Request().Header.Get("X-Showcase-User")
-			if res == "" {
-				return c, errors.New("認証に失敗しました(Headerに必要な情報が存在しません)")
-			}
+		res := c.Request().Header.Get("X-Showcase-User")
+		if res == "" {
+			return c, errors.New("認証に失敗しました(Headerに必要な情報が存在しません)")
 		}
 		user, _ := model.GetUserByName(res)
 		if user.Name == "" {

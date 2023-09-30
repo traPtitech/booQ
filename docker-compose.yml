@@ -13,12 +13,6 @@ services:
       - '3306'
     ports:
       - '3306:3306'
-    healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USERNAME -p$$MYSQL_ROOT_PASSWORD
-      interval: 6s
-      timeout: 60s
-      retries: 20
-      start_period: 5s
 
   booq-server:
     build: .
@@ -29,13 +23,14 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_DATABASE: booq
     volumes:
-      - './:/app'
+      - './:/go/src/github.com/traPtitech/booQ'
     tty: true
+    entrypoint: dockerize -timeout 60s -wait tcp://db:3306
+    command: fresh -c fresh.conf
     ports:
       - '8080:3001'
     depends_on:
-      db:
-        condition: service_healthy
+      - db
 
   swagger:
     image: swaggerapi/swagger-ui

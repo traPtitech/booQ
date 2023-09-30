@@ -3,8 +3,6 @@ package model
 import (
 	"errors"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/jinzhu/gorm"
 )
 
@@ -23,13 +21,8 @@ type Item struct {
 	Comments    []Comment     `json:"comments"`
 	Likes       []User        `gorm:"many2many:like_maps;" json:"likes"`
 	LikeCounts  int           `gorm:"-" json:"likeCounts"`
+	IsLiked     bool          `gorm:"-" json:"isLiked"`
 }
-
-const (
-	PersonalItem = iota
-	TrapItem
-	SienkaItem
-)
 
 type Owner struct {
 	GormModel
@@ -48,48 +41,15 @@ type RentalUser struct {
 	Count   int  `gorm:"type:int;" json:"count"`
 }
 
-type RequestPutItemBody struct {
-	Name        string `json:"name"`
-	Code        string `json:"code"`
-	Description string `json:"description"`
-	ImgURL      string `json:"imgUrl"`
-	Type        int    `json:"type"`
-}
-
 type RequestPostOwnersBody struct {
 	UserID     int  `json:"userId"`
 	Rentalable bool `json:"rentalable"`
 	Count      int  `json:"count"`
 }
 
-type GetItemResponse struct {
-	IsLiked bool `json:"isLiked"`
-	Item
-}
-
 // TableName dbのテーブル名を指定する
 func (item *Item) TableName() string {
 	return "items"
-}
-
-// checkItemType Item.Typeのバリデーション
-func checkItemType(value interface{}) error {
-	i := value.(int)
-	// item.Type=0⇒個人、1⇒trap所有、2⇒支援課
-	if !(i == 0 || i == 1 || i == 2) {
-		return errors.New("must be 0, 1, or 2")
-	}
-	return nil
-}
-
-func (item Item) Validate() error {
-	return validation.ValidateStruct(&item,
-		validation.Field(&item.Name, validation.Required),
-		validation.Field(&item.Type, validation.By(checkItemType)),
-		validation.Field(&item.Code, validation.Required),
-		validation.Field(&item.Description, validation.Required),
-		validation.Field(&item.ImgURL, is.URL),
-	)
 }
 
 func (owner *Owner) TableName() string {
@@ -98,24 +58,6 @@ func (owner *Owner) TableName() string {
 
 func (rentalUser *RentalUser) TableName() string {
 	return "rental_users"
-}
-
-func (body RequestPutItemBody) Validate() error {
-	return validation.ValidateStruct(&body,
-		validation.Field(&body.Name, validation.Required),
-		validation.Field(&body.Code, validation.Required),
-		validation.Field(&body.Description, validation.Required),
-		validation.Field(&body.ImgURL, is.URL),
-		validation.Field(&body.Type, validation.By(checkItemType)),
-	)
-}
-
-func (body RequestPostOwnersBody) Validate() error {
-	return validation.ValidateStruct(&body,
-		validation.Field(&body.UserID, validation.Required),
-		validation.Field(&body.Rentalable, validation.Skip),
-		validation.Field(&body.Count, validation.Required),
-	)
 }
 
 // GetItemByID IDからitemを取得する
@@ -153,29 +95,27 @@ func GetItemByName(name string) (Item, error) {
 }
 
 // GetItems 全itemを取得する
-func GetItems(meID uint) ([]GetItemResponse, error) {
-	items := []Item{}
-	err := db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&items).Error
+func GetItems(meID uint) ([]Item, error) {
+	res := []Item{}
+	err := db.Set("gorm:auto_preload", true).Preload("Owners.User").Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&res).Error
 	if err != nil {
-		return []GetItemResponse{}, err
+		return []Item{}, err
 	}
-	res := make([]GetItemResponse, 0, len(items))
-	for _, item := range items {
+	for i, item := range res {
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
-			return []GetItemResponse{}, err
+			return []Item{}, err
 		}
-		isLiked := false
+		item.IsLiked = false
 		for _, like := range item.Likes {
 			if like.ID == meID {
-				isLiked = true
+				item.IsLiked = true
 				break
 			}
 		}
 		item.LikeCounts = len(item.Likes)
 		item.Likes = []User{}
-		r := GetItemResponse{IsLiked: isLiked, Item: item}
-		res = append(res, r)
+		res[i] = item
 	}
 	return res, nil
 }
@@ -257,9 +197,9 @@ func AddOwner(owner Owner, item Item) (Item, error) {
 			return Item{}, errors.New("現在貸し出し中の物品が存在するのでそれよりも少ない数にはできません")
 		}
 		if owner.Count-nowOwner.Count < 0 {
-			log.Type = ReduceItem
+			log.Type = 3
 		} else {
-			log.Type = AddItem
+			log.Type = 2
 		}
 		log.Count = owner.Count - nowOwner.Count
 		nowOwner.Count = owner.Count
@@ -382,84 +322,68 @@ func CancelLike(itemID, userID uint) (Item, error) {
 }
 
 // SearchItemsByOwner itemsをOwnerNameから取得する
-func SearchItemByOwner(ownerName string, meID uint) ([]GetItemResponse, error) {
+func SearchItemByOwner(ownerName string, meID uint) ([]Item, error) {
+	res := []Item{}
 	items := []Item{}
 	owner, err := GetUserByName(ownerName)
 	if owner.ID == 0 {
-		return []GetItemResponse{}, errors.New("該当のUserが存在しません")
+		return []Item{}, errors.New("該当のUserが存在しません")
 	}
 	if err != nil {
-		return []GetItemResponse{}, err
+		return []Item{}, err
 	}
-	err = db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Preload("Owners.User").Find(&items).Error
+	err = db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Preload("Owners.User").Find(&res).Error
 	if err != nil {
-		return []GetItemResponse{}, err
+		return []Item{}, err
 	}
-	res := make([]GetItemResponse, 0, len(items))
-	for _, item := range items {
+	for _, item := range res {
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
-			return []GetItemResponse{}, err
+			return []Item{}, err
 		}
-		match := false
-		for _, owner := range item.Owners {
-			if owner.User.Name == ownerName {
-				match = true
-				break
-			}
-		}
-		if !match {
-			continue
-		}
-		isLiked := false
+		item.IsLiked = false
 		for _, like := range item.Likes {
 			if like.ID == meID {
-				isLiked = true
+				item.IsLiked = true
 				break
 			}
 		}
-		r := GetItemResponse{IsLiked: isLiked, Item: item}
-		res = append(res, r)
+		for _, owner := range item.Owners {
+			if owner.User.Name == ownerName {
+				items = append(items, item)
+			}
+		}
 	}
-	return res, nil
+	return items, nil
 }
 
 // SearchItemsByRental itemsをRentalUserNameから取得する
-func SearchItemByRental(rentalUserID uint, meID uint) ([]GetItemResponse, error) {
+func SearchItemByRental(rentalUserID uint, meID uint) ([]Item, error) {
 	items := []Item{}
+	res := []Item{}
 	err := db.Set("gorm:auto_preload", true).Preload("Logs.User").Preload("RentalUsers.User").Preload("RentalUsers.Owner").Preload("Comments.User").Find(&items).Error
 	if err != nil {
-		return []GetItemResponse{}, err
+		return []Item{}, err
 	}
-	res := make([]GetItemResponse, 0, len(items))
 	for _, item := range items {
 		var err error
 		item.LatestLogs, err = GetLatestLogs(item.Logs)
 		if err != nil {
-			return []GetItemResponse{}, err
+			return []Item{}, err
 		}
-		match := false
-		for _, rentalUser := range item.RentalUsers {
-			if rentalUser.UserID == rentalUserID && rentalUser.Count < 0 {
-				match = true
-			}
-		}
-		if !match {
-			continue
-		}
-		isLiked := false
+		item.IsLiked = false
 		for _, like := range item.Likes {
 			if like.ID == meID {
-				isLiked = true
+				item.IsLiked = true
 				break
 			}
 		}
-		r := GetItemResponse{
-			IsLiked: isLiked,
-			Item:    item,
+		for _, rentalUser := range item.RentalUsers {
+			if rentalUser.UserID == rentalUserID && rentalUser.Count < 0 {
+				res = append(res, item)
+			}
 		}
-		res = append(res, r)
 	}
 	return res, nil
 }
@@ -492,13 +416,25 @@ func DestroyItem(item Item) (Item, error) {
 }
 
 // UpdateItem itemを変更する
-func UpdateItem(item *Item, body *RequestPutItemBody, isAdmin bool) (Item, error) {
-	if !isAdmin {
-		body.Type = 0
+func UpdateItem(item *Item, body *map[string]interface{}, isAdmin bool) (Item, error) {
+	fields := []string{"name", "code", "description", "imgUrl"}
+	if isAdmin {
+		fields = append(fields, "type")
 	}
-	err := db.Model(item).Updates(body).Error
+	err := db.Model(item).Updates(filterMap(body, fields)).Error
 	if err != nil {
 		return Item{}, err
 	}
+
 	return *item, nil
+}
+
+func filterMap(input *map[string]interface{}, keys []string) map[string]interface{} {
+	output := make(map[string]interface{})
+	for _, key := range keys {
+		if val, ok := (*input)[key]; ok {
+			output[key] = val
+		}
+	}
+	return output
 }

@@ -49,7 +49,6 @@ func echoSetupWithUser() *echo.Echo {
 		Admin:       false,
 	})
 	SetupRouting(e, client)
-	SetValidator(e)
 	return e
 }
 
@@ -61,6 +60,5 @@ func echoSetupWithAdminUser() *echo.Echo {
 		Admin:       true,
 	})
 	SetupRouting(e, client)
-	SetValidator(e)
 	return e
 }

@@ -19,9 +19,6 @@ func TestPostComments(t *testing.T) {
 	testRequestBody := model.RequestPostCommentBody{
 		Text: "testPostCommentsText",
 	}
-	testRequestInvalidBody := model.RequestPostCommentBody{
-		Text: "",
-	}
 	item, _ := model.CreateItem(model.Item{Name: "testPostCommentsItem"})
 
 	t.Run("admin user", func(t *testing.T) {
@@ -42,18 +39,5 @@ func TestPostComments(t *testing.T) {
 		assert.Equal(testRequestBody.Text, comment.Text)
 		assert.Equal(item.ID, comment.ItemID)
 		assert.Equal("traP", comment.User.Name)
-	})
-
-	t.Run("admin user/validation error", func(t *testing.T) {
-		assert := assert.New(t)
-		e := echoSetupWithAdminUser()
-
-		reqBody, _ := json.Marshal(testRequestInvalidBody)
-		req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(item.ID))+"/comments", bytes.NewReader(reqBody))
-		req.Header.Set("Content-Type", "application/json")
-		rec := httptest.NewRecorder()
-		e.ServeHTTP(rec, req)
-
-		assert.Equal(http.StatusBadRequest, rec.Code)
 	})
 }
