@@ -3,7 +3,6 @@ package model
 import (
 	"errors"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/jinzhu/gorm"
 )
 
@@ -23,13 +22,6 @@ type RequestPutUsersBody struct {
 // TableName dbのテーブル名を指定する
 func (user *User) TableName() string {
 	return "users"
-}
-
-func (body RequestPutUsersBody) Validate() error {
-	return validation.ValidateStruct(&body,
-		validation.Field(&body.Name, validation.Required),
-		validation.Field(&body.Admin, validation.Skip),
-	)
 }
 
 // GetUsers 全userを取得する

@@ -5,42 +5,42 @@ info:
   description: booQサーバーのAPIです。
   contact:
     name: traP
-    url: "https://github.com/traPtitech/booQ"
+    url: 'https://github.com/traPtitech/booQ'
 servers:
-  - url: "https://booq.trap.jp/api"
+  - url: 'https://booq.trap.jp/api'
     description: production
-  - url: "https://booq-dev.trapti.tech/api"
+  - url: 'https://booq-dev.trapti.tech/api'
     description: staging
-  - url: 'http://localhost:8080/api'
+  - url: 'http://localhost:3000/api'
     description: local
 
 tags:
-  - name: "items"
-    description: "物品に関するAPI"
-  - name: "comments"
-    description: "コメントに関するAPI"
-  - name: "logs"
-    description: "履歴に関するAPI"
-  - name: "likes"
-    description: "物品のいいねに関するAPI"
-  - name: "owners"
-    description: "物品の所有者に関するAPI"
-  - name: "tags"
-    description: "タグに関するAPI"
-  - name: "users"
-    description: "ユーザーに関するAPI"
-  - name: "files"
-    description: "画像アップロードに関するAPI"
+- name: "items"
+  description: "物品に関するAPI"
+- name: "comments"
+  description: "コメントに関するAPI"
+- name: "logs"
+  description: "履歴に関するAPI"
+- name: "likes"
+  description: "物品のいいねに関するAPI"
+- name: "owners"
+  description: "物品の所有者に関するAPI"
+- name: "tags"
+  description: "タグに関するAPI"
+- name: "users"
+  description: "ユーザーに関するAPI"
+- name: "files"
+  description: "画像アップロードに関するAPI"
 
 paths:
   /users:
     get:
       operationId: getUsers
       tags:
-        - "users"
+      - "users"
       summary: "ユーザー一覧を取得します。"
       responses:
-        "200":
+        '200':
           description: "OK"
           content:
             application/json:
@@ -51,7 +51,7 @@ paths:
     put:
       operationId: editUser
       tags:
-        - "users"
+      - "users"
       summary: "ユーザーの情報を変更します。主に権限の変更用です。"
       requestBody:
         description: "権限の変更は権限を持っているユーザーからしかできません。"
@@ -61,25 +61,25 @@ paths:
             schema:
               $ref: "#/components/schemas/user"
       responses:
-        "200":
+        '200':
           description: "OK"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/user"
-        "400":
+        '400':
           description: "変更がありません"
-        "403":
+        '403':
           description: "権限がありません"
 
   /users/me:
     get:
       operationId: getMe
       tags:
-        - "users"
+      - "users"
       summary: "自分の情報を取得します。存在しない場合はユーザーを作成します。"
       responses:
-        "200":
+        '200':
           description: "OK"
           content:
             application/json:
@@ -90,24 +90,24 @@ paths:
     get:
       operationId: getItems
       tags:
-        - "items"
+      - "items"
       summary: "物品の一覧を取得します。"
       parameters:
-        - schema:
-            type: "string"
-          name: "user"
-          in: "query"
-          description: "指定したユーザーの所有する物品一覧を取得します。"
-        - schema:
-            type: "string"
-          name: "search"
-          in: "query"
-          description: "名称が部分一致する物品一覧を取得します。"
-        - schema:
-            type: "string"
-          name: "rental"
-          in: "query"
-          description: "指定したユーザーの借りている物品一覧を取得します。"
+      - schema:
+          type: "string"
+        name: "user"
+        in: "query"
+        description: "指定したユーザーの所有する物品一覧を取得します。"
+      - schema:
+          type: "string"
+        name: "search"
+        in: "query"
+        description: "名称が部分一致する物品一覧を取得します。"
+      - schema:
+          type: "string"
+        name: "rental"
+        in: "query"
+        description: "指定したユーザーの借りている物品一覧を取得します。"
       # - schema:
       #     type: "integer"
       #   name: "limit"
@@ -129,7 +129,7 @@ paths:
       #   in: "query"
       #   description: "リクエストしたタグのついている物品一覧を取得します。"
       responses:
-        "200":
+        '200':
           description: "OK"
           content:
             application/json:
@@ -137,12 +137,12 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/itemSummary"
-        "400":
+        '400':
           description: リクエストが不正です
     post:
       operationId: postItem
       tags:
-        - "items"
+      - "items"
       summary: "物品を新しく登録します。"
       requestBody:
         required: true
@@ -151,38 +151,38 @@ paths:
             schema:
               $ref: "#/components/schemas/itemPosted"
       responses:
-        "201":
+        '201':
           description: "Created"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/itemPosted"
-        "400":
+        '400':
           description: "リクエストボディが不正です。"
-        "403":
+        '403':
           description: "権限がありません"
 
   /items/{itemId}:
     parameters:
-      - $ref: "#/components/parameters/itemIdInPath"
+      - $ref: '#/components/parameters/itemIdInPath'
     get:
       operationId: getItem
       tags:
-        - "items"
+      - "items"
       summary: "物品の詳細情報を取得します。"
       responses:
-        "200":
+        '200':
           description: "OK"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/itemDetail"
-        "404":
+        '404':
           description: "アイテムが存在しません"
     put:
       operationId: editItem
       tags:
-        - "items"
+      - "items"
       summary: "物品の情報を変更します。(所有者と管理者のみ)"
       requestBody:
         required: true
@@ -191,38 +191,38 @@ paths:
             schema:
               $ref: "#/components/schemas/itemPosted"
       responses:
-        "200":
+        '200':
           description: "OK"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/item"
-        "400":
+        '400':
           description: "リクエストボディが不正です。"
-        "403":
+        '403':
           description: "権限がありません。"
-        "404":
+        '404':
           description: "アイテムが存在しません"
     delete:
       operationId: deleteItem
       tags:
-        - "items"
+      - "items"
       summary: "物品を削除します。(管理者のみ)"
       responses:
-        "200":
+        '200':
           description: "OK"
-        "403":
+        '403':
           description: "権限がありません。"
-        "404":
+        '404':
           description: "アイテムが存在しません"
 
   /items/{itemId}/owners:
     parameters:
-      - $ref: "#/components/parameters/itemIdInPath"
+      - $ref: '#/components/parameters/itemIdInPath'
     post:
       operationId: postItemOwners
       tags:
-        - "owners"
+      - "owners"
       summary: "物品の所有者を追加します。"
       description: "他者の所有権を操作する場合は権限が必要です。"
       requestBody:
@@ -232,20 +232,20 @@ paths:
             schema:
               $ref: "#/components/schemas/postOwnership"
       responses:
-        "201":
+        '201':
           description: "Created"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ownership"
-        "403":
+        '403':
           description: "権限がありません。"
-        "404":
+        '404':
           description: "アイテムが存在しません"
     put:
       operationId: editItemOwners
       tags:
-        - "owners"
+      - "owners"
       summary: "物品の所有者を編集します。(所有者と管理者のみ)"
       description: "他者の所有権を操作する場合は権限が必要です。"
       requestBody:
@@ -255,24 +255,24 @@ paths:
             schema:
               $ref: "#/components/schemas/postOwnership"
       responses:
-        "200":
+        '200':
           description: "OK"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ownership"
-        "403":
+        '403':
           description: "権限がありません。"
-        "404":
+        '404':
           description: "アイテムが存在しません"
 
   /items/{itemId}/logs:
     parameters:
-      - $ref: "#/components/parameters/itemIdInPath"
+      - $ref: '#/components/parameters/itemIdInPath'
     post:
       operationId: postLog
       tags:
-        - "logs"
+      - "logs"
       summary: "履歴を新しく登録します。"
       description: "itemとownerが紐づいていない場合はエラー(400)を返す必要があります。"
       requestBody:
@@ -282,26 +282,26 @@ paths:
             schema:
               $ref: "#/components/schemas/postLog"
       responses:
-        "201":
+        '201':
           description: "Created"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/log"
-        "400":
+        '400':
           description: "リクエストボディが不正です。"
-        "403":
+        '403':
           description: "権限が存在しません。またはそのアイテムを持っていません。"
-        "404":
+        '404':
           description: "アイテムが存在しません"
 
   /items/{itemId}/comments:
     parameters:
-      - $ref: "#/components/parameters/itemIdInPath"
+      - $ref: '#/components/parameters/itemIdInPath'
     post:
       operationId: postComment
       tags:
-        - "comments"
+      - "comments"
       summary: "コメントを新規作成します。"
       requestBody:
         required: true
@@ -310,45 +310,45 @@ paths:
             schema:
               $ref: "#/components/schemas/postComment"
       responses:
-        "201":
+        '201':
           description: "Created"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/comment"
-        "400":
+        '400':
           description: "リクエストボディが不正です。"
-        "404":
+        '404':
           description: "アイテムが存在しません"
 
   /items/{itemId}/likes:
     parameters:
-      - $ref: "#/components/parameters/itemIdInPath"
+      - $ref: '#/components/parameters/itemIdInPath'
     post:
       operationId: addLike
       tags:
-        - "likes"
+      - "likes"
       summary: "物品にいいねをつけます。"
       description: "すでにいいねしている状態の場合、エラー(400)を返します。"
       responses:
-        "201":
+        '201':
           description: "正常にいいねしました"
-        "400":
+        '400':
           description: "不正なリクエストです"
-        "404":
+        '404':
           description: "指定されたアイテムが存在しません"
     delete:
       operationId: removeLike
       tags:
-        - "likes"
+      - "likes"
       summary: "物品のいいねを取り消します。"
       description: "すでに所有済み状態の場合、エラー(400)を返します。"
       responses:
-        "200":
+        '200':
           description: "正常に削除しました"
-        "400":
+        '400':
           description: "不正なリクエストです"
-        "404":
+        '404':
           description: "指定されたアイテムが存在しません"
 
   # /items/{itemId}/tags:
@@ -447,15 +447,15 @@ paths:
     get:
       operationId: getComments
       tags:
-        - "comments"
+      - "comments"
       summary: "コメント一覧を取得します。"
       parameters:
-        - schema:
-            type: "string"
-          name: "user"
-          in: "query"
-          description: "特定のユーザーの投稿したコメント一覧を取得します。"
-          required: true
+      - schema:
+          type: "string"
+        name: "user"
+        in: "query"
+        description: "特定のユーザーの投稿したコメント一覧を取得します。"
+        required: true
       # - schema:
       #     type: "integer"
       #   name: "limit"
@@ -467,7 +467,7 @@ paths:
       #   in: "query"
       #   description: "取得したいコメントの開始場所を指定します。リクエストした件数が全部の件数より多い場合は空の配列が返ってきます。"
       responses:
-        "200":
+        '200':
           description: "OK"
           content:
             application/json:
@@ -475,7 +475,7 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/comment"
-        "400":
+        '400':
           description: 不正なリクエストです
 
   # /comments/{commentId}:
@@ -563,7 +563,7 @@ paths:
     post:
       operationId: postFile
       tags:
-        - "files"
+      - "files"
       summary: "画像ファイルをアップロードします。"
       requestBody:
         required: true
@@ -576,32 +576,32 @@ paths:
                   format: binary
                   description: "3MBまでのJPG, PNGファイル"
       responses:
-        "201":
+        '201':
           description: "OK"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/file"
-        "400":
+        '400':
           description: "不正なリクエストです。"
 
   /files/{fileId}:
     parameters:
-      - $ref: "#/components/parameters/fileIdInPath"
+      - $ref: '#/components/parameters/fileIdInPath'
     get:
       operationId: getFile
       tags:
-        - "files"
+      - "files"
       summary: "画像ファイルをダウンロードします。"
       responses:
-        "200":
+        '200':
           description: "OK"
           content:
             image/jpeg:
               schema:
                 type: string
                 format: binary
-        "404":
+        '404':
           description: "ファイルが存在しません。"
 
 components:
@@ -659,7 +659,6 @@ components:
         imgUrl:
           type: "string"
           example: "https://cover.openbd.jp/9784041026403.jpg"
-          default: ""
         createdAt:
           type: "string"
           format: "date-time"

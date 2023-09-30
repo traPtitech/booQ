@@ -29,8 +29,8 @@ func PostComments(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	commentRequest := model.RequestPostCommentBody{}
-	if err := BindAndValidate(c, &commentRequest); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+	if err := c.Bind(&commentRequest); err != nil {
+		return err
 	}
 	comment := model.Comment{
 		ItemID: uint(itemID),

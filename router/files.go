@@ -4,16 +4,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"image"
-	"image/color"
-	"image/draw"
-	"net/http"
-	"strconv"
-
 	"github.com/disintegration/imaging"
 	"github.com/labstack/echo"
 	"github.com/traPtitech/booQ/model"
 	"github.com/traPtitech/booQ/storage"
+	"net/http"
+	"strconv"
 )
 
 // アップロードを許可するMIMEタイプ
@@ -50,16 +46,9 @@ func PostFile(c echo.Context) error {
 		// 不正な画像
 		return c.JSON(http.StatusBadRequest, errors.New("不正なファイルです"))
 	}
-	// 背景を透明にする
-	newImg := image.NewRGBA(orig.Bounds())
-	draw.Draw(newImg, newImg.Bounds(), &image.Uniform{color.White}, image.Point{}, draw.Src)
-	draw.Draw(newImg, newImg.Bounds(), orig, orig.Bounds().Min, draw.Over)
 	b := &bytes.Buffer{}
-	err = imaging.Encode(b, imaging.Fit(newImg, 360, 480, imaging.Linear), imaging.JPEG, imaging.JPEGQuality(85))
-	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
-	}
-	
+	_ = imaging.Encode(b, imaging.Fit(orig, 360, 480, imaging.Linear), imaging.JPEG, imaging.JPEGQuality(85))
+
 	// 保存
 	f, err := model.CreateFile(user.ID, b, "jpg")
 	if err != nil {

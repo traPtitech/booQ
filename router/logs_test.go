@@ -63,44 +63,6 @@ func TestPostLogs(t *testing.T) {
 	// 	Count:   1,
 	// }
 
-	testInvalidBodiesLog := []model.RequestPostLogsBody{
-		{
-			OwnerID: 0,
-			Type:    0,
-			Purpose: "ログのポストのテストのPurposeですvalidation error1",
-			DueDate: "2000-02-16",
-			Count:   1,
-		},
-		{
-			OwnerID: trap.ID,
-			Type:    5,
-			Purpose: "ログのポストのテストのPurposeですvalidation error2",
-			DueDate: "2000-02-16",
-			Count:   1,
-		},
-		{
-			OwnerID: trap.ID,
-			Type:    0,
-			Purpose: "",
-			DueDate: "2000-02-16",
-			Count:   1,
-		},
-		{
-			OwnerID: trap.ID,
-			Type:    0,
-			Purpose: "ログのポストのテストのPurposeですvalidation error4",
-			DueDate: "2000/02/16",
-			Count:   1,
-		},
-		{
-			OwnerID: trap.ID,
-			Type:    0,
-			Purpose: "ログのポストのテストのPurposeですvalidation error5",
-			DueDate: "2000-02-16",
-			Count:   0,
-		},
-	}
-
 	t.Run("failed", func(t *testing.T) {
 		e := echoSetupWithAdminUser()
 
@@ -128,16 +90,6 @@ func TestPostLogs(t *testing.T) {
 		// e.ServeHTTP(rec, req)
 
 		// assert.Equal(http.StatusForbidden, rec.Code)
-
-		for _, log := range testInvalidBodiesLog {
-			reqBody, _ := json.Marshal(log)
-			req := httptest.NewRequest(echo.POST, "/api/items/"+strconv.Itoa(int(item.ID))+"/logs", bytes.NewReader(reqBody))
-			req.Header.Set("Content-Type", "application/json")
-			rec = httptest.NewRecorder()
-			e.ServeHTTP(rec, req)
-
-			assert.Equal(http.StatusBadRequest, rec.Code)
-		}
 	})
 
 	t.Run("success", func(t *testing.T) {

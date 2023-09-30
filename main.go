@@ -15,6 +15,7 @@ import (
 )
 
 func main() {
+
 	db, err := model.EstablishConnection()
 	if err != nil {
 		panic(err)
@@ -59,15 +60,12 @@ func main() {
 	// Echo instance
 	e := echo.New()
 
-	// Validator
-	router.SetValidator(e)
-
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	// Routing
-	router.SetupRouting(e, router.CreateUserProvider(os.Getenv("DEBUG_USER_NAME")))
+	router.SetupRouting(e, router.CreateUserProvider())
 
 	// Start server
 	e.Logger.Fatal(e.Start(":3001"))

@@ -19,7 +19,7 @@ func GetUsersMe(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-// GetUsers GET /users
+//GetUsers GET /users
 func GetUsers(c echo.Context) error {
 	res, err := model.GetUsers()
 	if err != nil {
@@ -31,7 +31,8 @@ func GetUsers(c echo.Context) error {
 // PutUsers PUT /users
 func PutUsers(c echo.Context) error {
 	req := model.RequestPutUsersBody{}
-	if err := BindAndValidate(c, &req); err != nil {
+	err := c.Bind(&req)
+	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
