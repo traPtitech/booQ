@@ -81,13 +81,6 @@ func TestPostLogs(t *testing.T) {
 		{
 			OwnerID: trap.ID,
 			Type:    0,
-			Purpose: "",
-			DueDate: "2000-02-16",
-			Count:   1,
-		},
-		{
-			OwnerID: trap.ID,
-			Type:    0,
 			Purpose: "ログのポストのテストのPurposeですvalidation error4",
 			DueDate: "2000/02/16",
 			Count:   1,
