@@ -65,11 +65,11 @@ func GetItems(c echo.Context) error {
 func PostItems(c echo.Context) error {
 	user := c.Get("user").(model.User)
 	item := model.Item{}
-	if err := c.Bind(&item); err != nil {
-		return err
+	if err := BindAndValidate(c, &item); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 	// item.Type=0⇒個人、1⇒trap所有、2⇒支援課
-	if item.Type != 0 && !user.Admin {
+	if item.Type != model.PersonalItem && !user.Admin {
 		return c.NoContent(http.StatusForbidden)
 	}
 	res, err := model.CreateItem(item)
@@ -78,7 +78,7 @@ func PostItems(c echo.Context) error {
 	}
 	itemInfo := fmt.Sprintf("[%v](https://%v/items/%v)", res.Name, os.Getenv("HOST"), res.ID)
 	message := fmt.Sprintf("@%v が%vを登録しました", user.Name, itemInfo)
-	_ = PostMessage(c, message, item.Type != 0)
+	_ = PostMessage(c, message, item.Type != model.PersonalItem)
 	return c.JSON(http.StatusCreated, res)
 }
 
@@ -101,9 +101,9 @@ func GetItem(c echo.Context) error {
 func PutItem(c echo.Context) error {
 	ID := c.Param("id")
 	user := c.Get("user").(model.User)
-	body := map[string]interface{}{}
-	if err := c.Bind(&body); err != nil {
-		return err
+	body := model.RequestPutItemBody{}
+	if err := BindAndValidate(c, &body); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 	itemID, err := strconv.Atoi(ID)
 	if err != nil {
@@ -154,7 +154,7 @@ func PostOwners(c echo.Context) error {
 	ID := c.Param("id")
 	me := c.Get("user").(model.User)
 	body := model.RequestPostOwnersBody{}
-	if err := c.Bind(&body); err != nil {
+	if err := BindAndValidate(c, &body); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	itemID, err := strconv.Atoi(ID)
@@ -173,17 +173,17 @@ func PostOwners(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
 	}
-	if body.UserID > 2 && item.Type > 0 {
+	if body.UserID > 2 && item.Type > model.PersonalItem {
 		return c.NoContent(http.StatusForbidden)
 	}
-	if item.Type == 1 {
+	if item.Type == model.TrapItem {
 		user, _ = model.GetUserByName("traP")
 	}
-	if item.Type == 2 {
+	if item.Type == model.SienkaItem {
 		user, _ = model.GetUserByName("sienka")
 	}
 	// item.Type=0⇒個人、1⇒trap(id:1)所有、2⇒支援課(id:2)
-	if item.Type != 0 && !me.Admin {
+	if item.Type != model.PersonalItem && !me.Admin {
 		return c.NoContent(http.StatusForbidden)
 	}
 	owner := model.Owner{
@@ -208,7 +208,7 @@ func PutOwners(c echo.Context) error {
 	ID := c.Param("id")
 	me := c.Get("user").(model.User)
 	body := model.RequestPostOwnersBody{}
-	if err := c.Bind(&body); err != nil {
+	if err := BindAndValidate(c, &body); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	itemID, err := strconv.Atoi(ID)
@@ -227,17 +227,17 @@ func PutOwners(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
 	}
-	if body.UserID > 2 && item.Type > 0 {
+	if body.UserID > 2 && item.Type > model.PersonalItem {
 		return c.NoContent(http.StatusForbidden)
 	}
-	if item.Type == 1 {
+	if item.Type == model.TrapItem {
 		user, _ = model.GetUserByName("traP")
 	}
-	if item.Type == 2 {
+	if item.Type == model.SienkaItem {
 		user, _ = model.GetUserByName("sienka")
 	}
 	// item.Type=0⇒個人、1⇒trap(id:1)所有、2⇒支援課(id:2)
-	if item.Type != 0 && !me.Admin {
+	if item.Type != model.PersonalItem && !me.Admin {
 		return c.NoContent(http.StatusForbidden)
 	}
 	owner := model.Owner{

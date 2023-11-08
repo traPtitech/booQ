@@ -2,7 +2,6 @@ version: "3"
 services:
   db:
     image: mariadb:10.6.4
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: booq
@@ -28,6 +27,7 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: password
       MYSQL_DATABASE: booq
+      DEBUG_USER_NAME: ryoha
     volumes:
       - './:/app'
     tty: true
