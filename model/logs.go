@@ -36,7 +36,7 @@ const (
 type RequestPostLogsBody struct {
 	OwnerID uint   `json:"ownerId"`
 	Type    int    `json:"type"`
-	Purpose string `json:"purpose"`
+	Purpose string `json:"purpose,omitempty"`
 	DueDate string `json:"dueDate"`
 	Count   int    `json:"count"`
 }
@@ -58,7 +58,6 @@ func (body RequestPostLogsBody) Validate() error {
 	return validation.ValidateStruct(&body,
 		validation.Field(&body.OwnerID, validation.Required),
 		validation.Field(&body.Type, validation.By(checkLogsType)),
-		validation.Field(&body.Purpose, validation.Required),
 		validation.Field(&body.DueDate, validation.Date("2006-01-02")),
 		validation.Field(&body.Count, validation.Required),
 	)
