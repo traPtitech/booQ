@@ -92,5 +92,8 @@ func Migrate() error {
 		}
 	}
 
+	// https://cover.openbd.jp/xxx.jpg -> https://iss.ndl.go.jp/thumbnail/xxx
+	db.Exec("UPDATE items SET img_url=REPLACE(REPLACE(img_url, '.jpg', ''), 'https://cover.openbd.jp/', 'https://iss.ndl.go.jp/thumbnail/') WHERE img_url LIKE 'https://cover.openbd.jp/%'")
+
 	return nil
 }
