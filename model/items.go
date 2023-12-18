@@ -86,7 +86,7 @@ func (item Item) Validate() error {
 	return validation.ValidateStruct(&item,
 		validation.Field(&item.Name, validation.Required),
 		validation.Field(&item.Type, validation.By(checkItemType)),
-		validation.Field(&item.Code, validation.Required),
+		validation.Field(&item.Code, validation.NotNil),
 		validation.Field(&item.Description, validation.Required),
 		validation.Field(&item.ImgURL, is.URL),
 	)
