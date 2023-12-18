@@ -34,6 +34,16 @@ func TestPostItems(t *testing.T) {
 		ImgURL:      "http://example.com/testKojin.jpg",
 	}
 
+	testValidBodies := []model.Item{
+		{
+			Name:        "testPostInvalidItem3",
+			Type:        0,
+			Code:        "",
+			Description: "これはバリデーションのテスト3です",
+			ImgURL:      "http://example.com/testInvalid3.jpg",
+		},
+	}
+
 	testInvalidBodies := []model.Item{
 		{
 			Name:        "",
@@ -50,13 +60,6 @@ func TestPostItems(t *testing.T) {
 			ImgURL:      "http://example.com/testInvalid2.jpg",
 		},
 		{
-			Name:        "testPostInvalidItem3",
-			Type:        0,
-			Code:        "",
-			Description: "これはバリデーションのテスト3です",
-			ImgURL:      "http://example.com/testInvalid3.jpg",
-		},
-		{
 			Name:        "testPostInvalidItem4",
 			Type:        0,
 			Code:        "3665321293882",
@@ -67,7 +70,7 @@ func TestPostItems(t *testing.T) {
 			Name:        "testPostInvalidItem5",
 			Type:        0,
 			Code:        "3575736936335",
-			Description: "これはバリデーションのテスト5です",
+			Description: "これはバリデーションのテスト4です",
 			ImgURL:      "not a url",
 		},
 	}
@@ -136,6 +139,21 @@ func TestPostItems(t *testing.T) {
 			e.ServeHTTP(rec, req)
 
 			assert.Equal(http.StatusBadRequest, rec.Code)
+		})
+	}
+
+	for _, body := range testValidBodies {
+		t.Run("admin user/validation pass", func(t *testing.T) {
+			assert := assert.New(t)
+			e := echoSetupWithAdminUser()
+
+			reqBody, _ := json.Marshal(body)
+			req := httptest.NewRequest(echo.POST, "/api/items", bytes.NewReader(reqBody))
+			req.Header.Set("Content-Type", "application/json")
+			rec := httptest.NewRecorder()
+			e.ServeHTTP(rec, req)
+
+			assert.Equal(http.StatusCreated, rec.Code)
 		})
 	}
 }
