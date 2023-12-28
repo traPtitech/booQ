@@ -20,18 +20,18 @@ func SetupRouting(e *echo.Echo, client *UserProvider) {
 		{
 			apiUsers.GET("", GetUsers)
 			apiUsers.GET("/me", GetUsersMe)
-			apiUsers.PUT("", PutUsers)
+			apiUsers.PUT("", PutUsers, MiddlewareAdmin)
 		}
 
 		apiItems := api.Group("/items")
 		{
 			apiItems.GET("", GetItems)
-			apiItems.POST("", PostItems)
+			apiItems.POST("", PostItems, MiddlewareBodyItemSocial)
 			apiItems.GET("/:id", GetItem)
 			apiItems.PUT("/:id", PutItem)
-			apiItems.DELETE("/:id", DeleteItem)
-			apiItems.POST("/:id/owners", PostOwners)
-			apiItems.PUT("/:id/owners", PutOwners)
+			apiItems.DELETE("/:id", DeleteItem, MiddlewareAdmin)
+			apiItems.POST("/:id/owners", PostOwners, MiddlewareParamItemSocial)
+			apiItems.PUT("/:id/owners", PutOwners, MiddlewareParamItemSocial)
 			apiItems.POST("/:id/logs", PostLogs)
 			apiItems.POST("/:id/comments", PostComments)
 			apiItems.POST("/:id/likes", PostLikes)

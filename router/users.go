@@ -35,13 +35,9 @@ func PutUsers(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	user := c.Get("user").(model.User)
 	prevUser, err := model.GetUserByName(req.Name)
 	if err != nil {
 		return c.JSON(http.StatusForbidden, err)
-	}
-	if !user.Admin {
-		return c.NoContent(http.StatusForbidden)
 	}
 	if req.Admin == prevUser.Admin {
 		return c.NoContent(http.StatusBadRequest)

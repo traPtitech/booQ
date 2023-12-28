@@ -64,13 +64,9 @@ func GetItems(c echo.Context) error {
 // PostItems POST /items
 func PostItems(c echo.Context) error {
 	user := c.Get("user").(model.User)
-	item := model.Item{}
-	if err := BindAndValidate(c, &item); err != nil {
+	item := c.Get("item").(model.Item)
+	if err := c.Validate(&item); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
-	}
-	// item.Type=0⇒個人、1⇒trap所有、2⇒支援課
-	if item.Type != model.PersonalItem && !user.Admin {
-		return c.NoContent(http.StatusForbidden)
 	}
 	res, err := model.CreateItem(item)
 	if err != nil {
@@ -129,13 +125,9 @@ func PutItem(c echo.Context) error {
 // DeleteItem DELETE /items/:id
 func DeleteItem(c echo.Context) error {
 	ID := c.Param("id")
-	user := c.Get("user").(model.User)
 	itemID, err := strconv.Atoi(ID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
-	}
-	if !user.Admin {
-		return c.NoContent(http.StatusForbidden)
 	}
 	item, err := model.GetItemByID(uint(itemID))
 	if err != nil {
@@ -181,10 +173,6 @@ func PostOwners(c echo.Context) error {
 	}
 	if item.Type == model.SienkaItem {
 		user, _ = model.GetUserByName("sienka")
-	}
-	// item.Type=0⇒個人、1⇒trap(id:1)所有、2⇒支援課(id:2)
-	if item.Type != model.PersonalItem && !me.Admin {
-		return c.NoContent(http.StatusForbidden)
 	}
 	owner := model.Owner{
 		UserID:     user.ID,

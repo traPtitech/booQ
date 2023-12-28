@@ -3,6 +3,7 @@ package router
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo"
 
@@ -20,6 +21,49 @@ func (client *UserProvider) MiddlewareAuthUser(next echo.HandlerFunc) echo.Handl
 		c, err := client.AuthUser(c)
 		if err != nil {
 			return c.String(http.StatusUnauthorized, err.Error())
+		}
+		return next(c)
+	}
+}
+
+// MiddlewareAdmin Admin以外を弾くmiddleware
+func MiddlewareAdmin(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		user := c.Get("user").(model.User)
+		if !user.Admin {
+			return c.NoContent(http.StatusForbidden)
+		}
+		return next(c)
+	}
+}
+
+// MiddlewareBodyItemSocial リクエストボディから取得したItemがPersonalItemでない場合はAdmin以外を弾くmiddleware
+func MiddlewareBodyItemSocial(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		item := model.Item{}
+		if err := c.Bind(&item); err != nil {
+			return err
+		}
+		c.Set("item", item)
+		user := c.Get("user").(model.User)
+		if item.Type != model.PersonalItem && !user.Admin {
+			return c.NoContent(http.StatusForbidden)
+		}
+		return next(c)
+	}
+}
+
+// MiddlewareParamItemSocial パラメータから取得したItemがPersonalItemでない場合はAdmin以外を弾くmiddleware
+func MiddlewareParamItemSocial(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		itemID, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return next(c)
+		}
+		item, _ := model.GetItemByID(uint(itemID))
+		user := c.Get("user").(model.User)
+		if item.Type != model.PersonalItem && !user.Admin {
+			return c.NoContent(http.StatusForbidden)
 		}
 		return next(c)
 	}
