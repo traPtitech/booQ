@@ -1,4 +1,4 @@
-FROM golang:1.20.0-alpine AS server-build
+FROM golang:1.20.0-alpine@sha256:0d145ecb3cb3772ee54d3a97ae2774aa4f8a179f28f9d4ea67b9cb38b58acebd AS server-build
 RUN apk add --update --no-cache git
 WORKDIR /go/src/github.com/traPtitech/booQ
 COPY ./go.* ./
